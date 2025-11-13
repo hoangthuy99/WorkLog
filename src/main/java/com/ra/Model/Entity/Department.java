@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Generated;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -23,4 +24,5 @@ public class Department {
     private List<Users> users;
     @OneToMany(mappedBy = "department")
     private List<Project> projects;
+    private LocalTime deletedAt;
 }

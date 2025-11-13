@@ -28,5 +28,6 @@ public class WorkRecord {
     private Double totalHours;
     private int status;
     private String notes;
+    private LocalTime deletedAt;
 
 }

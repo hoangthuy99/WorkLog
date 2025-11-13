@@ -31,4 +31,5 @@ public class Attendance {
     private int isHoliday;
     private int status;
     private String notes;
+    private LocalTime deletedAt;
 }

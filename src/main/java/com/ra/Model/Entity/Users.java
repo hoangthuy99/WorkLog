@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 
 @Entity
 @Table(name = "users")
@@ -27,4 +29,5 @@ public class Users {
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
+    private LocalDate deletedAt;
 }
