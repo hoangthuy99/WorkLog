@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -24,4 +25,5 @@ public class Project {
     private Department department;
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Tasks> tasks;
+    private LocalDate deletedAt;
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,4 +28,5 @@ public class Tasks {
     @JoinColumn(name = "department_id")
     private Department department;
     private String status;
+    private LocalDate deletedAt;
 }
