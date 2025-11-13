@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-
+@Table(name = "work_record")
 public class WorkRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

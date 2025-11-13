@@ -16,6 +16,7 @@ import java.util.Timer;
 @AllArgsConstructor
 @Getter
 @Setter
+@Table(name = "attendance")
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
