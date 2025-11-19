@@ -1,6 +1,7 @@
-package com.ra.Model.Entity;
+package com.ra.DTO.request;
 
-import jakarta.persistence.*;
+import com.ra.Model.Entity.Project;
+import com.ra.Model.Entity.Users;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,24 +9,17 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "permission")
-public class Permission {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TaskRequest {
     private int id;
-
     private String name;
     private String description;
-
-    @ManyToMany(mappedBy = "permissions")
-    private List<Roles> roles;
+    private Project project;
+    private List<Users> users;
+    private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

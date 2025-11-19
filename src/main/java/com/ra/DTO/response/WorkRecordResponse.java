@@ -1,6 +1,6 @@
-package com.ra.Model.Entity;
+package com.ra.DTO.response;
 
-import jakarta.persistence.*;
+import com.ra.Model.Entity.Users;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,19 +9,13 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
-
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Setter
-@Table(name = "work_record")
-public class WorkRecord {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Getter
+
+public class WorkRecordResponse {
     private int id;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     private Users user;
     private Date workDate;
     private LocalTime startTime;
@@ -32,5 +26,4 @@ public class WorkRecord {
     private LocalDateTime deletedAt;// thời gian xóa bản ghi tam thơi
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 }

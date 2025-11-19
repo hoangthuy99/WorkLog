@@ -12,9 +12,11 @@
         <property name="hibernate.connection.password">thuyhip99</property>
 
         <!-- Hibernate properties -->
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+
 
         <!-- Mapping entity -->
         <mapping class="com.ra.Model.Entity.Users"/>

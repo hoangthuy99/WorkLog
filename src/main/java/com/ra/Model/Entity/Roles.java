@@ -1,11 +1,9 @@
 package com.ra.Model.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -14,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+
 @Table(name = "roles")
 public class Roles {
     @Id
@@ -22,6 +21,20 @@ public class Roles {
     private String name;
     @OneToMany(mappedBy = "role")
     private List<Users> users;
+    @ManyToMany
+    @JoinTable(
+            name = "role_permission",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    private List<Permission> permissions;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    @Override
+    public String toString() {
+        return name;
+    }
+
 
 
 }

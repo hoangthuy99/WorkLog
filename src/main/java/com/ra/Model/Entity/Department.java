@@ -1,13 +1,10 @@
 package com.ra.Model.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Generated;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -15,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+
 @Table(name = "department")
 public class Department {
     @Id
@@ -23,7 +21,13 @@ public class Department {
     private String name;
     @OneToMany(mappedBy = "department")
     private List<Users> users;
-    @OneToMany(mappedBy = "department")
+    @ManyToMany(mappedBy = "departments")
     private List<Project> projects;
-    private LocalTime deletedAt;
+    private LocalDateTime deletedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    @Override
+    public String toString() {
+        return name;
+    }
 }
