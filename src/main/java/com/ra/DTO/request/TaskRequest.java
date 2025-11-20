@@ -16,6 +16,7 @@ import java.util.List;
 public class TaskRequest {
     private int id;
     private String name;
+    private String taskCode;
     private String description;
     private Project project;
     private List<Users> users;

@@ -24,8 +24,8 @@ public class Roles {
     @ManyToMany
     @JoinTable(
             name = "role_permission",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id")
+            joinColumns = @JoinColumn(name = "roleId"),
+            inverseJoinColumns = @JoinColumn(name = "permissionId")
     )
     private List<Permission> permissions;
     private LocalDateTime createdAt;

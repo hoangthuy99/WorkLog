@@ -1,7 +1,6 @@
 package com.ra;
 
 import com.ra.Utils.HibernateUtil;
-import com.ra.View.DashboardForm;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -20,8 +19,8 @@ public class Main {
 //         Đảm bảo GUI chạy trên Event Dispatch Thread
         SwingUtilities.invokeLater(() -> {
             // Tạo instance của dashboard form
-            DashboardForm dashboard = new DashboardForm();
-            dashboard.setVisible(true);
+//            DashboardForm dashboard = new DashboardForm();
+//            dashboard.setVisible(true);
         });
     }
 }
