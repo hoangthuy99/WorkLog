@@ -29,7 +29,7 @@ public class AuthIMPL implements AuthSerVice {
         SessionLocal.put("currentUser", user);
         UserRequest userRequest = new UserRequest();
         userRequest.setId(user.getId());
-        userRequest.setUsername(user.getUsername());
+        userRequest.setUsername(user.getUserName());
         userRequest.setEmail(user.getEmail());
        return userRequest;
 
