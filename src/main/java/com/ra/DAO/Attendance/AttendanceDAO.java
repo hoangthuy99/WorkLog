@@ -13,7 +13,16 @@ public class AttendanceDAO implements IAttendanceDAO {
 
     @Override
     public AttendanceRequest findByUsername(String username) {
-        return null;
+        //TODO:Tìm kiếm dữ liệu điểm danh theo username
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "FROM Attendance a WHERE a.user.userName = :username";
+            return session.createQuery(hql, AttendanceRequest.class)
+                    .setParameter("username", username)
+                    .uniqueResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
