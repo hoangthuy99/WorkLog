@@ -22,18 +22,29 @@ public class Department {
     private String name;
     @Column(name = "departmentCode", length = 10, unique = true, nullable = false)
     private String departmentCode;
+    // Department - Users (1 - n)
     @OneToMany(mappedBy = "department")
     private List<Users> users;
+    // Department - Project (n - n)
     @ManyToMany(mappedBy = "departments")
     private List<Project> projects;
+    // Department - Task (n - n)
+    @ManyToMany
+    @JoinTable(
+            name = "department_task",
+            joinColumns = @JoinColumn(name = "departmentId"),
+            inverseJoinColumns = @JoinColumn(name = "taskId")
+    )
+    private List<Tasks> tasks;
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
     @Override
     public String toString() {
         return name;
     }
-    // Phương thức tạo mã phòng ban tự động duy nhất
+
     public static String generateDepartmentCode() {
         return "DP" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8).toUpperCase();
     }

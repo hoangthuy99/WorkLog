@@ -17,29 +17,34 @@ import java.util.UUID;
 @Setter
 @Table(name = "project")
 public class Project {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     @Column(name = "projectCode", length = 10, unique = true, nullable = false)
     private String projectCode;
-    @ManyToMany(fetch = FetchType.EAGER)
+    // Project - Department (n - n)
+    @ManyToMany
     @JoinTable(
-            name = "departmentProject",
+            name = "department_project",
             joinColumns = @JoinColumn(name = "projectId"),
             inverseJoinColumns = @JoinColumn(name = "departmentId")
     )
     private List<Department> departments;
-    @ManyToMany(fetch = FetchType.EAGER)
+    // Project - Task (n - n)
+    @ManyToMany
     @JoinTable(
             name = "task_project",
-            joinColumns = @JoinColumn(name = "taskId"),
-            inverseJoinColumns = @JoinColumn(name = "projectId")
+            joinColumns = @JoinColumn(name = "projectId"),
+            inverseJoinColumns = @JoinColumn(name = "taskId")
     )
     private List<Tasks> tasks;
+
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
     public static String generateProjectCode() {
         return "PD" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8).toUpperCase();
     }
