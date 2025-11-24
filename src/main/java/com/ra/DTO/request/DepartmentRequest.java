@@ -17,6 +17,7 @@ import java.util.List;
 public class DepartmentRequest {
     private int id;
     private String name;
+    private String departmentCode;
     private List<Users> users;
     private List<Project> projects;
     private LocalDateTime deletedAt;

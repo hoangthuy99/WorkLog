@@ -16,6 +16,7 @@ import java.util.List;
 public class ProjectRequest {
     private int id;
     private String name;
+    private String projectCode;
     private List<Department> departments;
     private List<Tasks> tasks;
     private LocalDateTime deletedAt;

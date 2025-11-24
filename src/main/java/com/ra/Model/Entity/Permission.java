@@ -21,7 +21,8 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String name;
+    private String name;// module cha
+    private int parent_id;// module con thuộc module cha nào
     private String description;
 
     @ManyToMany(mappedBy = "permissions")

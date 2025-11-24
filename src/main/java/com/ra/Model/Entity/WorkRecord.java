@@ -21,7 +21,7 @@ public class WorkRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userId")
     private Users user;
     private Date workDate;
     private LocalTime startTime;
