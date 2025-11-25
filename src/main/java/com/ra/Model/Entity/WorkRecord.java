@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
+
 
 @Entity
 @NoArgsConstructor
@@ -17,20 +17,39 @@ import java.util.Date;
 @Setter
 @Table(name = "work_record")
 public class WorkRecord {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
-    private Users user;
-    private Date workDate;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private Double totalHours;
-    private int status; // trạng thái bản ghi công
-    private String remarks; // ghi chú về bản ghi công
-    private LocalDateTime deletedAt;// thời gian xóa bản ghi tam thơi
+
+    // Detail belongs to Attendance
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attendanceId", nullable = false)
+    private Attendance attendance;
+
+    // Project (optional nếu ngày đó không thuộc dự án)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "projectId")
+    private Project project;
+
+    // Task
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "taskId")
+    private Tasks task;
+
+    @Column(nullable = false)
+    private LocalTime startTime;   // giờ bắt đầu block
+
+    @Column(nullable = false)
+    private LocalTime endTime;     // giờ kết thúc block
+
+    private Integer workMinutes; // tổng phút trong block
+    private Integer breakMinutes; // phút nghỉ trong block (nếu có)
+
+    private String remarks;
+    private String status;
+
+    private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 }

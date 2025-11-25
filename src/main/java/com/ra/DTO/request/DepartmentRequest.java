@@ -18,8 +18,9 @@ public class DepartmentRequest {
     private int id;
     private String name;
     private String departmentCode;
-    private List<Users> users;
-    private List<Project> projects;
+    private List<Users> userId;
+    private List<Project> projectId;
+    private List<Integer> taskIds;
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

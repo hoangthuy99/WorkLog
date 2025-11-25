@@ -1,6 +1,8 @@
 package com.ra.DTO.request;
 
+import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Project;
+import com.ra.Model.Entity.Tasks;
 import com.ra.Model.Entity.Users;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,8 +20,9 @@ public class TaskRequest {
     private String name;
     private String taskCode;
     private String description;
-    private Project project;
-    private List<Users> users;
+    private List<Project> projectId;
+    private List<Users> userId;
+    private List<Department> departmentId;
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
