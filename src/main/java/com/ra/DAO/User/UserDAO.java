@@ -10,7 +10,7 @@ import java.util.List;
 public class UserDAO implements IUserDAO {
 
     @Override
-    public void create(Users user) {
+    public Users create(Users user) {
         Transaction transaction = null;
         // try-with-resources để tự động đóng session
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -26,6 +26,7 @@ public class UserDAO implements IUserDAO {
             }
             e.printStackTrace();
         }
+        return user;
     }
 
     @Override
