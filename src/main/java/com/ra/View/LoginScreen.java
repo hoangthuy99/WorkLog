@@ -2,6 +2,8 @@
 package com.ra.View;
 
 import com.ra.Common.ErrorConstants; // <-- Đã thêm import
+import com.ra.Controller.UserController;
+import com.ra.Model.Entity.Users;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -13,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class LoginScreen extends JFrame {
+    private UserController userController;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JToggleButton togglePasswordField;
@@ -247,56 +250,31 @@ public class LoginScreen extends JFrame {
     }
 
     private void performLogin() {
-        String username = usernameField.getText().trim();
-        String password = new String(passwordField.getPassword());
-        boolean hasInputError = false;
-
         resetErrorLabelsAndBorders();
 
-        // 1. Kiểm tra Lỗi nhập liệu (Thiếu trường)
-        if (username.isEmpty()) {
-            lblUsernameError.setText(ErrorConstants.ERROR_MESSAGE_REQUIRED_USERNAME); // <-- Dùng ErrorConstants
-            lblUsernameError.setVisible(true);
-            usernameField.setBorder(new CompoundBorder(ERROR_BORDER, new EmptyBorder(5, 8, 5, 8)));
-            hasInputError = true;
-        }
+        String username = usernameField.getText().trim();
+        String password = new String(passwordField.getPassword());
 
-        if (password.isEmpty()) {
-            lblPasswordError.setText(ErrorConstants.ERROR_MESSAGE_REQUIRED_PASSWORD); // <-- Dùng ErrorConstants
-            lblPasswordError.setVisible(true);
-            passwordContainer.setBorder(ERROR_BORDER);
-            hasInputError = true;
-        }
+        Users user = userController.login(username, password);
 
-        if (hasInputError) {
-            messageLabel.setText(ErrorConstants.ERROR_MESSAGE_INPUT_MISSING); // <-- Dùng ErrorConstants
-            return;
-        }
-
-
-        // 2. Logic Demo (Thay thế cho Controller/Backend)
-
-        // Tài khoản demo duy nhất: "admin" và "123456"
-        if (username.equals("admin") && password.equals("123456")) {
-
-            // --- THAY ĐỔI LỚN TẠI ĐÂY: MỞ ADMIN DASHBOARD ---
-            this.dispose(); // Đóng màn hình LoginScreen hiện tại
-            SwingUtilities.invokeLater(() -> new AdminDashboard().setVisible(true)); // Khởi tạo và hiển thị AdminDashboard
-            // ----------------------------------------------------
-
+        if (user == null) {
+            showLoginError();
         } else {
-            // Lỗi xác thực (Sai User ID hoặc Password)
-            lblUsernameError.setText(ErrorConstants.ERROR_MESSAGE_AUTH_FAILED); // <-- Dùng ErrorConstants
-            lblUsernameError.setVisible(true);
-
-            // Highlight cả hai trường nếu lỗi xác thực
-            usernameField.setBorder(new CompoundBorder(ERROR_BORDER, new EmptyBorder(5, 8, 5, 8)));
-            passwordContainer.setBorder(ERROR_BORDER);
-
-            messageLabel.setText(ErrorConstants.ERROR_MESSAGE_LOGIN_FAILED); // <-- Dùng ErrorConstants
-            passwordField.setText("");
-            passwordField.requestFocus();
+            showDashboard(user);
         }
+    }
+
+    private void showLoginError() {
+        messageLabel.setText("ユーザーIDまたはパスワードが正しくありません");
+        lblUsernameError.setVisible(true);
+        lblPasswordError.setVisible(true);
+
+        usernameField.setBorder(new CompoundBorder(ERROR_BORDER, new EmptyBorder(5, 8, 5, 8)));
+        passwordContainer.setBorder(ERROR_BORDER);
+    }
+
+    private void showDashboard(Users user) {
+        JOptionPane.showMessageDialog(this, "ログイン成功！ようこそ: " + user.getFullName());
     }
 
     public static void main(String[] args) {

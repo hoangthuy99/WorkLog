@@ -1,8 +1,10 @@
-package com.ra.DTO.request;
+package com.ra.DTO.response;
 
 import com.ra.Model.Entity.Users;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -11,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-public class AttendenceRequest {
+public class AttendanceResponse {
     private int id;
 
     private Users user;

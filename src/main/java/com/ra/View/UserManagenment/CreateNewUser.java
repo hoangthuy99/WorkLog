@@ -4,8 +4,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import com.ra.Common.ErrorConstants;
+import com.ra.Controller.UserController;
+import com.ra.Model.Entity.Users;
 
 public class CreateNewUser extends JPanel {
+    private UserController userController;
 
     // Kích thước TextField mặc định (Đây là kích thước tối thiểu, sẽ được override)
     private final int FIELD_WIDTH_DEFAULT = 20;
@@ -271,20 +274,8 @@ public class CreateNewUser extends JPanel {
         // Logic mô phỏng Backend/Add Listener được giữ nguyên
 
         staffIdField.addActionListener(e -> {
-            clearError(staffIdError, staffIdField);
-
-            String id = staffIdField.getText().trim();
-            if (id.isEmpty()) {
-                staffNameField.setText("");
-                deptField.setText("");
-            } else if (id.equals("123")) {
-                staffNameField.setText("田中 太郎");
-                deptField.setText("開発");
-            } else {
-                staffNameField.setText("見つかりません (Not Found)");
-                deptField.setText("---");
-                showError(staffIdError, ErrorConstants.ERROR_MESSAGE_STAFF_ID_NOT_FOUND, staffIdField);
-            }
+            //TODO: lấy hàm tạo từ controller từ UserController
+            userController.createUser(new Users());
         });
 
         btnCreate.addActionListener(e -> {
@@ -325,5 +316,12 @@ public class CreateNewUser extends JPanel {
         });
 
         return panel;
+    }
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Create New User Test");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 500);
+        frame.add(new CreateNewUser());
+        frame.setVisible(true);
     }
 }

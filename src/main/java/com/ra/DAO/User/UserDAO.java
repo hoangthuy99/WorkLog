@@ -7,10 +7,10 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 
-public class UserDAO implements IUserDao {
+public class UserDAO implements IUserDAO {
 
     @Override
-    public void create(Users user) {
+    public Users create(Users user) {
         Transaction transaction = null;
         // try-with-resources để tự động đóng session
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -26,6 +26,7 @@ public class UserDAO implements IUserDao {
             }
             e.printStackTrace();
         }
+        return user;
     }
 
     @Override
@@ -77,5 +78,19 @@ public class UserDAO implements IUserDao {
             e.printStackTrace();
             return List.of();
         }
+    }
+
+    @Override
+    public void findById(int id) {
+        //TODO:Tìm kiếm người dùng theo ID
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Users user = session.get(Users.class, id);
+            if (user != null) {
+                System.out.println("User found: " + user);
+            } else {
+                System.out.println("User not found with ID: " + id);
+            }
+    }catch (Exception e) {
+        e.printStackTrace();}
     }
 }
