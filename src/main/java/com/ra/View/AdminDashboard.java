@@ -263,13 +263,22 @@ class AdminDashboard extends JFrame {
         });
 
         // 2. QUẢN LÝ PHÒNG BAN (Chưa có màn hình)
-        addAccordionMenu("部署管理", null);
+        addAccordionMenu("部署管理", new String[]{
+                "部署リスト",
+                "新部署作成"
+        });
 
         // 3. QUẢN LÝ DỰ ÁN (Chưa có màn hình)
-        addAccordionMenu("プロジェクト管理", null);
+        addAccordionMenu("プロジェクト管理", new String[]{
+                "プロジェクトリスト",
+                "新プロジェクト作成"
+        });
 
         // 4. QUẢN LÝ TASK (Chưa có màn hình)
-        addAccordionMenu("タスク管理", null);
+        addAccordionMenu("タスク管理", new String[]{
+                "タスクリスト",
+                "新タスク作成"
+        });
 
         // 5. QUẢN LÝ CHẤM CÔNG (4 màn hình con)
         addAccordionMenu("勤怠管理", new String[]{
@@ -285,10 +294,10 @@ class AdminDashboard extends JFrame {
         });
 
         // 7. HỆ THỐNG (Chưa có màn hình)
-        addAccordionMenu("システム", new String[]{
-                "General Settings",
-                "Audit Logs"
-        });
+       // addAccordionMenu("システム", new String[]{
+       //         "General Settings",
+        //       "Audit Logs"
+        //});
 
         // 8. MENU (Chưa có màn hình)
         addAccordionMenu("メニュー", new String[]{
