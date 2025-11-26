@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- DB connection -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/worklog?useSSL=false&amp;serverTimezone=UTC</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">thuyhip99</property>
+
+        <!-- Hibernate properties -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+
+
+        <!-- Mapping entity -->
+        <mapping class="com.ra.Model.Entity.Users"/>
+        <mapping class="com.ra.Model.Entity.Roles"/>
+        <mapping class="com.ra.Model.Entity.Attendance"/>
+        <mapping class="com.ra.Model.Entity.Department"/>
+        <mapping class="com.ra.Model.Entity.Holidays"/>
+        <mapping class="com.ra.Model.Entity.Permission"/>
+        <mapping class="com.ra.Model.Entity.Project"/>
+        <mapping class="com.ra.Model.Entity.Tasks"/>
+        <mapping class="com.ra.Model.Entity.WorkRecord"/>
+    </session-factory>
+</hibernate-configuration>
