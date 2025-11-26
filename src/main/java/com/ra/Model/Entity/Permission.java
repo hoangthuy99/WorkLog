@@ -1,24 +1,32 @@
 package com.ra.Model.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-
+@Table(name = "permission")
 public class Permission {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String name;
+    private String code;// ma module
+    private String name;// module cha
+    private int parent_id;// module con thuộc module cha nào
     private String description;
+
+    @ManyToMany(mappedBy = "permissions")
+    private List<Roles> roles;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
