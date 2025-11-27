@@ -8,8 +8,9 @@
         <!-- DB connection -->
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/worklog?useSSL=false&amp;serverTimezone=UTC</property>
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">thuyhip99</property>
+        <property name="hibernate.connection.username">huynhtran</property>
+        <property name="hibernate.connection.password">@Huynh270998</property>
+
 
         <!-- Hibernate properties -->
         <property name="hibernate.show_sql">true</property>
