@@ -27,7 +27,6 @@ public class Tasks {
     @Column(name = "taskCode", length = 10, unique = true, nullable = false)
     private String taskCode;
 
-    private String description;
 
     // Task - Project (n - n)
     @ManyToMany(mappedBy = "tasks")
