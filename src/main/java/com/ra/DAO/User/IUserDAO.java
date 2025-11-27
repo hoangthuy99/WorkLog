@@ -4,7 +4,7 @@ import com.ra.Model.Entity.Users;
 
 import java.util.List;
 
-public interface IUserDao {
+public interface IUserDAO {
     void create(Users user);
     void update(Users user);
     boolean deleteFindById(int id);
