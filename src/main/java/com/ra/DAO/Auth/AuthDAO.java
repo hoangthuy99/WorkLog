@@ -8,7 +8,7 @@ import org.hibernate.Session;
 public class AuthDAO implements IAuthDAO {
     @Override
     public Users findByUsername(String username) {
-        //TODO:tìm kiếm người dùng theo username trong CSDL
+        //tìm kiếm người dùng theo username trong CSDL
        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
            String hql = "FROM Users U WHERE U.username = :username";
            return (Users) session.createQuery(hql).setParameter("username", username).uniqueResult();
