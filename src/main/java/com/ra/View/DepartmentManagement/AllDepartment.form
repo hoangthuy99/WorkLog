@@ -23,24 +23,21 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="scrAdddepartment" min="-2" pref="452" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
                       <Component id="lbKeyword" min="-2" pref="69" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="txtSearch" min="-2" pref="71" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="btnSearch" min="-2" pref="54" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="btnAdd" min="-2" pref="106" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                      <Component id="scrAddDepartment" min="-2" pref="452" max="-2" attributes="0"/>
-                  </Group>
               </Group>
-              <EmptySpace pref="112" max="32767" attributes="0"/>
+              <EmptySpace pref="94" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -54,9 +51,9 @@
                   <Component id="btnAdd" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="txtSearch" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
-              <Component id="scrAddDepartment" min="-2" pref="267" max="-2" attributes="0"/>
-              <EmptySpace pref="30" max="32767" attributes="0"/>
+              <EmptySpace pref="40" max="32767" attributes="0"/>
+              <Component id="scrAdddepartment" min="-2" pref="267" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -85,7 +82,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="txtSearch">
     </Component>
-    <Container class="javax.swing.JScrollPane" name="scrAddDepartment">
+    <Container class="javax.swing.JScrollPane" name="scrAdddepartment">
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
       </AuxValues>
@@ -98,9 +95,9 @@
               <Table columnCount="5" rowCount="5">
                 <Column editable="true" title="&#x90e8;&#x7f72;&#x540d;" type="java.lang.Object"/>
                 <Column editable="true" title="&#x30d7;&#x30ed;&#x30b8;&#x30a7;&#x30af;&#x30c8;&#x540d;" type="java.lang.Object"/>
-                <Column editable="true" title="&#x30bf;&#x30b9;&#x30af;&#x540d;" type="java.lang.Object"/>
-                <Column editable="true" title="&#x7de8;&#x96c6;" type="java.lang.Object"/>
-                <Column editable="true" title="&#x524a;&#x9664;" type="java.lang.Object"/>
+                <Column editable="true" title="&#x30bf;&#x30b9;&#x30af;&#x540d;" type="java.lang.String"/>
+                <Column editable="true" title="&#x7de8;&#x96c6;" type="java.lang.Integer"/>
+                <Column editable="true" title="&#x524a;&#x9664;" type="java.lang.Integer"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
