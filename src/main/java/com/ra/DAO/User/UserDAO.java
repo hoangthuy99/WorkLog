@@ -26,6 +26,7 @@ public class UserDAO implements IUserDAO {
             }
             e.printStackTrace();
         }
+
         return user;
     }
 
@@ -68,7 +69,7 @@ public class UserDAO implements IUserDAO {
     @Override
     public List<Users> findAll(String keyword, int page, int size) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM Users u WHERE u.username LIKE :keyword OR u.email LIKE :keyword";
+            String hql = "FROM Users u WHERE u.userName LIKE :keyword OR u.email LIKE :keyword";
             return session.createQuery(hql, Users.class)
                     .setParameter("keyword", "%" + keyword + "%")
                     .setFirstResult((page - 1) * size)
