@@ -8,14 +8,14 @@ package com.ra.View.DepartmentManagement;
  *
  * @author HP
  */
-public class CreateNewDepartment extends javax.swing.JDialog {
+public class AddDepartment extends javax.swing.JDialog {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CreateNewDepartment.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddDepartment.class.getName());
 
     /**
      * Creates new form CreateNewDepartment
      */
-    public CreateNewDepartment(java.awt.Frame parent, boolean modal) {
+    public AddDepartment(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -139,7 +139,7 @@ public class CreateNewDepartment extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                CreateNewDepartment dialog = new CreateNewDepartment(new javax.swing.JFrame(), true);
+                AddDepartment dialog = new AddDepartment(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
