@@ -11,6 +11,7 @@
         <property name="hibernate.connection.username">huynhtran</property>
         <property name="hibernate.connection.password">@Huynh270998</property>
 
+
         <!-- Hibernate properties -->
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
