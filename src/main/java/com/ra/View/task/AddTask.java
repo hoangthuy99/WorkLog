@@ -4,6 +4,17 @@
  */
 package com.ra.View.task;
 
+import com.ra.Controller.DepartmentController;
+import com.ra.Controller.ProjectController;
+import com.ra.Controller.TaskController;
+import com.ra.Model.Entity.Department;
+import com.ra.Model.Entity.Project;
+import com.ra.Model.Entity.Tasks;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author HP
@@ -11,6 +22,13 @@ package com.ra.View.task;
 public class AddTask extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddTask.class.getName());
+    private final TaskController taskController = new TaskController();
+    private final DepartmentController departmentController = new DepartmentController();
+    private final ProjectController projectController = new ProjectController();
+    // Danh sách dữ liệu nạp vào combobox
+    private List<Department> departmentList = new ArrayList<>();
+    private List<Project> projectList = new ArrayList<>();
+
 
     /**
      * Creates new form CreateNewTask
@@ -18,7 +36,12 @@ public class AddTask extends javax.swing.JDialog {
     public AddTask(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+
+        loadDepartments();
+        loadProjects();
     }
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -114,13 +137,76 @@ public class AddTask extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCancelActionPerformed
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
+        this.dispose();
+    }
+//GEN-LAST:event_btnCancelActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSaveActionPerformed
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
+
+        String taskName = txtTaskname.getText().trim();
+        if (taskName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Task name cannot be empty!");
+            return;
+        }
+
+        int depIndex = cbDepartmentname.getSelectedIndex();
+        int projIndex = cbProjectname.getSelectedIndex();
+
+        // Lấy Department
+        Department selectedDept = null;
+        if (depIndex >= 0 && departmentList != null && depIndex < departmentList.size()) {
+            selectedDept = departmentList.get(depIndex);
+        }
+
+        // Lấy Project
+        Project selectedProject = null;
+        if (projIndex >= 0 && projectList != null && projIndex < projectList.size()) {
+            selectedProject = projectList.get(projIndex);
+        }
+
+        // Tạo list an toàn — KHÔNG BAO GIỜ LỖI
+        List<Department> deps = new java.util.ArrayList<>();
+        if (selectedDept != null) deps.add(selectedDept);
+
+        List<Project> projs = new java.util.ArrayList<>();
+        if (selectedProject != null) projs.add(selectedProject);
+
+        // Tạo Task
+        Tasks task = new Tasks();
+        task.setName(taskName);
+        task.setDepartments(deps);
+        task.setProjects(projs);
+
+        // Save
+        taskController.create(task);
+
+        JOptionPane.showMessageDialog(this, "Task created successfully!");
+        this.dispose();
+    }
+
+//GEN-LAST:event_btnSaveActionPerformed
+
+    private void loadDepartments() {
+        departmentList = departmentController.findAll();
+        cbDepartmentname.removeAllItems();
+
+        for (Department d : departmentList) {
+            cbDepartmentname.addItem(d.getName());
+        }
+    }
+
+    private void loadProjects() {
+        projectList = projectController.findAll();
+        cbProjectname.removeAllItems();
+
+        for (Project p : projectList) {
+            cbProjectname.addItem(p.getName());
+        }
+    }
+
+
+
 
     /**
      * @param args the command line arguments

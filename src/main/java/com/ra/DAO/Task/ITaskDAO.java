@@ -13,4 +13,5 @@ public interface ITaskDAO {
     List<Tasks> search(String keyword);
     Optional<Tasks> findFindById(int id);
 
+    List<Tasks> findAll();
 }

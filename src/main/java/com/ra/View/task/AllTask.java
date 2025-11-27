@@ -4,12 +4,22 @@
  */
 package com.ra.View.task;
 
+import com.ra.Controller.TaskController;
+import com.ra.Model.Entity.Department;
+import com.ra.Model.Entity.Project;
+import com.ra.Model.Entity.Tasks;
+
+import java.util.List;
+
+
 /**
  *
  * @author HP
  */
 public class AllTask extends javax.swing.JDialog {
-    
+    private final TaskController taskController = new TaskController();
+
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AllTask.class.getName());
 
     /**
@@ -18,7 +28,9 @@ public class AllTask extends javax.swing.JDialog {
     public AllTask(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        loadTable(taskController.findAll());   // 🔥 thêm dòng này
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -117,22 +129,62 @@ public class AllTask extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSearchActionPerformed
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {
+        String kw = txtSearch.getText().trim();
+        loadTable(taskController.search(kw));
+    }
+//GEN-LAST:event_btnSearchActionPerformed
 
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAddActionPerformed
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {
+        AddTask dialog = new AddTask(null, true);
+        dialog.setVisible(true);
 
-    private void btnAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAllActionPerformed
+        // Reload table sau khi thêm
+        loadTable(taskController.findAll());
+    }
+//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnAllActionPerformed(java.awt.event.ActionEvent evt) {
+        loadTable(taskController.findAll());
+    }
+//GEN-LAST:event_btnAllActionPerformed
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         // TODO add your handling code here:
         
     }//GEN-LAST:event_txtSearchActionPerformed
+
+    private void loadTable(List<Tasks> list) {
+        String[] columns = {"タスク名", "プロジェクト名", "部署名", "編集", "削除"};
+        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(columns, 0);
+
+        for (Tasks t : list) {
+
+            String projects = "";
+            if (t.getProjects() != null) {
+                projects = t.getProjects().stream()
+                        .map(Project::getName)
+                        .reduce("", (a, b) -> a + " " + b);
+            }
+
+            String departments = "";
+            if (t.getDepartments() != null) {
+                departments = t.getDepartments().stream()
+                        .map(Department::getName)
+                        .reduce("", (a, b) -> a + " " + b);
+            }
+
+            model.addRow(new Object[]{
+                    t.getName(),
+                    projects,
+                    departments,
+                    "編集",
+                    "削除"
+            });
+        }
+
+        tblAddtask.setModel(model);
+    }
 
     /**
      * @param args the command line arguments
