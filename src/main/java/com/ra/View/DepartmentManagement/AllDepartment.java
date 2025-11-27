@@ -31,7 +31,7 @@ public class AllDepartment extends javax.swing.JDialog {
 
         lbKeyword = new javax.swing.JLabel();
         btnSearch = new javax.swing.JButton();
-        btnAdd = new javax.swing.JButton();
+        btnAddDepartment = new javax.swing.JButton();
         txtSearch = new javax.swing.JTextField();
         scrAdddepartment = new javax.swing.JScrollPane();
         tblAddDepartment = new javax.swing.JTable();
@@ -43,8 +43,8 @@ public class AllDepartment extends javax.swing.JDialog {
         btnSearch.setText("検索");
         btnSearch.addActionListener(this::btnSearchActionPerformed);
 
-        btnAdd.setText("親部署作成");
-        btnAdd.addActionListener(this::btnAddActionPerformed);
+        btnAddDepartment.setText("部署作成");
+        btnAddDepartment.addActionListener(this::btnAddDepartmentActionPerformed);
 
         tblAddDepartment.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -83,7 +83,7 @@ public class AllDepartment extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnAddDepartment, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(94, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -93,7 +93,7 @@ public class AllDepartment extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbKeyword)
                     .addComponent(btnSearch)
-                    .addComponent(btnAdd)
+                    .addComponent(btnAddDepartment)
                     .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addComponent(scrAdddepartment, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -107,9 +107,9 @@ public class AllDepartment extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnSearchActionPerformed
 
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+    private void btnAddDepartmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDepartmentActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnAddActionPerformed
+    }//GEN-LAST:event_btnAddDepartmentActionPerformed
 
     /**
      * @param args the command line arguments
@@ -149,7 +149,7 @@ public class AllDepartment extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnAddDepartment;
     private javax.swing.JButton btnSearch;
     private javax.swing.JLabel lbKeyword;
     private javax.swing.JScrollPane scrAdddepartment;

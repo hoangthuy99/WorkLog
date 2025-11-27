@@ -32,7 +32,7 @@ public class AllTask extends javax.swing.JDialog {
         scrAddtask = new javax.swing.JScrollPane();
         tblAddtask = new javax.swing.JTable();
         btnSearch = new javax.swing.JButton();
-        btnAdd = new javax.swing.JButton();
+        btnAddTask = new javax.swing.JButton();
         lbKeywork = new javax.swing.JLabel();
         txtSearch = new javax.swing.JTextField();
         btnAll = new javax.swing.JButton();
@@ -52,7 +52,7 @@ public class AllTask extends javax.swing.JDialog {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -64,8 +64,8 @@ public class AllTask extends javax.swing.JDialog {
         btnSearch.setText("検索");
         btnSearch.addActionListener(this::btnSearchActionPerformed);
 
-        btnAdd.setText("親ユーザー作成");
-        btnAdd.addActionListener(this::btnAddActionPerformed);
+        btnAddTask.setText("タスク作成");
+        btnAddTask.addActionListener(this::btnAddTaskActionPerformed);
 
         lbKeywork.setText("キーワード");
 
@@ -88,7 +88,7 @@ public class AllTask extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAll, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(56, 56, 56)
-                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAddTask, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(75, 75, 75))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -101,7 +101,7 @@ public class AllTask extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAdd)
+                    .addComponent(btnAddTask)
                     .addComponent(lbKeywork)
                     .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch)
@@ -121,9 +121,9 @@ public class AllTask extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnSearchActionPerformed
 
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+    private void btnAddTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTaskActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnAddActionPerformed
+    }//GEN-LAST:event_btnAddTaskActionPerformed
 
     private void btnAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllActionPerformed
         // TODO add your handling code here:
@@ -172,13 +172,9 @@ public class AllTask extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnAddTask;
     private javax.swing.JButton btnAll;
     private javax.swing.JButton btnSearch;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JLabel lbKeywork;
     private javax.swing.JScrollPane scrAddtask;
     private javax.swing.JTable tblAddtask;
