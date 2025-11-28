@@ -63,15 +63,9 @@ public class AddTask extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        txtTaskname.setText("jTextField1");
-
         lbTaskname.setText("タスク名");
 
         lbDepartmentname.setText("部署名");
-
-        cbDepartmentname.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        cbProjectname.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         lbProjectname.setText("プロジェクト名");
 
@@ -140,7 +134,7 @@ public class AddTask extends javax.swing.JDialog {
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
         this.dispose();
     }
-//GEN-LAST:event_btnCancelActionPerformed
+                                         
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
 
@@ -185,7 +179,7 @@ public class AddTask extends javax.swing.JDialog {
         this.dispose();
     }
 
-//GEN-LAST:event_btnSaveActionPerformed
+                                       
 
     private void loadDepartments() {
         departmentList = departmentController.findAll();
