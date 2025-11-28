@@ -71,6 +71,7 @@ public class AddAttendance extends javax.swing.JFrame {
         txtBreaktime = new javax.swing.JTextField();
         lbBreaktime = new javax.swing.JLabel();
         btnCancel = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
         btnSend = new javax.swing.JButton();
 
         popupMenu1.setLabel("popupMenu1");
@@ -129,8 +130,6 @@ public class AddAttendance extends javax.swing.JFrame {
 
         lbHoliday.setText("休日");
 
-        cbHoliday.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         lbLatestendtime.setText("最終");
 
         txtEarlieststarttime.setText("時/分");
@@ -164,9 +163,6 @@ public class AddAttendance extends javax.swing.JFrame {
 
         lbProject.setText("プロジェクト名");
 
-        cbProject.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        txtTask.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         txtTask.addActionListener(this::txtTaskActionPerformed);
 
         lbTaskName.setText("タスク名");
@@ -192,10 +188,13 @@ public class AddAttendance extends javax.swing.JFrame {
 
         lbBreaktime.setText("休憩時間");
 
-        btnCancel.setBackground(new java.awt.Color(255, 204, 204));
-        btnCancel.setText("キャンセル");
+        btnCancel.setBackground(new java.awt.Color(204, 255, 255));
+        btnCancel.setText("編集");
 
-        btnSend.setBackground(new java.awt.Color(153, 204, 255));
+        btnEdit.setBackground(new java.awt.Color(255, 204, 204));
+        btnEdit.setText("削除");
+
+        btnSend.setBackground(new java.awt.Color(153, 255, 153));
         btnSend.setText("送信");
 
         javax.swing.GroupLayout pnlAddAttendanceLayout = new javax.swing.GroupLayout(pnlAddAttendance);
@@ -238,10 +237,12 @@ public class AddAttendance extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAddAttendanceLayout.createSequentialGroup()
                                 .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
-                                        .addGap(407, 407, 407)
+                                        .addGap(44, 44, 44)
+                                        .addComponent(btnSend)
+                                        .addGap(288, 288, 288)
                                         .addComponent(btnCancel)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnSend))
+                                        .addComponent(btnEdit))
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlAddAttendanceLayout.createSequentialGroup()
                                         .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
@@ -364,6 +365,7 @@ public class AddAttendance extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancel)
+                    .addComponent(btnEdit)
                     .addComponent(btnSend))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
@@ -466,6 +468,7 @@ public class AddAttendance extends javax.swing.JFrame {
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnCreatecontent;
+    private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnSend;
     private javax.swing.JButton btnWorkinformation;
     private javax.swing.JComboBox<String> cbHoliday;

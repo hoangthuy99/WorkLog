@@ -28,21 +28,111 @@ public class AddProject extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        pnlAddProject = new javax.swing.JPanel();
+        lbAddProjectName = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        txtAddProject = new javax.swing.JTextField();
+        cbDepartment = new javax.swing.JComboBox<>();
+        cbTask = new javax.swing.JComboBox<>();
+        btnCancel = new javax.swing.JButton();
+        btnCreate = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        lbAddProjectName.setText("プロジェクト名");
+
+        jLabel2.setText("部署名");
+
+        jLabel3.setText("タスク名");
+
+        txtAddProject.setText("プロジェクト名");
+        txtAddProject.addActionListener(this::txtAddProjectActionPerformed);
+
+        cbDepartment.addActionListener(this::cbDepartmentActionPerformed);
+
+        btnCancel.setBackground(new java.awt.Color(255, 204, 204));
+        btnCancel.setText("キャンセル");
+
+        btnCreate.setBackground(new java.awt.Color(204, 204, 255));
+        btnCreate.setText("作成");
+
+        javax.swing.GroupLayout pnlAddProjectLayout = new javax.swing.GroupLayout(pnlAddProject);
+        pnlAddProject.setLayout(pnlAddProjectLayout);
+        pnlAddProjectLayout.setHorizontalGroup(
+            pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlAddProjectLayout.createSequentialGroup()
+                .addGroup(pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlAddProjectLayout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addGroup(pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(pnlAddProjectLayout.createSequentialGroup()
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(41, 41, 41))
+                            .addGroup(pnlAddProjectLayout.createSequentialGroup()
+                                .addComponent(lbAddProjectName)
+                                .addGap(18, 18, 18))))
+                    .addGroup(pnlAddProjectLayout.createSequentialGroup()
+                        .addGap(62, 62, 62)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addGroup(pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlAddProjectLayout.createSequentialGroup()
+                        .addGroup(pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtAddProject, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+                            .addComponent(cbDepartment, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbTask, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(pnlAddProjectLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(btnCancel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 138, Short.MAX_VALUE)
+                        .addComponent(btnCreate)
+                        .addGap(135, 135, 135))))
+        );
+        pnlAddProjectLayout.setVerticalGroup(
+            pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlAddProjectLayout.createSequentialGroup()
+                .addGap(91, 91, 91)
+                .addGroup(pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbAddProjectName)
+                    .addComponent(txtAddProject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addGroup(pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(cbDepartment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29)
+                .addGroup(pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(cbTask, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                .addGroup(pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(84, 84, 84))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(pnlAddProject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(pnlAddProject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtAddProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAddProjectActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAddProjectActionPerformed
+
+    private void cbDepartmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDepartmentActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbDepartmentActionPerformed
 
     /**
      * @param args the command line arguments
@@ -70,5 +160,14 @@ public class AddProject extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnCreate;
+    private javax.swing.JComboBox<String> cbDepartment;
+    private javax.swing.JComboBox<String> cbTask;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel lbAddProjectName;
+    private javax.swing.JPanel pnlAddProject;
+    private javax.swing.JTextField txtAddProject;
     // End of variables declaration//GEN-END:variables
 }
