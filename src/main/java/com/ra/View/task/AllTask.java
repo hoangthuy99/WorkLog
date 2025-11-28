@@ -2,14 +2,24 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package com.ra.View.TaskManagement;
+package com.ra.View.task;
+
+import com.ra.Controller.TaskController;
+import com.ra.Model.Entity.Department;
+import com.ra.Model.Entity.Project;
+import com.ra.Model.Entity.Tasks;
+
+import java.util.List;
+
 
 /**
  *
  * @author HP
  */
 public class AllTask extends javax.swing.JDialog {
-    
+    private final TaskController taskController = new TaskController();
+
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AllTask.class.getName());
 
     /**
@@ -18,7 +28,9 @@ public class AllTask extends javax.swing.JDialog {
     public AllTask(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        loadTable(taskController.findAll());   // 🔥 thêm dòng này
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -36,23 +48,25 @@ public class AllTask extends javax.swing.JDialog {
         lbKeywork = new javax.swing.JLabel();
         txtSearch = new javax.swing.JTextField();
         btnAll = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         tblAddtask.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "タスク名", "プロジェクト名", "部署名", "編集", "削除"
+                "タスク名", "プロジェクト名", "部署名"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -74,27 +88,39 @@ public class AllTask extends javax.swing.JDialog {
         btnAll.setText("全て");
         btnAll.addActionListener(this::btnAllActionPerformed);
 
+        btnEdit.setText("編集");
+        btnEdit.addActionListener(this::btnEditActionPerformed);
+
+        btnDelete.setText("削除");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(71, Short.MAX_VALUE)
-                .addComponent(lbKeywork, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAll, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(56, 56, 56)
-                .addComponent(btnAddTask, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(75, 75, 75))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(59, 59, 59)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(lbKeywork, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAll, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(83, 83, 83)
+                        .addComponent(btnAddTask, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(48, 48, 48))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(74, 74, 74)
-                    .addComponent(scrAddtask, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(74, Short.MAX_VALUE)))
+                    .addGap(31, 31, 31)
+                    .addComponent(scrAddtask, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(48, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,7 +132,11 @@ public class AllTask extends javax.swing.JDialog {
                     .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch)
                     .addComponent(btnAll))
-                .addContainerGap(351, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 291, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEdit)
+                    .addComponent(btnDelete))
+                .addGap(37, 37, 37))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(66, 66, 66)
@@ -117,22 +147,69 @@ public class AllTask extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSearchActionPerformed
-
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {
+        String kw = txtSearch.getText().trim();
+        loadTable(taskController.search(kw));
+    }
+                                        
     private void btnAddTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTaskActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAddTaskActionPerformed
 
-    private void btnAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAllActionPerformed
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {
+        AddTask dialog = new AddTask(null, true);
+        dialog.setVisible(true);
+
+        // Reload table sau khi thêm
+        loadTable(taskController.findAll());
+    }
+                                      
+
+    private void btnAllActionPerformed(java.awt.event.ActionEvent evt) {
+        loadTable(taskController.findAll());
+    }
+                                      
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         // TODO add your handling code here:
         
     }//GEN-LAST:event_txtSearchActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void loadTable(List<Tasks> list) {
+        String[] columns = {"タスク名", "プロジェクト名", "部署名", "編集", "削除"};
+        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(columns, 0);
+
+        for (Tasks t : list) {
+
+            String projects = "";
+            if (t.getProjects() != null) {
+                projects = t.getProjects().stream()
+                        .map(Project::getName)
+                        .reduce("", (a, b) -> a + " " + b);
+            }
+
+            String departments = "";
+            if (t.getDepartments() != null) {
+                departments = t.getDepartments().stream()
+                        .map(Department::getName)
+                        .reduce("", (a, b) -> a + " " + b);
+            }
+
+            model.addRow(new Object[]{
+                    t.getName(),
+                    projects,
+                    departments,
+                    "編集",
+                    "削除"
+            });
+        }
+
+        tblAddtask.setModel(model);
+    }
 
     /**
      * @param args the command line arguments
@@ -174,6 +251,8 @@ public class AllTask extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddTask;
     private javax.swing.JButton btnAll;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnSearch;
     private javax.swing.JLabel lbKeywork;
     private javax.swing.JScrollPane scrAddtask;
