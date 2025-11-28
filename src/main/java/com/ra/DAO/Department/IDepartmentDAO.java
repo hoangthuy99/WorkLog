@@ -11,7 +11,7 @@ public interface IDepartmentDAO {
     boolean deleteFindById(int id);
     List<Department> search(String keyword);
     Optional<Department> findFindById(int id);
-
     List<Department> findAll();
+    Optional<Department> findFindByName(String name);
 }
 

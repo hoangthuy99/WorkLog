@@ -24,14 +24,14 @@ import java.util.Optional;
  *
  * @author Admin
  */
-public class AddUser extends javax.swing.JFrame {
+public class EditUser extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddUser.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditUser.class.getName());
 
     /**
      * Creates new form AddUser
      */
-    public AddUser() {
+    public EditUser() {
         initComponents();
         loadData();
     }
@@ -389,7 +389,7 @@ public class AddUser extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AddUser().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new EditUser().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

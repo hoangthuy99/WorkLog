@@ -1,6 +1,7 @@
 package com.ra.Service.User;
 
 import com.ra.DAO.User.UserDAO;
+import com.ra.DTO.request.UserRequest;
 import com.ra.Model.Entity.Users;
 import com.ra.Utils.HibernateUtil;
 import org.hibernate.Session;
@@ -10,20 +11,27 @@ import java.util.Optional;
 
 public class UserServiceIMPL implements UserService {
     private UserDAO userDAO = new UserDAO();
+
+
     @Override
-    public void create() {
-       userDAO.create(new Users());
+    public Users create(Users user) {
+        return null;
     }
 
     @Override
-    public void update() {
-      userDAO.update(new Users());
+    public Users update(Users user) {
+        return null;
     }
 
     @Override
     public boolean deleteFindById(int id) {
         return userDAO.deleteFindById(id);
 
+    }
+
+    @Override
+    public List<Users> findAll(String keyword, int page, int size) {
+        return List.of();
     }
 
     @Override
@@ -38,8 +46,9 @@ public class UserServiceIMPL implements UserService {
     }
 
     @Override
-    public List<Users> searchUsers(String keyword, int page, int size) {
-        return userDAO.findAll(keyword, page, size);
+    public long countAll(String keyword) {
+        return 0;
     }
+
 
 }
