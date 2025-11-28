@@ -4,9 +4,15 @@
  */
 package com.ra.View.user;
 
-import com.ra.View.button.ButtonRenderer;
-import javax.swing.JTable;
-import javax.swing.table.TableColumn;
+import com.ra.Controller.UserController;
+import com.ra.DAO.Department.DepartmentDAO;
+import com.ra.DAO.User.UserDAO;
+import com.ra.Model.Entity.Department;
+import com.ra.Model.Entity.Users;
+
+import java.util.List;
+import java.util.Optional;
+
 /**
  *
  * @author Admin
@@ -20,43 +26,66 @@ public class AllUser extends javax.swing.JFrame {
      */
     public AllUser() {
         initComponents();
-        // **********************************************
-        // GỌI PHƯƠNG THỨC THIẾT LẬP CỘT NÚT
-        // **********************************************
-        setupButtonColumns(tbAlluser);
+        loadUserTable();
+        
         // tblAllmenu là tên biến JTable của bạn, đã được khởi tạo ở initComponents()
     }
-
-
-    // *************************************************************
-    // THÊM PHƯƠNG THỨC THIẾT LẬP CỘT NÚT (CODE CẦU NỐI)
-    // *************************************************************
-    private void setupButtonColumns(JTable table) {
-
-        // === Cột 4: Chỉnh sửa (編集) ===
-        // Index cột 3 (vì cột bắt đầu từ 0: 0, 1, 2, 3, 4)
-        TableColumn editColumn = table.getColumnModel().getColumn(6);
-
-        // Khởi tạo ButtonEditor và ButtonRenderer cho cột "編集"
-        // LƯU Ý: Đảm bảo ButtonRenderer.java và ButtonEditor.java
-        // đã được đặt trong package com.ra.View.menu;
-
-        // Renderer (Hiển thị nút)
-        editColumn.setCellRenderer(new ButtonRenderer("編集"));
+    private List<Integer> userIds;
 
 
 
-        // === Cột 5: Xóa (削除) ===
-        TableColumn deleteColumn = table.getColumnModel().getColumn(7); // Index cột 4
 
-        // Renderer (Hiển thị nút)
-        deleteColumn.setCellRenderer(new ButtonRenderer("削除"));
-
-
-        // Tùy chỉnh chiều rộng cột (Tùy chọn)
-        editColumn.setPreferredWidth(60);
-        deleteColumn.setPreferredWidth(60);
+    private void updatePaginationLabel() {
+        setTitle("ユーザーリスト - ページ " + currentPage + "/" + totalPages);
     }
+
+    public UserController userController;
+
+    private void loadUserTable() {
+
+        String keyword = txtSearch.getText().trim();
+        List<Users> list = userController.findAll(keyword, currentPage, pageSize);
+
+        userIds = new java.util.ArrayList<>();
+
+        String[][] data = new String[list.size()][7];
+
+        for (int i = 0; i < list.size(); i++) {
+            Users u = list.get(i);
+
+            // STT tăng dần
+            data[i][0] = String.valueOf((currentPage - 1) * pageSize + i + 1);
+
+            data[i][1] = u.getUserCode();
+            data[i][2] = u.getFullName();
+            data[i][3] = u.getUserName();
+            data[i][4] = u.getDepartment() != null ? u.getDepartment().getName() : "";
+            data[i][5] = u.getRole() != null ? u.getRole().getName() : "";
+
+            // Lưu ID thật
+            userIds.add(u.getId());
+        }
+
+        tbAllUser.setModel(new javax.swing.table.DefaultTableModel(
+                data,
+                new String[]{"STT", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール"}
+        ));
+    }
+
+    private Optional<Users> getSelectedUser() {
+        int row = tbAllUser.getSelectedRow();
+        if (row == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "行を選択してください"); // Chọn một dòng
+            return null;
+        }
+        // Lấy Id từ cột 0
+        int id = Integer.parseInt(tbAllUser.getValueAt(row, 0).toString());
+        return userController.findById(id) ;// Tìm user từ controller
+    }
+
+
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -74,7 +103,9 @@ public class AllUser extends javax.swing.JFrame {
         btnAlluser = new javax.swing.JButton();
         btnAdduser = new javax.swing.JButton();
         scrollTable = new javax.swing.JScrollPane();
-        tbAlluser = new javax.swing.JTable();
+        tbAllUser = new javax.swing.JTable();
+        btnEdit = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
 
         jRadioButton1.setText("jRadioButton1");
 
@@ -85,7 +116,6 @@ public class AllUser extends javax.swing.JFrame {
         pnlAllUser.setBackground(new java.awt.Color(255, 255, 255));
         pnlAllUser.setPreferredSize(new java.awt.Dimension(600, 400));
 
-        txtSearch.setText("jTextField1");
         txtSearch.setToolTipText("");
         txtSearch.addActionListener(this::txtSearchActionPerformed);
 
@@ -97,35 +127,47 @@ public class AllUser extends javax.swing.JFrame {
 
         btnAdduser.setBackground(new java.awt.Color(201, 221, 201));
         btnAdduser.setText("新ユーザー作成");
+        btnAdduser.addActionListener(this::btnAdduserActionPerformed);
 
-        tbAlluser.setModel(new javax.swing.table.DefaultTableModel(
+        tbAllUser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ユーザーコード", "社員名", "ユーザー名", "部署", "タスク", "ロール", "編集", "削除"
+                "ID", "ユーザーコード", "社員名", "ユーザー名", "部署", "タスク", "ロール"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
         });
-        scrollTable.setViewportView(tbAlluser);
+        scrollTable.setViewportView(tbAllUser);
+        if (tbAllUser.getColumnModel().getColumnCount() > 0) {
+            tbAllUser.getColumnModel().getColumn(6).setResizable(false);
+        }
+
+        btnEdit.setBackground(new java.awt.Color(0, 255, 204));
+        btnEdit.setText("Edit");
+        btnEdit.addActionListener(this::btnEditActionPerformed);
+
+        btnDelete.setBackground(new java.awt.Color(255, 0, 51));
+        btnDelete.setText("Delete");
+        btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
         javax.swing.GroupLayout pnlAllUserLayout = new javax.swing.GroupLayout(pnlAllUser);
         pnlAllUser.setLayout(pnlAllUserLayout);
@@ -145,6 +187,12 @@ public class AllUser extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(scrollTable, javax.swing.GroupLayout.PREFERRED_SIZE, 575, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(19, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAllUserLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnEdit)
+                .addGap(45, 45, 45)
+                .addComponent(btnDelete)
+                .addGap(35, 35, 35))
         );
         pnlAllUserLayout.setVerticalGroup(
             pnlAllUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -157,7 +205,11 @@ public class AllUser extends javax.swing.JFrame {
                     .addComponent(btnAdduser))
                 .addGap(18, 18, 18)
                 .addComponent(scrollTable, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(81, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlAllUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEdit)
+                    .addComponent(btnDelete))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -180,17 +232,78 @@ public class AllUser extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private int currentPage = 1;
+    private final int pageSize = 10;
+    private long totalUsers = 0;
+    private int totalPages = 0;
+
+
+
+
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSearchActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         // TODO add your handling code here:
+        currentPage = 1;
+        loadUserTable();
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnAlluserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlluserActionPerformed
         // TODO add your handling code here:
+        currentPage = 1;
+        txtSearch.setText("");
+        loadUserTable();
     }//GEN-LAST:event_btnAlluserActionPerformed
+
+    private void btnAdduserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdduserActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnAdduserActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        // TODO add your handling code here:
+       //Lấy ID rồi chuyển qua màn khác
+
+        int selectedRow = tbAllUser.getSelectedRow();
+
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "行を選択してください。");
+            return;
+        }
+
+        // Lấy userCode từ cột 0
+        Integer id = Integer.parseInt(tbAllUser.getValueAt(selectedRow, 0).toString());
+
+        // Tìm user trong DB
+        Optional<Users> user = userController.findById(id);
+
+        if (user == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "ユーザーが見つかりません。");
+            return;
+        }
+
+        // Mở màn hình EditUser và truyền User sang
+//        EditUser editForm = new EditUser(user);
+//        editForm.setVisible(true);
+//        editForm.setLocationRelativeTo(null);
+
+
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        Optional<Users> u = getSelectedUser();
+        if (u != null) {
+            int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+                    "このユーザーを削除しますか？", "確認", javax.swing.JOptionPane.YES_NO_OPTION);
+            if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+                userController.deleteUser(u.get().getId());
+                loadUserTable(); // reload table sau khi xóa
+            }
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -220,11 +333,13 @@ public class AllUser extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdduser;
     private javax.swing.JButton btnAlluser;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnSearch;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JPanel pnlAllUser;
     private javax.swing.JScrollPane scrollTable;
-    private javax.swing.JTable tbAlluser;
+    private javax.swing.JTable tbAllUser;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

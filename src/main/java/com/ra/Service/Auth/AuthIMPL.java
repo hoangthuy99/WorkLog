@@ -2,9 +2,12 @@ package com.ra.Service.Auth;
 
 import com.ra.DAO.Auth.IAuthDAO;
 import com.ra.DTO.request.UserRequest;
+import com.ra.Model.Entity.Roles;
 import com.ra.Model.Entity.Users;
 import com.ra.Sercurity.PasswordHash;
 import com.ra.Sercurity.SessionLocal;
+
+import java.util.List;
 
 
 public class AuthIMPL implements AuthSerVice {
@@ -53,4 +56,12 @@ public class AuthIMPL implements AuthSerVice {
 
 
     }
+
+    @Override
+    public List<Roles> findAllRoles() {
+        authDAO.findAllRoles();
+        return authDAO.findAllRoles();
+    }
+
+
 }

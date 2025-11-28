@@ -1,37 +1,34 @@
 package com.ra.DAO.User;
 
+import com.ra.DTO.request.UserRequest;
 import com.ra.Model.Entity.Users;
 import com.ra.Utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserDAO implements IUserDAO {
 
     @Override
     public Users create(Users user) {
         Transaction transaction = null;
-        // try-with-resources để tự động đóng session
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            // Thêm user vào DB
             session.save(user);
-            // Commit transaction
             transaction.commit();
             System.out.println("User created successfully!");
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback(); // rollback nếu lỗi
-            }
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
+            throw e;
         }
-
         return user;
     }
 
     @Override
-    public void update(Users user) {
+    public Users update(Users user) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -42,7 +39,18 @@ public class UserDAO implements IUserDAO {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
+        return user;
     }
+    @Override
+    public long countAll(String keyword) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "SELECT COUNT(u) FROM Users u WHERE u.fullName LIKE :kw OR u.userName LIKE :kw";
+            return (long) session.createQuery(hql)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .uniqueResult();
+        }
+    }
+
 
     @Override
     public boolean deleteFindById(int id) {
@@ -82,16 +90,9 @@ public class UserDAO implements IUserDAO {
     }
 
     @Override
-    public void findById(int id) {
-        //TODO:Tìm kiếm người dùng theo ID
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Users user = session.get(Users.class, id);
-            if (user != null) {
-                System.out.println("User found: " + user);
-            } else {
-                System.out.println("User not found with ID: " + id);
-            }
-    }catch (Exception e) {
-        e.printStackTrace();}
+    public Optional<Users> findById(int id) {
+        return Optional.empty();
     }
+
+
 }

@@ -39,5 +39,10 @@ public class TaskIMPL implements TaskSerVice {
         return taskDAO.findAll();
     }
 
+    @Override
+    public Optional<Tasks> findByName(String name) {
+        return taskDAO.findByName(name);
+    }
+
 
 }

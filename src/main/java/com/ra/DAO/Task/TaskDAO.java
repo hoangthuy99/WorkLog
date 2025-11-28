@@ -4,6 +4,7 @@ import com.ra.Model.Entity.Tasks;
 import com.ra.Utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -89,6 +90,16 @@ public class TaskDAO implements ITaskDAO{
         }
     }
 
+    @Override
+    public Optional<Tasks> findByName(String name) {
+        //TODO tìm kiếm theo tên Task
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "FROM Tasks t WHERE t.name = :name";
+            Query<Tasks> query = session.createQuery(hql, Tasks.class);
+            query.setParameter("name", name);
+            return Optional.ofNullable(query.getSingleResult());
+        }
+    }
 
 
 }
