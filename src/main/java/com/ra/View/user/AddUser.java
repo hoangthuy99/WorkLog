@@ -241,14 +241,7 @@ public class AddUser extends javax.swing.JFrame {
         listTask = new javax.swing.JList<>();
         txtPassWord = new javax.swing.JPasswordField();
 
-        jCheckBoxMenuItem1.setSelected(true);
-        jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
 
-        jCheckBoxMenuItem2.setSelected(true);
-        jCheckBoxMenuItem2.setText("jCheckBoxMenuItem2");
-
-        jCheckBoxMenuItem3.setSelected(true);
-        jCheckBoxMenuItem3.setText("jCheckBoxMenuItem3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("新ユーザー作成");
@@ -284,8 +277,8 @@ public class AddUser extends javax.swing.JFrame {
         lbRole.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
         lbRole.setText("ロール");
 
-        cbRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Employee", "Manager", "Admin" }));
-        cbRole.addActionListener(this::cbRoleActionPerformed);
+        cbRole.setModel(new javax.swing.DefaultComboBoxModel<>());
+
 
         btnCancel.setBackground(new java.awt.Color(255, 204, 153));
         btnCancel.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
