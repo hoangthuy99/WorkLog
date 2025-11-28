@@ -114,6 +114,7 @@ public class AddAttendance extends javax.swing.JFrame {
 
         btnCreatecontent.setBackground(new java.awt.Color(255, 255, 204));
         btnCreatecontent.setText("作成内容");
+        btnCreatecontent.setToolTipText("");
         btnCreatecontent.addActionListener(this::btnCreatecontentActionPerformed);
 
         lbEmployee.setText("社員名");

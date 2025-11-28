@@ -55,7 +55,7 @@ public class AddProject extends javax.swing.JFrame {
         btnCancel.setText("キャンセル");
 
         btnCreate.setBackground(new java.awt.Color(204, 204, 255));
-        btnCreate.setText("作成");
+        btnCreate.setText("保存");
 
         javax.swing.GroupLayout pnlAddProjectLayout = new javax.swing.GroupLayout(pnlAddProject);
         pnlAddProject.setLayout(pnlAddProjectLayout);
