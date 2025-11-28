@@ -14,6 +14,8 @@ import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Roles;
 import com.ra.Model.Entity.Tasks;
 import com.ra.Model.Entity.Users;
+import com.ra.Sercurity.PasswordHash;
+import com.ra.View.menu.AllMenu;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -31,8 +33,25 @@ public class AddUser extends javax.swing.JFrame {
     /**
      * Creates new form AddUser
      */
+    private DefaultListModel<String> taskModel = new DefaultListModel<>();
+
     public AddUser() {
         initComponents();
+        listTask.setModel(taskModel);
+        listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        // --- Thêm đoạn MouseListener để click thường chọn được nhiều ---
+        listTask.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int index = listTask.locationToIndex(evt.getPoint());
+                if (index >= 0) {
+                    if (listTask.isSelectedIndex(index)) {
+                        listTask.removeSelectionInterval(index, index);
+                    } else {
+                        listTask.addSelectionInterval(index, index);
+                    }
+                }
+            }
+        });
         loadData();
     }
 
@@ -61,9 +80,13 @@ public class AddUser extends javax.swing.JFrame {
             TaskDAO taskDAO = new TaskDAO();
             List<Tasks> tasks = taskDAO.findAll();
 
-            listTask.removeAll();
+            // lấy model hiện tại của listTask
+            DefaultListModel<String> model = (DefaultListModel<String>) listTask.getModel();
+            model.clear(); // xoá toàn bộ item cũ
+
+            // add dữ liệu vào list
             for (Tasks t : tasks) {
-                listTask.add(t.getName());
+                model.addElement(t.getName());
             }
 
         } catch (Exception e) {
@@ -82,6 +105,109 @@ public class AddUser extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+
+    private boolean validateForm() {
+        String email = txtMail.getText().trim();
+        String username = txtUsername.getText().trim();
+        String password = txtPassWord.getText().trim();
+        String fullName = txtEmployeename.getText().trim();
+
+        // Email 空チェック
+        if (email.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "メールアドレスを入力してください。",
+                    "警告",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            txtMail.requestFocus();
+            return false;
+        }
+
+        // Email 形式チェック
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "メールアドレスの形式が正しくありません。",
+                    "警告",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            txtMail.requestFocus();
+            return false;
+        }
+
+        // Username 空チェック
+        if (username.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "ユーザー名を入力してください。",
+                    "警告",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            txtUsername.requestFocus();
+            return false;
+        }
+
+        // Password 空チェック
+        if (password.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "パスワードを入力してください。",
+                    "警告",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            txtPassWord.requestFocus();
+            return false;
+        }
+
+        // Full name 空チェック
+        if (fullName.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "氏名を入力してください。",
+                    "警告",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            txtEmployeename.requestFocus();
+            return false;
+        }
+
+        // 部署選択チェック
+        if (cbDepartment.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "部署を選択してください。",
+                    "警告",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return false;
+        }
+
+        // 役割選択チェック
+        if (cbRole.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "役割を選択してください。",
+                    "警告",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return false;
+        }
+
+        // タスク選択チェック
+        if (listTask.getSelectedValuesList().isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "少なくとも1つのタスクを選択してください。",
+                    "警告",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return false;
+        }
+
+        return true;
+    }
+
 
 
     /**
@@ -102,7 +228,6 @@ public class AddUser extends javax.swing.JFrame {
         lbUsername = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
         lbPassword = new javax.swing.JLabel();
-        txtPassword = new javax.swing.JTextField();
         lbEmployeename = new javax.swing.JLabel();
         txtEmployeename = new javax.swing.JTextField();
         lbDepartment = new javax.swing.JLabel();
@@ -112,7 +237,9 @@ public class AddUser extends javax.swing.JFrame {
         btnCancel = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
         cbDepartment = new javax.swing.JComboBox<>();
-        listTask = new java.awt.List();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        listTask = new javax.swing.JList<>();
+        txtPassWord = new javax.swing.JPasswordField();
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
@@ -143,8 +270,6 @@ public class AddUser extends javax.swing.JFrame {
         lbPassword.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
         lbPassword.setText("パスワード");
 
-        txtPassword.addActionListener(this::txtPasswordActionPerformed);
-
         lbEmployeename.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
         lbEmployeename.setText("社員名");
 
@@ -172,49 +297,47 @@ public class AddUser extends javax.swing.JFrame {
         btnSave.setText("保存");
         btnSave.addActionListener(this::btnSaveActionPerformed);
 
+        jScrollPane1.setViewportView(listTask);
+
         javax.swing.GroupLayout pnlAdduserLayout = new javax.swing.GroupLayout(pnlAdduser);
         pnlAdduser.setLayout(pnlAdduserLayout);
         pnlAdduserLayout.setHorizontalGroup(
             pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAdduserLayout.createSequentialGroup()
+                .addGap(60, 60, 60)
+                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lbUsername)
+                    .addComponent(lbPassword)
+                    .addGroup(pnlAdduserLayout.createSequentialGroup()
+                        .addComponent(lbMail)
+                        .addGap(16, 16, 16))
+                    .addComponent(lbRole, javax.swing.GroupLayout.Alignment.LEADING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtMail, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbRole, 0, 140, Short.MAX_VALUE)
+                    .addComponent(txtPassWord))
+                .addGap(52, 52, 52)
                 .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addGap(60, 60, 60)
-                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lbUsername)
-                            .addComponent(lbPassword)
-                            .addComponent(lbRole)
-                            .addGroup(pnlAdduserLayout.createSequentialGroup()
-                                .addComponent(lbMail)
-                                .addGap(16, 16, 16)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(txtPassword, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtMail, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cbRole, 0, 140, Short.MAX_VALUE))
-                        .addGap(52, 52, 52)
-                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlAdduserLayout.createSequentialGroup()
-                                .addComponent(lbEmployeename)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtEmployeename, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(pnlAdduserLayout.createSequentialGroup()
-                                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lbTask)
-                                    .addComponent(lbDepartment))
-                                .addGap(18, 18, 18)
-                                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cbDepartment, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(pnlAdduserLayout.createSequentialGroup()
-                                        .addComponent(listTask, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))))))
+                        .addComponent(lbEmployeename)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtEmployeename, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addGap(188, 188, 188)
-                        .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36)
-                        .addComponent(btnSave)))
+                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbTask)
+                            .addComponent(lbDepartment))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                            .addComponent(cbDepartment, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(0, 32, Short.MAX_VALUE))
+            .addGroup(pnlAdduserLayout.createSequentialGroup()
+                .addGap(188, 188, 188)
+                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addComponent(btnSave)
                 .addGap(20, 20, 20))
         );
         pnlAdduserLayout.setVerticalGroup(
@@ -237,21 +360,20 @@ public class AddUser extends javax.swing.JFrame {
                         .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cbDepartment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lbDepartment))))
+                .addGap(26, 26, 26)
                 .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addGap(28, 28, 28)
                         .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lbPassword)
-                            .addComponent(lbTask))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                            .addComponent(lbTask)
+                            .addComponent(txtPassWord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                         .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lbRole)
                             .addComponent(cbRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE))
                     .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(listTask, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancel)
@@ -289,10 +411,6 @@ public class AddUser extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsernameActionPerformed
 
-    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPasswordActionPerformed
-
     private void txtEmployeenameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmployeenameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEmployeenameActionPerformed
@@ -307,22 +425,27 @@ public class AddUser extends javax.swing.JFrame {
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         // TODO add your handling code here:
+        if (!validateForm()) {
+            return; // dừng lại, không tạo User
+        }
         String userName = txtUsername.getText();
-        String password = txtPassword.getText();
+        String password = new String(txtPassWord.getPassword());
         String roleName = cbRole.getSelectedItem().toString();
         String email = txtMail.getText();
         String fullName = txtEmployeename.getText();
         String departmentName = cbDepartment.getSelectedItem().toString();
-        String[] selectedTasks = listTask.getSelectedItems(); // Nếu multi-select
         List<Tasks> tasks = new ArrayList<>();
 
         try {
             Users user = new Users();
             user.setUserName(userName);
-            user.setPassword(password);
+            PasswordHash passwordHash = new PasswordHash();
+            String hashedPassword = passwordHash.hashPassword(password);
+            user.setPassword(hashedPassword);
             user.setFullName(fullName);
-            user.setUserCode(UserRequest.generateUserCode());
+            user.setUserCode(Users.generateUserCode());
             user.setEmail(email);
+            user.getCreatedAt();
 
             // Lấy Department theo tên
             DepartmentDAO departmentDAO = new DepartmentDAO();
@@ -342,23 +465,31 @@ public class AddUser extends javax.swing.JFrame {
             }
 
             // Tasks
+            // Tasks
             TaskDAO taskDAO = new TaskDAO();
+            // Lấy danh sách task đã chọn từ JList
+            List<String> selectedTasks = listTask.getSelectedValuesList();
 
+            // Luôn tạo list mới (tránh bị ghi đè vào list cũ đang dùng của Hibernate)
+            List<Tasks> newTasks = new ArrayList<>();
 
-            if (selectedTasks != null) {
-                for (String name : selectedTasks) {
-                    Optional<Tasks> task = taskDAO.findByName(name);
-                    if (task != null) {
-                        tasks.add(task.get());
-                    }
-                }
+            for (String name : selectedTasks) {
+                taskDAO.findByName(name).ifPresent(newTasks::add);
             }
             user.setTasks(tasks);
 
             // Gọi Controller để lưu vào DB
             userController.createUser(user);
 
-            JOptionPane.showMessageDialog(this, "User created successfully!");
+            JOptionPane.showMessageDialog(this, "ユーザーが正常に作成されました！");
+
+           // Đóng form EditUser
+            this.dispose();
+
+           // Mở lại form AllUser
+            AllUser all = new AllUser();
+            all.setVisible(true);
+            all.setLocationRelativeTo(null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -400,6 +531,7 @@ public class AddUser extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem3;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbDepartment;
     private javax.swing.JLabel lbEmployeename;
     private javax.swing.JLabel lbMail;
@@ -407,11 +539,11 @@ public class AddUser extends javax.swing.JFrame {
     private javax.swing.JLabel lbRole;
     private javax.swing.JLabel lbTask;
     private javax.swing.JLabel lbUsername;
-    private java.awt.List listTask;
+    private javax.swing.JList<String> listTask;
     private javax.swing.JPanel pnlAdduser;
     private javax.swing.JTextField txtEmployeename;
     private javax.swing.JTextField txtMail;
-    private javax.swing.JTextField txtPassword;
+    private javax.swing.JPasswordField txtPassWord;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }

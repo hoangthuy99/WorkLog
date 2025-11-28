@@ -8,15 +8,19 @@ import com.ra.Controller.UserController;
 import com.ra.DAO.Department.DepartmentDAO;
 import com.ra.DAO.User.UserDAO;
 import com.ra.Model.Entity.Department;
+import com.ra.Model.Entity.Tasks;
 import com.ra.Model.Entity.Users;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author Admin
  */
+
 public class AllUser extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AllUser.class.getName());
@@ -26,27 +30,28 @@ public class AllUser extends javax.swing.JFrame {
      */
     public AllUser() {
         initComponents();
+
+
         loadUserTable();
         
         // tblAllmenu là tên biến JTable của bạn, đã được khởi tạo ở initComponents()
     }
     private List<Integer> userIds;
 
-
-
+    private DefaultListModel<String> taskModel = new DefaultListModel<>();
 
     private void updatePaginationLabel() {
         setTitle("ユーザーリスト - ページ " + currentPage + "/" + totalPages);
     }
 
-    public UserController userController;
+    public UserController userController = new UserController();
 
     private void loadUserTable() {
 
         String keyword = txtSearch.getText().trim();
         List<Users> list = userController.findAll(keyword, currentPage, pageSize);
 
-        userIds = new java.util.ArrayList<>();
+        userIds = new java.util.ArrayList<>(); // Khởi tạo 1 lần
 
         String[][] data = new String[list.size()][7];
 
@@ -61,6 +66,9 @@ public class AllUser extends javax.swing.JFrame {
             data[i][3] = u.getUserName();
             data[i][4] = u.getDepartment() != null ? u.getDepartment().getName() : "";
             data[i][5] = u.getRole() != null ? u.getRole().getName() : "";
+            data[i][6] = (u.getTasks() != null && !u.getTasks().isEmpty())
+                    ? u.getTasks().stream().map(Tasks::getName).collect(Collectors.joining(", "))
+                    : "";
 
             // Lưu ID thật
             userIds.add(u.getId());
@@ -68,20 +76,10 @@ public class AllUser extends javax.swing.JFrame {
 
         tbAllUser.setModel(new javax.swing.table.DefaultTableModel(
                 data,
-                new String[]{"STT", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール"}
+                new String[]{"STT", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール","タスク"}
         ));
     }
 
-    private Optional<Users> getSelectedUser() {
-        int row = tbAllUser.getSelectedRow();
-        if (row == -1) {
-            javax.swing.JOptionPane.showMessageDialog(this, "行を選択してください"); // Chọn một dòng
-            return null;
-        }
-        // Lấy Id từ cột 0
-        int id = Integer.parseInt(tbAllUser.getValueAt(row, 0).toString());
-        return userController.findById(id) ;// Tìm user từ controller
-    }
 
 
 
@@ -131,29 +129,36 @@ public class AllUser extends javax.swing.JFrame {
 
         tbAllUser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "ユーザーコード", "社員名", "ユーザー名", "部署", "タスク", "ロール"
+                "ID", "ユーザーコード", "社員名", "ユーザー名", "部署", "タスク", "ロール", "タスク"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         scrollTable.setViewportView(tbAllUser);
@@ -265,43 +270,63 @@ public class AllUser extends javax.swing.JFrame {
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
        //Lấy ID rồi chuyển qua màn khác
-
         int selectedRow = tbAllUser.getSelectedRow();
 
-        if (selectedRow == -1) {
-            javax.swing.JOptionPane.showMessageDialog(this, "行を選択してください。");
-            return;
-        }
+        Integer id = userIds.get(selectedRow);
 
-        // Lấy userCode từ cột 0
-        Integer id = Integer.parseInt(tbAllUser.getValueAt(selectedRow, 0).toString());
-
-        // Tìm user trong DB
+       // Tìm user trong DB
         Optional<Users> user = userController.findById(id);
-
-        if (user == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "ユーザーが見つかりません。");
-            return;
+        if (user.isPresent()) {
+            EditUser editForm = new EditUser(user.get());
+            editForm.setVisible(true);
+            editForm.setLocationRelativeTo(null);
+        } else {
+            JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
         }
-
-        // Mở màn hình EditUser và truyền User sang
-//        EditUser editForm = new EditUser(user);
-//        editForm.setVisible(true);
-//        editForm.setLocationRelativeTo(null);
 
 
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
-        Optional<Users> u = getSelectedUser();
-        if (u != null) {
-            int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
-                    "このユーザーを削除しますか？", "確認", javax.swing.JOptionPane.YES_NO_OPTION);
-            if (confirm == javax.swing.JOptionPane.YES_OPTION) {
-                userController.deleteUser(u.get().getId());
-                loadUserTable(); // reload table sau khi xóa
+        int row = tbAllUser.getSelectedRow();
+
+        try {
+            // Lấy ID thật từ cột 0 (cột ẩn)
+            Integer id = userIds.get(row);
+
+            // Lấy user từ DB
+            Optional<Users> u = userController.findById(id);
+
+            if (!u.isPresent()) {
+                JOptionPane.showMessageDialog(this, "このユーザーは存在しません");
+                return;
             }
+
+            // Hỏi xác nhận trước khi xóa
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "このユーザーを削除しますか？",
+                    "確認",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                // Xóa user
+                userController.deleteUser(id);
+
+                // Load lại bảng
+                loadUserTable();
+
+                JOptionPane.showMessageDialog(this, "削除しました"); // Đã xóa
+            }
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID không hợp lệ");
+            e.printStackTrace();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Xảy ra lỗi khi xóa user");
+            e.printStackTrace();
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
