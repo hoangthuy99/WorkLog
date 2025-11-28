@@ -87,5 +87,21 @@ public class DepartmentDAO implements IDepartmentDAO {
         }
     }
 
+    @Override
+    public Optional<Department> findFindByName(String name) {
+            try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+                String hql = "FROM Department d WHERE d.name = :name";
+                Department dept = session.createQuery(hql, Department.class)
+                        .setParameter("name", name)
+                        .uniqueResult();
+                return Optional.ofNullable(dept);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                return Optional.empty();
+            }
+
+
+    }
+
 
 }

@@ -5,10 +5,13 @@ import com.ra.DAO.Auth.AuthDAO;
 import com.ra.DAO.User.UserDAO;
 import com.ra.Model.Entity.Users;
 
+import java.util.List;
+import java.util.Optional;
+
 public class UserController {
     private AuthDAO authDAO;
 
-    public UserController(AuthDAO authDAO) {
+    public UserController() {
         this.authDAO = authDAO;
     }
 
@@ -48,6 +51,26 @@ public class UserController {
      public Users createUser(Users user) {
         UserDAO userDAO = new UserDAO();
         return userDAO.create(user);
+     }
+     public Users updateUser(Users user) {
+        UserDAO userDAO = new UserDAO();
+         return userDAO.update(user);
+     }
+     public boolean deleteUser(int id) {
+        UserDAO userDAO = new UserDAO();
+         return userDAO.deleteFindById(id);
+     }
+     public Optional<Users> findById(int id) {
+        UserDAO userDAO = new UserDAO();
+        return  userDAO.findById(id);
+     }
+     public List<Users> findAll(String keyword, int page, int size) {
+        UserDAO userDAO = new UserDAO();
+        return userDAO.findAll(keyword, page, size);
+     }
+     public long count(String keyword) {
+        UserDAO userDAO = new UserDAO();
+       return userDAO.countAll(keyword);
      }
 
 }

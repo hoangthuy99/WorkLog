@@ -14,4 +14,5 @@ public interface ITaskDAO {
     Optional<Tasks> findFindById(int id);
 
     List<Tasks> findAll();
+    Optional<Tasks> findByName(String name);
 }
