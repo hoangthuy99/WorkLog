@@ -14,4 +14,6 @@ public interface IUserDAO {
 
     Optional<Users> findById(int id);
     long countAll(String keyword);
+    Optional<Users> findByUsername(String username);
+
 }

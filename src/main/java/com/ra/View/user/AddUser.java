@@ -194,16 +194,7 @@ public class AddUser extends javax.swing.JFrame {
             return false;
         }
 
-        // タスク選択チェック
-        if (listTask.getSelectedValuesList().isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "少なくとも1つのタスクを選択してください。",
-                    "警告",
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return false;
-        }
+
 
         return true;
     }
