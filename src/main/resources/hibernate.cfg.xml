@@ -12,8 +12,7 @@
         </property>
         <property name="hibernate.connection.username">root</property>
 
-        <property name="hibernate.connection.password">uyenduongthu01</property>
-
+        <property name="hibernate.connection.password">Nhat2872@</property>     
 
 
         <!-- Hibernate properties -->
