@@ -269,7 +269,7 @@ public class AllUser extends javax.swing.JFrame {
         addUserForm.setLocationRelativeTo(null);
         
     }//GEN-LAST:event_btnAdduserActionPerformed
-
+git
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
        //Lấy ID rồi chuyển qua màn khác
