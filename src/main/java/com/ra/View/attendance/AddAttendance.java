@@ -32,6 +32,8 @@ public class AddAttendance extends javax.swing.JFrame {
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jComboBox3 = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         pnlAddAttendance = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
@@ -44,8 +46,6 @@ public class AddAttendance extends javax.swing.JFrame {
         lbCalendar = new javax.swing.JLabel();
         txtCalendar = new javax.swing.JTextField();
         lbEarlieststarttime = new javax.swing.JLabel();
-        lbHoliday = new javax.swing.JLabel();
-        cbHoliday = new javax.swing.JComboBox<>();
         lbLatestendtime = new javax.swing.JLabel();
         txtEarlieststarttime = new javax.swing.JTextField();
         txtLatestendtime = new javax.swing.JTextField();
@@ -73,6 +73,7 @@ public class AddAttendance extends javax.swing.JFrame {
         btnCancel = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnSend = new javax.swing.JButton();
+        rdbtnHoliday = new javax.swing.JRadioButton();
 
         popupMenu1.setLabel("popupMenu1");
 
@@ -128,8 +129,6 @@ public class AddAttendance extends javax.swing.JFrame {
         txtCalendar.addActionListener(this::txtCalendarActionPerformed);
 
         lbEarlieststarttime.setText("最始");
-
-        lbHoliday.setText("休日");
 
         lbLatestendtime.setText("最終");
 
@@ -198,6 +197,8 @@ public class AddAttendance extends javax.swing.JFrame {
         btnSend.setBackground(new java.awt.Color(153, 255, 153));
         btnSend.setText("送信");
 
+        rdbtnHoliday.setText("休日");
+
         javax.swing.GroupLayout pnlAddAttendanceLayout = new javax.swing.GroupLayout(pnlAddAttendance);
         pnlAddAttendance.setLayout(pnlAddAttendanceLayout);
         pnlAddAttendanceLayout.setHorizontalGroup(
@@ -222,18 +223,16 @@ public class AddAttendance extends javax.swing.JFrame {
                                             .addComponent(txtCalendar)
                                             .addComponent(txtEmployeeName, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGap(30, 30, 30)
-                                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(lbEarlieststarttime, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(lbHoliday, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(cbHoliday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                                .addComponent(lbEarlieststarttime, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(txtEarlieststarttime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(25, 25, 25)
                                                 .addComponent(lbLatestendtime, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtLatestendtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                                .addComponent(txtLatestendtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(rdbtnHoliday, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAddAttendanceLayout.createSequentialGroup()
                                 .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -320,9 +319,7 @@ public class AddAttendance extends javax.swing.JFrame {
                     .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lbCalendar))
-                    .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lbHoliday)
-                        .addComponent(cbHoliday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(rdbtnHoliday))
                 .addGap(2, 2, 2)
                 .addComponent(txtValidate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -472,7 +469,8 @@ public class AddAttendance extends javax.swing.JFrame {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnSend;
     private javax.swing.JButton btnWorkinformation;
-    private javax.swing.JComboBox<String> cbHoliday;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JComboBox<String> cbProject;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel jLabel12;
@@ -487,7 +485,6 @@ public class AddAttendance extends javax.swing.JFrame {
     private javax.swing.JLabel lbEarlieststarttime;
     private javax.swing.JLabel lbEmployee;
     private javax.swing.JLabel lbEndtime;
-    private javax.swing.JLabel lbHoliday;
     private javax.swing.JLabel lbLatestendtime;
     private javax.swing.JLabel lbOvertime;
     private javax.swing.JLabel lbProject;
@@ -497,6 +494,7 @@ public class AddAttendance extends javax.swing.JFrame {
     private javax.swing.JLabel lbWorktimetotask;
     private javax.swing.JPanel pnlAddAttendance;
     private java.awt.PopupMenu popupMenu1;
+    private javax.swing.JRadioButton rdbtnHoliday;
     private javax.swing.JTable tblAddAttendance;
     private javax.swing.JTextField txtBreaktime;
     private javax.swing.JTextField txtBreaktimetotask;

@@ -42,6 +42,10 @@
         <Property name="text" type="java.lang.String" value="jLabel11"/>
       </Properties>
     </Component>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup2">
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
@@ -106,20 +110,17 @@
                                               <Component id="txtEmployeeName" alignment="0" min="-2" pref="116" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="1" attributes="0">
-                                              <Component id="lbEarlieststarttime" min="-2" pref="37" max="-2" attributes="0"/>
-                                              <Component id="lbHoliday" min="-2" pref="37" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="cbHoliday" min="-2" max="-2" attributes="0"/>
-                                              <Group type="102" alignment="0" attributes="0">
+                                              <Group type="102" attributes="0">
+                                                  <Component id="lbEarlieststarttime" min="-2" pref="37" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
                                                   <Component id="txtEarlieststarttime" min="-2" max="-2" attributes="0"/>
                                                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                                                   <Component id="lbLatestendtime" min="-2" pref="37" max="-2" attributes="0"/>
                                                   <EmptySpace max="-2" attributes="0"/>
                                                   <Component id="txtLatestendtime" min="-2" max="-2" attributes="0"/>
                                               </Group>
+                                              <Component id="rdbtnHoliday" min="-2" pref="98" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                   </Group>
@@ -234,10 +235,7 @@
                           <Component id="txtCalendar" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lbCalendar" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="lbHoliday" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cbHoliday" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="rdbtnHoliday" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                   <Component id="txtValidate" min="-2" max="-2" attributes="0"/>
@@ -427,21 +425,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="&#x6700;&#x59cb;"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="lbHoliday">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x4f11;&#x65e5;"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JComboBox" name="cbHoliday">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="0"/>
-            </Property>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="lbLatestendtime">
           <Properties>
@@ -634,6 +617,11 @@
               <Color blue="99" green="ff" red="99" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="&#x9001;&#x4fe1;"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="rdbtnHoliday">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&#x4f11;&#x65e5;"/>
           </Properties>
         </Component>
       </SubComponents>
