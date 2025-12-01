@@ -50,5 +50,11 @@ public class UserServiceIMPL implements UserService {
         return 0;
     }
 
+    @Override
+    public Optional<Users> findByUsername(String username) {
+        return userDAO.findByUsername(username);
+    }
+
+
 
 }

@@ -29,4 +29,8 @@ public class DepartmentController {
     public boolean delete(int id) {
         return departmentService.deleteFindById(id);
     }
+    public List<Department> search(String keyword) {
+        return departmentService.search(keyword);
+    }
+
 }

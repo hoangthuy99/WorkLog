@@ -11,7 +11,9 @@
             jdbc:mysql://localhost:3306/worklog?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC
         </property>
         <property name="hibernate.connection.username">root</property>
+
         <property name="hibernate.connection.password">uyenduongthu01</property>
+
 
 
         <!-- Hibernate properties -->

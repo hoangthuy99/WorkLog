@@ -2,6 +2,7 @@ package com.ra.DAO.Department;
 
 import com.ra.Model.Entity.Department;
 import com.ra.Utils.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -80,12 +81,22 @@ public class DepartmentDAO implements IDepartmentDAO {
     @Override
     public List<Department> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Department", Department.class).list();
+
+            List<Department> list = session.createQuery("FROM Department", Department.class).list();
+
+            for (Department d : list) {
+                Hibernate.initialize(d.getProjects());
+                Hibernate.initialize(d.getTasks());
+            }
+
+            return list;
+
         } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
     }
+
 
     @Override
     public Optional<Department> findFindByName(String name) {

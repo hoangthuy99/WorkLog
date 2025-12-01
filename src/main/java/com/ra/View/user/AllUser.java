@@ -29,13 +29,13 @@ public class AllUser extends javax.swing.JFrame {
      * Creates new form AllUser
      */
     public AllUser() {
+        userController = new UserController();  // <<--- BẮT BUỘC PHẢI CÓ
         initComponents();
 
 
         loadUserTable();
-        
-        // tblAllmenu là tên biến JTable của bạn, đã được khởi tạo ở initComponents()
     }
+
     private List<Integer> userIds;
 
     private DefaultListModel<String> taskModel = new DefaultListModel<>();
@@ -264,6 +264,9 @@ public class AllUser extends javax.swing.JFrame {
 
     private void btnAdduserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdduserActionPerformed
         // TODO add your handling code here:
+        AddUser addUserForm = new AddUser();
+        addUserForm.setVisible(true);
+        addUserForm.setLocationRelativeTo(null);
         
     }//GEN-LAST:event_btnAdduserActionPerformed
 

@@ -1,14 +1,15 @@
 package com.ra.Controller;
 
-
 import com.ra.DAO.Auth.AuthDAO;
 import com.ra.DAO.User.UserDAO;
 import com.ra.Model.Entity.Users;
+import com.ra.Sercurity.PasswordHash;
 
 import java.util.List;
 import java.util.Optional;
 
 public class UserController {
+
     private AuthDAO authDAO;
     private UserDAO userDAO;
 
@@ -17,45 +18,63 @@ public class UserController {
         this.userDAO = new UserDAO();
     }
 
-
     /**
-     * Hàm kiểm tra đăng nhập
-     * @param username tên đăng nhập
-     * @param password mật khẩu
-     * @return Users nếu đăng nhập đúng, null nếu sai
+     * Đăng nhập có kiểm tra mật khẩu đã HASH bằng BCrypt
      */
     public Users login(String username, String password) {
+
         if (username == null || username.trim().isEmpty()) return null;
         if (password == null || password.trim().isEmpty()) return null;
 
-        // Gọi DAO để lấy user theo username
+        // Lấy user từ DB
         Users user = authDAO.findByUsername(username);
 
         if (user == null) {
             System.out.println("User not found");
-            return null; // Không có user
-        }else{
-            System.out.println("User found: " + user.getUserName());
-            //TODO: Phân quyền ở đây cho dễ quản lý
-            if(user.getRole() == null){
-                System.out.println("User has no role assigned");
-                return null; // Không có role
-            }else {
-                System.out.println("User role: " + user.getRole().getName());
-            }
-        }
-
-        // Kiểm tra password (demo = password plaintext — nếu có hash thì đổi logic)
-        if (!user.getPassword().equals(password)) {
             return null;
         }
-        return user; // Đúng mật khẩu → trả về user
+
+        System.out.println("User found: " + user.getUserName());
+
+        // Kiểm tra role
+        if (user.getRole() == null) {
+            System.out.println("User has no role assigned");
+            return null;
+        }
+
+        System.out.println("User role: " + user.getRole().getName());
+
+        // Kiểm tra mật khẩu đã HASH
+        boolean pwMatch = PasswordHash.verifyPassword(password, user.getPassword());
+
+        if (!pwMatch) {
+            System.out.println("Password mismatch");
+            return null;
+        }
+
+        return user;
     }
+
+    /**
+     * Tạo user mới → HASH password trước khi lưu
+     */
     public Users createUser(Users user) {
+
+        // Hash password trước khi lưu
+        String hashed = PasswordHash.hashPassword(user.getPassword());
+        user.setPassword(hashed);
+
         return userDAO.create(user);
     }
 
     public Users updateUser(Users user) {
+
+        // Nếu user muốn đổi password → hash lại
+        if (user.getPassword() != null && user.getPassword().length() < 60) {
+            String hashed = PasswordHash.hashPassword(user.getPassword());
+            user.setPassword(hashed);
+        }
+
         return userDAO.update(user);
     }
 
@@ -71,4 +90,7 @@ public class UserController {
         return userDAO.findAll(keyword, page, size);
     }
 
+    public Optional<Users> findByUsername(String username) {
+        return userDAO.findByUsername(username);
+    }
 }

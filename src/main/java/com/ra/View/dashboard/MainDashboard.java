@@ -110,6 +110,13 @@ public class MainDashboard extends javax.swing.JFrame {
         pnlHeader = new javax.swing.JPanel();
         lbDatetime = new javax.swing.JLabel();
         pnlWorkingArea = new javax.swing.JPanel();
+        jLocaleChooser1 = new com.toedter.components.JLocaleChooser();
+        jLocaleChooser2 = new com.toedter.components.JLocaleChooser();
+        jYearChooser1 = new com.toedter.calendar.JYearChooser();
+        jYearChooser2 = new com.toedter.calendar.JYearChooser();
+        jYearChooser3 = new com.toedter.calendar.JYearChooser();
+        jYearChooser4 = new com.toedter.calendar.JYearChooser();
+        jYearChooser5 = new com.toedter.calendar.JYearChooser();
 
         jLabel1.setText("jLabel1");
 
@@ -597,11 +604,6 @@ public class MainDashboard extends javax.swing.JFrame {
         pnlMenumenu.add(pnlAllmenu);
 
         pnlSidebar.add(pnlMenumenu);
-
-        // GLUE để đẩy nút Logout xuống cuối
-        pnlSidebar.add(javax.swing.Box.createVerticalGlue());
-
-        // LOGOUT (JPanel giữ nguyên)
         pblLogout.setBackground(new java.awt.Color(255, 255, 255));
         pblLogout.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pblLogout.setMaximumSize(new java.awt.Dimension(250, 30));
@@ -640,6 +642,16 @@ public class MainDashboard extends javax.swing.JFrame {
         pnlMainContent.add(pnlHeader, java.awt.BorderLayout.PAGE_START);
 
         pnlWorkingArea.setLayout(new java.awt.CardLayout());
+
+        jLocaleChooser1.addActionListener(this::jLocaleChooser1ActionPerformed);
+        pnlWorkingArea.add(jLocaleChooser1, "card2");
+        pnlWorkingArea.add(jLocaleChooser2, "card3");
+        pnlWorkingArea.add(jYearChooser1, "card4");
+        pnlWorkingArea.add(jYearChooser2, "card5");
+        pnlWorkingArea.add(jYearChooser3, "card6");
+        pnlWorkingArea.add(jYearChooser4, "card7");
+        pnlWorkingArea.add(jYearChooser5, "card8");
+
         pnlMainContent.add(pnlWorkingArea, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(pnlMainContent, java.awt.BorderLayout.CENTER);
@@ -689,6 +701,10 @@ public class MainDashboard extends javax.swing.JFrame {
         // Logic xử lý Logout
         System.out.println("Thực hiện Logout...");
     }
+
+    private void jLocaleChooser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLocaleChooser1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLocaleChooser1ActionPerformed
 
     /**
      * @param args the command line arguments

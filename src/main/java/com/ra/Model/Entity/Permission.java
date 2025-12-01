@@ -29,4 +29,6 @@ public class Permission {
     private List<Roles> roles;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+
 }
