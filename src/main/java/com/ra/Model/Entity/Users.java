@@ -49,4 +49,13 @@ public class Users {
         return "US" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8).toUpperCase();
     }
 
+    public boolean isEmpty() {
+        return userName == null || userName.isBlank()
+                || password == null || password.isBlank();
+    }
+
+    public Users get() {
+        return this;
+    }
+
 }

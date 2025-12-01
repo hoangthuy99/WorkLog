@@ -20,7 +20,7 @@ import java.util.List;
  * @author HP
  */
 public class AddTask extends javax.swing.JDialog {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddTask.class.getName());
     private final TaskController taskController = new TaskController();
     private final DepartmentController departmentController = new DepartmentController();
@@ -134,7 +134,7 @@ public class AddTask extends javax.swing.JDialog {
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
         this.dispose();
     }
-                                         
+
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
 
@@ -147,39 +147,38 @@ public class AddTask extends javax.swing.JDialog {
         int depIndex = cbDepartmentname.getSelectedIndex();
         int projIndex = cbProjectname.getSelectedIndex();
 
-        // Lấy Department
-        Department selectedDept = null;
-        if (depIndex >= 0 && departmentList != null && depIndex < departmentList.size()) {
-            selectedDept = departmentList.get(depIndex);
-        }
+        Department selectedDept = depIndex >= 0 ? departmentList.get(depIndex) : null;
+        Project selectedProject = projIndex >= 0 ? projectList.get(projIndex) : null;
 
-        // Lấy Project
-        Project selectedProject = null;
-        if (projIndex >= 0 && projectList != null && projIndex < projectList.size()) {
-            selectedProject = projectList.get(projIndex);
-        }
-
-        // Tạo list an toàn — KHÔNG BAO GIỜ LỖI
-        List<Department> deps = new java.util.ArrayList<>();
+        List<Department> deps = new ArrayList<>();
         if (selectedDept != null) deps.add(selectedDept);
 
-        List<Project> projs = new java.util.ArrayList<>();
+        List<Project> projs = new ArrayList<>();
         if (selectedProject != null) projs.add(selectedProject);
 
-        // Tạo Task
+        // TẠO TASK
         Tasks task = new Tasks();
         task.setName(taskName);
+        task.setTaskCode(Tasks.generateTaskCode());   // ⭐ FIX LỖI 1
         task.setDepartments(deps);
         task.setProjects(projs);
 
-        // Save
+        // ⭐ FIX LỖI 2 — cập nhật quan hệ ngược lại
+        if (selectedDept != null) {
+            selectedDept.getTasks().add(task);
+        }
+        if (selectedProject != null) {
+            selectedProject.getTasks().add(task);
+        }
+
+        // SAVE
         taskController.create(task);
 
         JOptionPane.showMessageDialog(this, "Task created successfully!");
+
         this.dispose();
     }
 
-                                       
 
     private void loadDepartments() {
         departmentList = departmentController.findAll();
@@ -207,7 +206,7 @@ public class AddTask extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

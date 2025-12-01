@@ -29,13 +29,13 @@ public class AllUser extends javax.swing.JFrame {
      * Creates new form AllUser
      */
     public AllUser() {
+        userController = new UserController();  // <<--- BẮT BUỘC PHẢI CÓ
         initComponents();
 
 
         loadUserTable();
-        
-        // tblAllmenu là tên biến JTable của bạn, đã được khởi tạo ở initComponents()
     }
+
     private List<Integer> userIds;
 
     private DefaultListModel<String> taskModel = new DefaultListModel<>();
