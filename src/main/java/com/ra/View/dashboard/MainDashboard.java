@@ -121,6 +121,13 @@ private void startClock() {
         pnlHeader = new javax.swing.JPanel();
         lbDatetime = new javax.swing.JLabel();
         pnlWorkingArea = new javax.swing.JPanel();
+        jLocaleChooser1 = new com.toedter.components.JLocaleChooser();
+        jLocaleChooser2 = new com.toedter.components.JLocaleChooser();
+        jYearChooser1 = new com.toedter.calendar.JYearChooser();
+        jYearChooser2 = new com.toedter.calendar.JYearChooser();
+        jYearChooser3 = new com.toedter.calendar.JYearChooser();
+        jYearChooser4 = new com.toedter.calendar.JYearChooser();
+        jYearChooser5 = new com.toedter.calendar.JYearChooser();
 
         jLabel1.setText("jLabel1");
 
@@ -486,9 +493,6 @@ private void startClock() {
 
         pnlSidebar.add(pnlMenumenu);
 
-        // CHÈN DÒNG CODE GLUE - Gắn Panel Logout xuống cuối Sidebar
-        pnlSidebar.add(javax.swing.Box.createVerticalGlue());
-
         pblLogout.setBackground(new java.awt.Color(255, 255, 255));
         pblLogout.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pblLogout.setMaximumSize(new java.awt.Dimension(250, 30));
@@ -518,6 +522,16 @@ private void startClock() {
         pnlMainContent.add(pnlHeader, java.awt.BorderLayout.PAGE_START);
 
         pnlWorkingArea.setLayout(new java.awt.CardLayout());
+
+        jLocaleChooser1.addActionListener(this::jLocaleChooser1ActionPerformed);
+        pnlWorkingArea.add(jLocaleChooser1, "card2");
+        pnlWorkingArea.add(jLocaleChooser2, "card3");
+        pnlWorkingArea.add(jYearChooser1, "card4");
+        pnlWorkingArea.add(jYearChooser2, "card5");
+        pnlWorkingArea.add(jYearChooser3, "card6");
+        pnlWorkingArea.add(jYearChooser4, "card7");
+        pnlWorkingArea.add(jYearChooser5, "card8");
+
         pnlMainContent.add(pnlWorkingArea, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(pnlMainContent, java.awt.BorderLayout.CENTER);
@@ -567,6 +581,10 @@ private void startClock() {
     pnlSidebar.repaint();
     }//GEN-LAST:event_pnlMenuHeaderMouseClicked
 
+    private void jLocaleChooser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLocaleChooser1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLocaleChooser1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -595,6 +613,13 @@ private void startClock() {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private com.toedter.components.JLocaleChooser jLocaleChooser1;
+    private com.toedter.components.JLocaleChooser jLocaleChooser2;
+    private com.toedter.calendar.JYearChooser jYearChooser1;
+    private com.toedter.calendar.JYearChooser jYearChooser2;
+    private com.toedter.calendar.JYearChooser jYearChooser3;
+    private com.toedter.calendar.JYearChooser jYearChooser4;
+    private com.toedter.calendar.JYearChooser jYearChooser5;
     private javax.swing.JLabel lbAddUser;
     private javax.swing.JLabel lbAddUser2;
     private javax.swing.JLabel lbAddattendance;
