@@ -48,4 +48,5 @@ public class Department {
     public static String generateDepartmentCode() {
         return "DP" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8).toUpperCase();
     }
+
 }
