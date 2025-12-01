@@ -1,5 +1,7 @@
-
 package com.ra.View.dashboard;
+
+import com.ra.View.user.AddUser;
+import com.ra.View.user.AllUser;
 
 import java.time.ZonedDateTime; // Để lấy thời gian hiện tại
 import java.time.format.DateTimeFormatter; // Để định dạng chuỗi
@@ -7,52 +9,43 @@ import java.util.Locale; // Để định dạng theo Locale Nhật Bản
 import javax.swing.Timer; // Để cập nhật thời gian mỗi giây
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Color;
+import java.awt.Font;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Box;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import javax.swing.JButton;
 
 public class MainDashboard extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainDashboard.class.getName());
 
-    
+
     public MainDashboard() {
         initComponents();
-        //GỌI PHƯƠNG THỨC KHỞI ĐỘNG ĐỒNG HỒ Ở ĐÂY
         startClock();
     }
-    
-    /**
- * Lấy chuỗi ngày giờ hiện tại, định dạng theo Locale Nhật Bản (ja_JP).
- * Định dạng: Năm/Tháng/Ngày (Thứ) Giờ:Phút:Giây
- * Ví dụ: 2025/11/28(金) 15:46:53
- */
-private String getCurrentDateTimeJapan() {
-    // Lấy thời gian hiện tại
-    ZonedDateTime now = ZonedDateTime.now();
-    
-    // Pattern: yyyy/MM/dd(E) HH:mm:ss
-    // E đại diện cho tên thứ ngắn gọn, sẽ được dịch sang tiếng Nhật nhờ Locale.JAPAN
-    DateTimeFormatter formatter = DateTimeFormatter
-        .ofPattern("yyyy/MM/dd(E) HH:mm:ss")
-        .withLocale(Locale.JAPAN); // <--- Sử dụng Locale.JAPAN để dịch tên thứ
 
-    return now.format(formatter);
-}
-/**
- * Thêm phương thức Khởi động Đồng hồ (Timer)
- */
+    private String getCurrentDateTimeJapan() {
+        ZonedDateTime now = ZonedDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("yyyy/MM/dd(E) HH:mm:ss")
+                .withLocale(Locale.JAPAN);
+        return now.format(formatter);
+    }
 
-private void startClock() {
-    // Thiết lập Timer để chạy mỗi 1000 mili giây (1 giây)
-    Timer timer = new Timer(1000, new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Lấy thời gian mới và cập nhật JLabel
-            lbDatetime.setText(getCurrentDateTimeJapan());
-        }
-    });
-    timer.start(); // Bắt đầu đồng hồ
-}
-
-// ...
+    private void startClock() {
+        Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                lbDatetime.setText(getCurrentDateTimeJapan());
+            }
+        });
+        timer.start();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -68,55 +61,62 @@ private void startClock() {
         pnlHeaderSidebar = new javax.swing.JPanel();
         lbHeaderSidebar = new javax.swing.JLabel();
         pnlDashboard = new javax.swing.JPanel();
-        lbDashboard = new javax.swing.JLabel();
+        btnDashboard = new javax.swing.JButton();
         pnlUserHeader = new javax.swing.JPanel();
-        lbUserHeader = new javax.swing.JLabel();
+        UserHeader = new javax.swing.JButton();
         pnlUsermenu = new javax.swing.JPanel();
         pnlAddUser = new javax.swing.JPanel();
-        lbAddUser = new javax.swing.JLabel();
+        btnAddUser = new javax.swing.JButton();
         pnlAllUser = new javax.swing.JPanel();
-        lbAllUser = new javax.swing.JLabel();
+        btnAllUser = new javax.swing.JButton();
         pnlDepartmentHeader = new javax.swing.JPanel();
-        lbDepartmentHeader = new javax.swing.JLabel();
+        btnDepartmentHeader = new javax.swing.JButton();
         pnlDepartmentmenu = new javax.swing.JPanel();
-        pnlAdddepartment = new javax.swing.JPanel();
-        lbAdddepartment = new javax.swing.JLabel();
-        pnlAlldepartment = new javax.swing.JPanel();
-        lbAlldepartment = new javax.swing.JLabel();
+        pnlAddDepartment = new javax.swing.JPanel();
+        btnAddDepartment = new javax.swing.JButton();
+        pnlAllDeparment = new javax.swing.JPanel();
+        btnAllDepartment = new javax.swing.JButton();
         pnlProjectHeader = new javax.swing.JPanel();
-        lbProjectHeader = new javax.swing.JLabel();
+        btnProjectHeader = new javax.swing.JButton();
         pnlProjectmenu = new javax.swing.JPanel();
-        pnlAddproject = new javax.swing.JPanel();
-        lbAddproject = new javax.swing.JLabel();
-        pnlAllproject = new javax.swing.JPanel();
-        lbAllproject = new javax.swing.JLabel();
+        pnlAddProject = new javax.swing.JPanel();
+        btnAddDepartment1 = new javax.swing.JButton();
+        pnlAllProject = new javax.swing.JPanel();
+        btnAllDepartment1 = new javax.swing.JButton();
         pnlTaskHeader = new javax.swing.JPanel();
-        lbTaskHeader = new javax.swing.JLabel();
+        btnTaskHeader = new javax.swing.JButton();
         pnlTaskmenu = new javax.swing.JPanel();
-        pnlAddtask = new javax.swing.JPanel();
-        lbAddtask = new javax.swing.JLabel();
-        pnlAlltask = new javax.swing.JPanel();
-        lbAlltask = new javax.swing.JLabel();
+        pnlAddTask = new javax.swing.JPanel();
+        btnAddTask = new javax.swing.JButton();
+        pnlAllTask = new javax.swing.JPanel();
+        btnAllTask = new javax.swing.JButton();
         pnlAttendanceHeader = new javax.swing.JPanel();
-        lbAttendanceHeader = new javax.swing.JLabel();
+        btnTaskHeader1 = new javax.swing.JButton();
         pnlAttendancemenu = new javax.swing.JPanel();
-        pnlAddattendance = new javax.swing.JPanel();
-        lbAddattendance = new javax.swing.JLabel();
-        pnlViewmonth = new javax.swing.JPanel();
-        lbViewmonth = new javax.swing.JLabel();
-        pnlViewday = new javax.swing.JPanel();
-        lbViewday = new javax.swing.JLabel();
+        pnlAddAttendance = new javax.swing.JPanel();
+        btnAddAttendance = new javax.swing.JButton();
+        pnlAttendanceMonth = new javax.swing.JPanel();
+        btnViewAttendanceMonth = new javax.swing.JButton();
+        pnlAttendanceDay = new javax.swing.JPanel();
+        btnViewAttendanceDay = new javax.swing.JButton();
         pnlReport = new javax.swing.JPanel();
-        lbReport = new javax.swing.JLabel();
+        btnReport = new javax.swing.JButton();
+        pnlHolidayHeader = new javax.swing.JPanel();
+        btnHolidayHeader = new javax.swing.JButton();
+        pnlHolidaymenu = new javax.swing.JPanel();
+        pnlAddHoliday = new javax.swing.JPanel();
+        btnAddMenu1 = new javax.swing.JButton();
+        pnlAllHoliday = new javax.swing.JPanel();
+        btnAllMenu1 = new javax.swing.JButton();
         pnlMenuHeader = new javax.swing.JPanel();
-        lbMenuHeader = new javax.swing.JLabel();
+        btnMenuHeader = new javax.swing.JButton();
         pnlMenumenu = new javax.swing.JPanel();
-        pnlAddmenu = new javax.swing.JPanel();
-        lbAddUser2 = new javax.swing.JLabel();
-        pnlAllmenu = new javax.swing.JPanel();
-        lbAllUser2 = new javax.swing.JLabel();
-        pblLogout = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        pnlAddMenu = new javax.swing.JPanel();
+        btnAddMenu = new javax.swing.JButton();
+        pnlAllMenu = new javax.swing.JPanel();
+        btnAllMenu = new javax.swing.JButton();
+        pnlLogout = new javax.swing.JPanel();
+        btnLogout = new javax.swing.JButton();
         pnlMainContent = new javax.swing.JPanel();
         pnlHeader = new javax.swing.JPanel();
         lbDatetime = new javax.swing.JLabel();
@@ -127,7 +127,7 @@ private void startClock() {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ダッシュボード");
 
-        pnlSidebar.setBackground(new java.awt.Color(29, 30, 40));
+        pnlSidebar.setBackground(new java.awt.Color(0, 0, 0));
         pnlSidebar.setPreferredSize(new java.awt.Dimension(250, 300));
         pnlSidebar.setLayout(new javax.swing.BoxLayout(pnlSidebar, javax.swing.BoxLayout.Y_AXIS));
 
@@ -145,52 +145,93 @@ private void startClock() {
 
         pnlSidebar.add(pnlHeaderSidebar);
 
-        pnlDashboard.setBackground(new java.awt.Color(0, 0, 102));
+        pnlDashboard.setBackground(new java.awt.Color(0, 0, 0));
         pnlDashboard.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pnlDashboard.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlDashboard.setLayout(new java.awt.GridBagLayout());
+        pnlDashboard.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        lbDashboard.setBackground(new java.awt.Color(0, 0, 102));
-        lbDashboard.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        lbDashboard.setForeground(new java.awt.Color(255, 255, 255));
-        lbDashboard.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbDashboard.setText("ダッシュボード");
-        pnlDashboard.add(lbDashboard, new java.awt.GridBagConstraints());
+        btnDashboard.setBackground(new java.awt.Color(0, 0, 102));
+        btnDashboard.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnDashboard.setForeground(new java.awt.Color(255, 255, 255));
+        btnDashboard.setText("ダッシュボード");
+        btnDashboard.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnDashboard.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnDashboard.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnDashboard.addActionListener(this::btnDashboardActionPerformed);
+
+        javax.swing.GroupLayout pnlDashboardLayout = new javax.swing.GroupLayout(pnlDashboard);
+        pnlDashboard.setLayout(pnlDashboardLayout);
+        pnlDashboardLayout.setHorizontalGroup(
+            pnlDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlDashboardLayout.setVerticalGroup(
+            pnlDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnDashboard, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         pnlSidebar.add(pnlDashboard);
 
-        pnlUserHeader.setBackground(new java.awt.Color(0, 0, 102));
+        pnlUserHeader.setBackground(new java.awt.Color(0, 0, 0));
         pnlUserHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pnlUserHeader.setForeground(new java.awt.Color(255, 255, 255));
         pnlUserHeader.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlUserHeader.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                pnlUserHeaderMouseClicked(evt);
-            }
-        });
-        pnlUserHeader.setLayout(new java.awt.GridBagLayout());
+        pnlUserHeader.setMinimumSize(new java.awt.Dimension(250, 30));
+        pnlUserHeader.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        lbUserHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        lbUserHeader.setForeground(new java.awt.Color(255, 255, 255));
-        lbUserHeader.setText("ユーザー管理");
-        pnlUserHeader.add(lbUserHeader, new java.awt.GridBagConstraints());
+        UserHeader.setBackground(new java.awt.Color(0, 0, 102));
+        UserHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        UserHeader.setForeground(new java.awt.Color(255, 255, 255));
+        UserHeader.setText("ユーザー管理");
+        UserHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        UserHeader.setMinimumSize(new java.awt.Dimension(250, 30));
+        UserHeader.setPreferredSize(new java.awt.Dimension(250, 30));
+        UserHeader.addActionListener(this::UserHeaderActionPerformed);
+
+        javax.swing.GroupLayout pnlUserHeaderLayout = new javax.swing.GroupLayout(pnlUserHeader);
+        pnlUserHeader.setLayout(pnlUserHeaderLayout);
+        pnlUserHeaderLayout.setHorizontalGroup(
+            pnlUserHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(UserHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlUserHeaderLayout.setVerticalGroup(
+            pnlUserHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlUserHeaderLayout.createSequentialGroup()
+                .addComponent(UserHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
+        );
 
         pnlSidebar.add(pnlUserHeader);
 
+        pnlUsermenu.setBackground(new java.awt.Color(0, 0, 0));
         pnlUsermenu.setMaximumSize(new java.awt.Dimension(250, 60));
         pnlUsermenu.setVisible(false);
         pnlUsermenu.setLayout(new javax.swing.BoxLayout(pnlUsermenu, javax.swing.BoxLayout.Y_AXIS));
 
-        pnlAddUser.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAddUser.setBackground(new java.awt.Color(0, 102, 153));
         pnlAddUser.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         pnlAddUser.setMaximumSize(new java.awt.Dimension(250, 30));
         pnlAddUser.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAddUser.setLayout(new java.awt.GridBagLayout());
 
-        lbAddUser.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAddUser.setForeground(new java.awt.Color(255, 255, 255));
-        lbAddUser.setText("新ユーザー作成");
-        pnlAddUser.add(lbAddUser, new java.awt.GridBagConstraints());
+        btnAddUser.setBackground(new java.awt.Color(0, 102, 102));
+        btnAddUser.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAddUser.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddUser.setText("新ユーザー作成");
+        btnAddUser.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAddUser.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAddUser.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAddUser.addActionListener(this::btnAddUserActionPerformed);
+
+        javax.swing.GroupLayout pnlAddUserLayout = new javax.swing.GroupLayout(pnlAddUser);
+        pnlAddUser.setLayout(pnlAddUserLayout);
+        pnlAddUserLayout.setHorizontalGroup(
+            pnlAddUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAddUserLayout.setVerticalGroup(
+            pnlAddUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         pnlUsermenu.add(pnlAddUser);
 
@@ -198,307 +239,686 @@ private void startClock() {
         pnlAllUser.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         pnlAllUser.setMaximumSize(new java.awt.Dimension(250, 30));
         pnlAllUser.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAllUser.setLayout(new java.awt.GridBagLayout());
 
-        lbAllUser.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAllUser.setForeground(new java.awt.Color(255, 255, 255));
-        lbAllUser.setText("ユーザーリスト");
-        pnlAllUser.add(lbAllUser, new java.awt.GridBagConstraints());
+        btnAllUser.setBackground(new java.awt.Color(0, 102, 102));
+        btnAllUser.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAllUser.setForeground(new java.awt.Color(255, 255, 255));
+        btnAllUser.setText("ユーザーリスト");
+        btnAllUser.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAllUser.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAllUser.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAllUser.addActionListener(this::btnAllUserActionPerformed);
+
+        javax.swing.GroupLayout pnlAllUserLayout = new javax.swing.GroupLayout(pnlAllUser);
+        pnlAllUser.setLayout(pnlAllUserLayout);
+        pnlAllUserLayout.setHorizontalGroup(
+            pnlAllUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAllUserLayout.setVerticalGroup(
+            pnlAllUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         pnlUsermenu.add(pnlAllUser);
 
         pnlSidebar.add(pnlUsermenu);
 
-        pnlDepartmentHeader.setBackground(new java.awt.Color(0, 0, 102));
+        pnlDepartmentHeader.setBackground(new java.awt.Color(0, 0, 0));
         pnlDepartmentHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlDepartmentHeader.setForeground(new java.awt.Color(255, 255, 255));
         pnlDepartmentHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlDepartmentHeader.setMinimumSize(new java.awt.Dimension(250, 30));
+        pnlDepartmentHeader.setPreferredSize(new java.awt.Dimension(250, 30));
         pnlDepartmentHeader.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnlDepartmentHeaderMouseClicked(evt);
             }
         });
-        pnlDepartmentHeader.setLayout(new java.awt.GridBagLayout());
 
-        lbDepartmentHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        lbDepartmentHeader.setForeground(new java.awt.Color(255, 255, 255));
-        lbDepartmentHeader.setText("部署管理");
-        pnlDepartmentHeader.add(lbDepartmentHeader, new java.awt.GridBagConstraints());
+        btnDepartmentHeader.setBackground(new java.awt.Color(0, 0, 102));
+        btnDepartmentHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnDepartmentHeader.setForeground(new java.awt.Color(255, 255, 255));
+        btnDepartmentHeader.setText("部署管理");
+        btnDepartmentHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnDepartmentHeader.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnDepartmentHeader.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnDepartmentHeader.addActionListener(this::btnDepartmentHeaderActionPerformed);
+
+        javax.swing.GroupLayout pnlDepartmentHeaderLayout = new javax.swing.GroupLayout(pnlDepartmentHeader);
+        pnlDepartmentHeader.setLayout(pnlDepartmentHeaderLayout);
+        pnlDepartmentHeaderLayout.setHorizontalGroup(
+            pnlDepartmentHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnDepartmentHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlDepartmentHeaderLayout.setVerticalGroup(
+            pnlDepartmentHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlDepartmentHeaderLayout.createSequentialGroup()
+                .addComponent(btnDepartmentHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
+        );
 
         pnlSidebar.add(pnlDepartmentHeader);
-        pnlDepartmentHeader.getAccessibleContext().setAccessibleName("pnlDepartmentHeader");
 
-        pnlDepartmentmenu.setMaximumSize(new java.awt.Dimension(250, 60));
+        pnlDepartmentmenu.setBackground(new java.awt.Color(0, 0, 0));
         pnlDepartmentmenu.setVisible(false);
         pnlDepartmentmenu.setLayout(new javax.swing.BoxLayout(pnlDepartmentmenu, javax.swing.BoxLayout.Y_AXIS));
 
-        pnlAdddepartment.setBackground(new java.awt.Color(0, 0, 152));
-        pnlAdddepartment.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAdddepartment.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAdddepartment.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAdddepartment.setLayout(new java.awt.GridBagLayout());
+        pnlAddDepartment.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAddDepartment.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAddDepartment.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAddDepartment.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        lbAdddepartment.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAdddepartment.setForeground(new java.awt.Color(255, 255, 255));
-        lbAdddepartment.setText("新部署作成");
-        pnlAdddepartment.add(lbAdddepartment, new java.awt.GridBagConstraints());
+        btnAddDepartment.setBackground(new java.awt.Color(0, 102, 102));
+        btnAddDepartment.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAddDepartment.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddDepartment.setText("新部署作成");
+        btnAddDepartment.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAddDepartment.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAddDepartment.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAddDepartment.addActionListener(this::btnAddDepartmentActionPerformed);
 
-        pnlDepartmentmenu.add(pnlAdddepartment);
+        javax.swing.GroupLayout pnlAddDepartmentLayout = new javax.swing.GroupLayout(pnlAddDepartment);
+        pnlAddDepartment.setLayout(pnlAddDepartmentLayout);
+        pnlAddDepartmentLayout.setHorizontalGroup(
+            pnlAddDepartmentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddDepartment, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAddDepartmentLayout.setVerticalGroup(
+            pnlAddDepartmentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddDepartment, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
-        pnlAlldepartment.setBackground(new java.awt.Color(0, 0, 152));
-        pnlAlldepartment.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAlldepartment.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAlldepartment.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAlldepartment.setLayout(new java.awt.GridBagLayout());
+        pnlDepartmentmenu.add(pnlAddDepartment);
 
-        lbAlldepartment.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAlldepartment.setForeground(new java.awt.Color(255, 255, 255));
-        lbAlldepartment.setText("部署リスト");
-        pnlAlldepartment.add(lbAlldepartment, new java.awt.GridBagConstraints());
+        pnlAllDeparment.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAllDeparment.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAllDeparment.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAllDeparment.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        pnlDepartmentmenu.add(pnlAlldepartment);
+        btnAllDepartment.setBackground(new java.awt.Color(0, 102, 102));
+        btnAllDepartment.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAllDepartment.setForeground(new java.awt.Color(255, 255, 255));
+        btnAllDepartment.setText("部署リスト");
+        btnAllDepartment.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAllDepartment.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAllDepartment.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAllDepartment.addActionListener(this::btnAllDepartmentActionPerformed);
+
+        javax.swing.GroupLayout pnlAllDeparmentLayout = new javax.swing.GroupLayout(pnlAllDeparment);
+        pnlAllDeparment.setLayout(pnlAllDeparmentLayout);
+        pnlAllDeparmentLayout.setHorizontalGroup(
+            pnlAllDeparmentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllDepartment, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAllDeparmentLayout.setVerticalGroup(
+            pnlAllDeparmentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllDepartment, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pnlDepartmentmenu.add(pnlAllDeparment);
 
         pnlSidebar.add(pnlDepartmentmenu);
 
-        pnlProjectHeader.setBackground(new java.awt.Color(0, 0, 102));
+        pnlProjectHeader.setBackground(new java.awt.Color(0, 0, 0));
         pnlProjectHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlProjectHeader.setForeground(new java.awt.Color(255, 255, 255));
         pnlProjectHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlProjectHeader.setMinimumSize(new java.awt.Dimension(250, 30));
         pnlProjectHeader.setPreferredSize(new java.awt.Dimension(250, 30));
         pnlProjectHeader.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnlProjectHeaderMouseClicked(evt);
             }
         });
-        pnlProjectHeader.setLayout(new java.awt.GridBagLayout());
 
-        lbProjectHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        lbProjectHeader.setForeground(new java.awt.Color(255, 255, 255));
-        lbProjectHeader.setText("プロジェクト管理");
-        pnlProjectHeader.add(lbProjectHeader, new java.awt.GridBagConstraints());
+        btnProjectHeader.setBackground(new java.awt.Color(0, 0, 102));
+        btnProjectHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnProjectHeader.setForeground(new java.awt.Color(255, 255, 255));
+        btnProjectHeader.setText("プロジェクト管理");
+        btnProjectHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnProjectHeader.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnProjectHeader.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnProjectHeader.addActionListener(this::btnProjectHeaderActionPerformed);
+
+        javax.swing.GroupLayout pnlProjectHeaderLayout = new javax.swing.GroupLayout(pnlProjectHeader);
+        pnlProjectHeader.setLayout(pnlProjectHeaderLayout);
+        pnlProjectHeaderLayout.setHorizontalGroup(
+            pnlProjectHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnProjectHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlProjectHeaderLayout.setVerticalGroup(
+            pnlProjectHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlProjectHeaderLayout.createSequentialGroup()
+                .addComponent(btnProjectHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
+        );
 
         pnlSidebar.add(pnlProjectHeader);
 
+        pnlProjectmenu.setBackground(new java.awt.Color(0, 0, 0));
         pnlProjectmenu.setVisible(false);
         pnlProjectmenu.setLayout(new javax.swing.BoxLayout(pnlProjectmenu, javax.swing.BoxLayout.Y_AXIS));
 
-        pnlAddproject.setBackground(new java.awt.Color(0, 0, 152));
-        pnlAddproject.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAddproject.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAddproject.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAddproject.setLayout(new java.awt.GridBagLayout());
+        pnlAddProject.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAddProject.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAddProject.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAddProject.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        lbAddproject.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAddproject.setForeground(new java.awt.Color(255, 255, 255));
-        lbAddproject.setText("新プロジェクト作成");
-        pnlAddproject.add(lbAddproject, new java.awt.GridBagConstraints());
+        btnAddDepartment1.setBackground(new java.awt.Color(0, 102, 102));
+        btnAddDepartment1.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAddDepartment1.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddDepartment1.setText("新プロジェクト作成");
+        btnAddDepartment1.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAddDepartment1.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAddDepartment1.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAddDepartment1.addActionListener(this::btnAddDepartment1ActionPerformed);
 
-        pnlProjectmenu.add(pnlAddproject);
+        javax.swing.GroupLayout pnlAddProjectLayout = new javax.swing.GroupLayout(pnlAddProject);
+        pnlAddProject.setLayout(pnlAddProjectLayout);
+        pnlAddProjectLayout.setHorizontalGroup(
+            pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddDepartment1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAddProjectLayout.setVerticalGroup(
+            pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddDepartment1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
-        pnlAllproject.setBackground(new java.awt.Color(0, 0, 152));
-        pnlAllproject.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAllproject.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAllproject.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAllproject.setLayout(new java.awt.GridBagLayout());
+        pnlProjectmenu.add(pnlAddProject);
 
-        lbAllproject.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAllproject.setForeground(new java.awt.Color(255, 255, 255));
-        lbAllproject.setText("プロジェクトリスト");
-        pnlAllproject.add(lbAllproject, new java.awt.GridBagConstraints());
+        pnlAllProject.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAllProject.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAllProject.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAllProject.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        pnlProjectmenu.add(pnlAllproject);
+        btnAllDepartment1.setBackground(new java.awt.Color(0, 102, 102));
+        btnAllDepartment1.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAllDepartment1.setForeground(new java.awt.Color(255, 255, 255));
+        btnAllDepartment1.setText("プロジェクトリスト");
+        btnAllDepartment1.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAllDepartment1.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAllDepartment1.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAllDepartment1.addActionListener(this::btnAllDepartment1ActionPerformed);
+
+        javax.swing.GroupLayout pnlAllProjectLayout = new javax.swing.GroupLayout(pnlAllProject);
+        pnlAllProject.setLayout(pnlAllProjectLayout);
+        pnlAllProjectLayout.setHorizontalGroup(
+            pnlAllProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllDepartment1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAllProjectLayout.setVerticalGroup(
+            pnlAllProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllDepartment1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pnlProjectmenu.add(pnlAllProject);
 
         pnlSidebar.add(pnlProjectmenu);
 
-        pnlTaskHeader.setBackground(new java.awt.Color(0, 0, 102));
+        pnlTaskHeader.setBackground(new java.awt.Color(0, 0, 0));
         pnlTaskHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlTaskHeader.setForeground(new java.awt.Color(255, 255, 255));
         pnlTaskHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlTaskHeader.setMinimumSize(new java.awt.Dimension(250, 30));
         pnlTaskHeader.setPreferredSize(new java.awt.Dimension(250, 30));
         pnlTaskHeader.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnlTaskHeaderMouseClicked(evt);
             }
         });
-        pnlTaskHeader.setLayout(new java.awt.GridBagLayout());
 
-        lbTaskHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        lbTaskHeader.setForeground(new java.awt.Color(255, 255, 255));
-        lbTaskHeader.setText("タスク管理");
-        pnlTaskHeader.add(lbTaskHeader, new java.awt.GridBagConstraints());
+        btnTaskHeader.setBackground(new java.awt.Color(0, 0, 102));
+        btnTaskHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnTaskHeader.setForeground(new java.awt.Color(255, 255, 255));
+        btnTaskHeader.setText("タスク管理");
+        btnTaskHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnTaskHeader.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnTaskHeader.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnTaskHeader.addActionListener(this::btnTaskHeaderActionPerformed);
+
+        javax.swing.GroupLayout pnlTaskHeaderLayout = new javax.swing.GroupLayout(pnlTaskHeader);
+        pnlTaskHeader.setLayout(pnlTaskHeaderLayout);
+        pnlTaskHeaderLayout.setHorizontalGroup(
+            pnlTaskHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnTaskHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlTaskHeaderLayout.setVerticalGroup(
+            pnlTaskHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlTaskHeaderLayout.createSequentialGroup()
+                .addComponent(btnTaskHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
+        );
 
         pnlSidebar.add(pnlTaskHeader);
 
+        pnlTaskmenu.setBackground(new java.awt.Color(0, 0, 0));
         pnlTaskmenu.setVisible(false);
         pnlTaskmenu.setLayout(new javax.swing.BoxLayout(pnlTaskmenu, javax.swing.BoxLayout.Y_AXIS));
 
-        pnlAddtask.setBackground(new java.awt.Color(0, 0, 152));
-        pnlAddtask.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAddtask.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAddtask.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAddtask.setLayout(new java.awt.GridBagLayout());
+        pnlAddTask.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAddTask.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAddTask.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAddTask.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        lbAddtask.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAddtask.setForeground(new java.awt.Color(255, 255, 255));
-        lbAddtask.setText("新タスク作成");
-        pnlAddtask.add(lbAddtask, new java.awt.GridBagConstraints());
+        btnAddTask.setBackground(new java.awt.Color(0, 102, 102));
+        btnAddTask.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAddTask.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddTask.setText("新タスク作成");
+        btnAddTask.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAddTask.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAddTask.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAddTask.addActionListener(this::btnAddTaskActionPerformed);
 
-        pnlTaskmenu.add(pnlAddtask);
+        javax.swing.GroupLayout pnlAddTaskLayout = new javax.swing.GroupLayout(pnlAddTask);
+        pnlAddTask.setLayout(pnlAddTaskLayout);
+        pnlAddTaskLayout.setHorizontalGroup(
+            pnlAddTaskLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAddTaskLayout.setVerticalGroup(
+            pnlAddTaskLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddTask, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
-        pnlAlltask.setBackground(new java.awt.Color(0, 0, 152));
-        pnlAlltask.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAlltask.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAlltask.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAlltask.setLayout(new java.awt.GridBagLayout());
+        pnlTaskmenu.add(pnlAddTask);
 
-        lbAlltask.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAlltask.setForeground(new java.awt.Color(255, 255, 255));
-        lbAlltask.setText("タスクリスト");
-        pnlAlltask.add(lbAlltask, new java.awt.GridBagConstraints());
+        pnlAllTask.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAllTask.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAllTask.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAllTask.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        pnlTaskmenu.add(pnlAlltask);
+        btnAllTask.setBackground(new java.awt.Color(0, 102, 102));
+        btnAllTask.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAllTask.setForeground(new java.awt.Color(255, 255, 255));
+        btnAllTask.setText("タスクリスト");
+        btnAllTask.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAllTask.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAllTask.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAllTask.addActionListener(this::btnAllTaskActionPerformed);
+
+        javax.swing.GroupLayout pnlAllTaskLayout = new javax.swing.GroupLayout(pnlAllTask);
+        pnlAllTask.setLayout(pnlAllTaskLayout);
+        pnlAllTaskLayout.setHorizontalGroup(
+            pnlAllTaskLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAllTaskLayout.setVerticalGroup(
+            pnlAllTaskLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllTask, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pnlTaskmenu.add(pnlAllTask);
 
         pnlSidebar.add(pnlTaskmenu);
 
-        pnlAttendanceHeader.setBackground(new java.awt.Color(0, 0, 102));
+        pnlAttendanceHeader.setBackground(new java.awt.Color(0, 0, 0));
         pnlAttendanceHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pnlAttendanceHeader.setForeground(new java.awt.Color(255, 255, 255));
         pnlAttendanceHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAttendanceHeader.setMinimumSize(new java.awt.Dimension(250, 30));
+        pnlAttendanceHeader.setPreferredSize(new java.awt.Dimension(250, 30));
         pnlAttendanceHeader.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnlAttendanceHeaderMouseClicked(evt);
             }
         });
-        pnlAttendanceHeader.setLayout(new java.awt.GridBagLayout());
 
-        lbAttendanceHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        lbAttendanceHeader.setForeground(new java.awt.Color(255, 255, 255));
-        lbAttendanceHeader.setText("勤怠管理");
-        pnlAttendanceHeader.add(lbAttendanceHeader, new java.awt.GridBagConstraints());
+        btnTaskHeader1.setBackground(new java.awt.Color(0, 0, 102));
+        btnTaskHeader1.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnTaskHeader1.setForeground(new java.awt.Color(255, 255, 255));
+        btnTaskHeader1.setText("勤怠管理");
+        btnTaskHeader1.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnTaskHeader1.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnTaskHeader1.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnTaskHeader1.addActionListener(this::btnTaskHeader1ActionPerformed);
+
+        javax.swing.GroupLayout pnlAttendanceHeaderLayout = new javax.swing.GroupLayout(pnlAttendanceHeader);
+        pnlAttendanceHeader.setLayout(pnlAttendanceHeaderLayout);
+        pnlAttendanceHeaderLayout.setHorizontalGroup(
+            pnlAttendanceHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnTaskHeader1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAttendanceHeaderLayout.setVerticalGroup(
+            pnlAttendanceHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlAttendanceHeaderLayout.createSequentialGroup()
+                .addComponent(btnTaskHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
+        );
 
         pnlSidebar.add(pnlAttendanceHeader);
 
-        pnlAttendancemenu.setDoubleBuffered(false);
-        pnlAttendancemenu.setFocusCycleRoot(true);
+        pnlAttendancemenu.setBackground(new java.awt.Color(0, 0, 0));
         pnlAttendancemenu.setMaximumSize(new java.awt.Dimension(250, 90));
+        pnlAttendancemenu.setMinimumSize(new java.awt.Dimension(250, 90));
         pnlAttendancemenu.setPreferredSize(new java.awt.Dimension(250, 90));
         pnlAttendancemenu.setVisible(false);
         pnlAttendancemenu.setLayout(new javax.swing.BoxLayout(pnlAttendancemenu, javax.swing.BoxLayout.Y_AXIS));
 
-        pnlAddattendance.setBackground(new java.awt.Color(0, 51, 153));
-        pnlAddattendance.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAddattendance.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAddattendance.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAddattendance.setLayout(new java.awt.GridBagLayout());
+        pnlAddAttendance.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAddAttendance.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAddAttendance.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAddAttendance.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        lbAddattendance.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAddattendance.setForeground(new java.awt.Color(255, 255, 255));
-        lbAddattendance.setText("勤務登録");
-        pnlAddattendance.add(lbAddattendance, new java.awt.GridBagConstraints());
+        btnAddAttendance.setBackground(new java.awt.Color(0, 102, 102));
+        btnAddAttendance.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAddAttendance.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddAttendance.setText("勤務登録");
+        btnAddAttendance.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAddAttendance.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAddAttendance.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAddAttendance.addActionListener(this::btnAddAttendanceActionPerformed);
 
-        pnlAttendancemenu.add(pnlAddattendance);
+        javax.swing.GroupLayout pnlAddAttendanceLayout = new javax.swing.GroupLayout(pnlAddAttendance);
+        pnlAddAttendance.setLayout(pnlAddAttendanceLayout);
+        pnlAddAttendanceLayout.setHorizontalGroup(
+            pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddAttendance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAddAttendanceLayout.setVerticalGroup(
+            pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddAttendance, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
-        pnlViewmonth.setBackground(new java.awt.Color(0, 51, 153));
-        pnlViewmonth.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlViewmonth.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlViewmonth.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlViewmonth.setLayout(new java.awt.GridBagLayout());
+        pnlAttendancemenu.add(pnlAddAttendance);
 
-        lbViewmonth.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbViewmonth.setForeground(new java.awt.Color(255, 255, 255));
-        lbViewmonth.setText("月別確認");
-        pnlViewmonth.add(lbViewmonth, new java.awt.GridBagConstraints());
+        pnlAttendanceMonth.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAttendanceMonth.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAttendanceMonth.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAttendanceMonth.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        pnlAttendancemenu.add(pnlViewmonth);
+        btnViewAttendanceMonth.setBackground(new java.awt.Color(0, 102, 102));
+        btnViewAttendanceMonth.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnViewAttendanceMonth.setForeground(new java.awt.Color(255, 255, 255));
+        btnViewAttendanceMonth.setText("月別確認");
+        btnViewAttendanceMonth.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnViewAttendanceMonth.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnViewAttendanceMonth.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnViewAttendanceMonth.addActionListener(this::btnViewAttendanceMonthActionPerformed);
 
-        pnlViewday.setBackground(new java.awt.Color(0, 51, 153));
-        pnlViewday.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlViewday.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlViewday.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlViewday.setLayout(new java.awt.GridBagLayout());
+        javax.swing.GroupLayout pnlAttendanceMonthLayout = new javax.swing.GroupLayout(pnlAttendanceMonth);
+        pnlAttendanceMonth.setLayout(pnlAttendanceMonthLayout);
+        pnlAttendanceMonthLayout.setHorizontalGroup(
+            pnlAttendanceMonthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnViewAttendanceMonth, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAttendanceMonthLayout.setVerticalGroup(
+            pnlAttendanceMonthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnViewAttendanceMonth, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
-        lbViewday.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbViewday.setForeground(new java.awt.Color(255, 255, 255));
-        lbViewday.setText("日別詳細確認");
-        pnlViewday.add(lbViewday, new java.awt.GridBagConstraints());
+        pnlAttendancemenu.add(pnlAttendanceMonth);
 
-        pnlAttendancemenu.add(pnlViewday);
+        pnlAttendanceDay.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAttendanceDay.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAttendanceDay.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAttendanceDay.setPreferredSize(new java.awt.Dimension(250, 30));
+
+        btnViewAttendanceDay.setBackground(new java.awt.Color(0, 102, 102));
+        btnViewAttendanceDay.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnViewAttendanceDay.setForeground(new java.awt.Color(255, 255, 255));
+        btnViewAttendanceDay.setText("日別詳細確認");
+        btnViewAttendanceDay.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnViewAttendanceDay.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnViewAttendanceDay.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnViewAttendanceDay.addActionListener(this::btnViewAttendanceDayActionPerformed);
+
+        javax.swing.GroupLayout pnlAttendanceDayLayout = new javax.swing.GroupLayout(pnlAttendanceDay);
+        pnlAttendanceDay.setLayout(pnlAttendanceDayLayout);
+        pnlAttendanceDayLayout.setHorizontalGroup(
+            pnlAttendanceDayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnViewAttendanceDay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAttendanceDayLayout.setVerticalGroup(
+            pnlAttendanceDayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnViewAttendanceDay, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pnlAttendancemenu.add(pnlAttendanceDay);
 
         pnlSidebar.add(pnlAttendancemenu);
 
-        pnlReport.setBackground(new java.awt.Color(0, 0, 102));
+        pnlReport.setBackground(new java.awt.Color(0, 0, 0));
         pnlReport.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pnlReport.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlReport.setLayout(new java.awt.GridBagLayout());
+        pnlReport.setMinimumSize(new java.awt.Dimension(250, 30));
+        pnlReport.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        lbReport.setBackground(new java.awt.Color(0, 0, 102));
-        lbReport.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        lbReport.setForeground(new java.awt.Color(255, 255, 255));
-        lbReport.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbReport.setText("レポート");
-        pnlReport.add(lbReport, new java.awt.GridBagConstraints());
+        btnReport.setBackground(new java.awt.Color(0, 0, 102));
+        btnReport.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnReport.setForeground(new java.awt.Color(255, 255, 255));
+        btnReport.setText("レポート");
+        btnReport.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnReport.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnReport.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnReport.addActionListener(this::btnReportActionPerformed);
+
+        javax.swing.GroupLayout pnlReportLayout = new javax.swing.GroupLayout(pnlReport);
+        pnlReport.setLayout(pnlReportLayout);
+        pnlReportLayout.setHorizontalGroup(
+            pnlReportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlReportLayout.setVerticalGroup(
+            pnlReportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnReport, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         pnlSidebar.add(pnlReport);
 
-        pnlMenuHeader.setBackground(new java.awt.Color(0, 0, 102));
+        pnlHolidayHeader.setBackground(new java.awt.Color(0, 0, 0));
+        pnlHolidayHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlHolidayHeader.setForeground(new java.awt.Color(255, 255, 255));
+        pnlHolidayHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlHolidayHeader.setPreferredSize(new java.awt.Dimension(254, 30));
+        pnlHolidayHeader.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pnlHolidayHeaderMouseClicked(evt);
+            }
+        });
+
+        btnHolidayHeader.setBackground(new java.awt.Color(0, 0, 102));
+        btnHolidayHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnHolidayHeader.setForeground(new java.awt.Color(255, 255, 255));
+        btnHolidayHeader.setText("休日");
+        btnHolidayHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnHolidayHeader.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnHolidayHeader.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnHolidayHeader.addActionListener(this::btnHolidayHeaderActionPerformed);
+
+        javax.swing.GroupLayout pnlHolidayHeaderLayout = new javax.swing.GroupLayout(pnlHolidayHeader);
+        pnlHolidayHeader.setLayout(pnlHolidayHeaderLayout);
+        pnlHolidayHeaderLayout.setHorizontalGroup(
+            pnlHolidayHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnHolidayHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlHolidayHeaderLayout.setVerticalGroup(
+            pnlHolidayHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlHolidayHeaderLayout.createSequentialGroup()
+                .addComponent(btnHolidayHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
+        );
+
+        pnlSidebar.add(pnlHolidayHeader);
+
+        pnlHolidaymenu.setBackground(new java.awt.Color(0, 0, 0));
+        pnlHolidaymenu.setVisible(false);
+        pnlHolidaymenu.setLayout(new javax.swing.BoxLayout(pnlHolidaymenu, javax.swing.BoxLayout.Y_AXIS));
+
+        pnlAddHoliday.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAddHoliday.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAddHoliday.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAddHoliday.setPreferredSize(new java.awt.Dimension(250, 30));
+
+        btnAddMenu1.setBackground(new java.awt.Color(0, 102, 102));
+        btnAddMenu1.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAddMenu1.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddMenu1.setText("新休日作成");
+        btnAddMenu1.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAddMenu1.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAddMenu1.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAddMenu1.addActionListener(this::btnAddMenu1ActionPerformed);
+
+        javax.swing.GroupLayout pnlAddHolidayLayout = new javax.swing.GroupLayout(pnlAddHoliday);
+        pnlAddHoliday.setLayout(pnlAddHolidayLayout);
+        pnlAddHolidayLayout.setHorizontalGroup(
+            pnlAddHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAddHolidayLayout.setVerticalGroup(
+            pnlAddHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddMenu1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pnlHolidaymenu.add(pnlAddHoliday);
+
+        pnlAllHoliday.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAllHoliday.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAllHoliday.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAllHoliday.setPreferredSize(new java.awt.Dimension(250, 30));
+
+        btnAllMenu1.setBackground(new java.awt.Color(0, 102, 102));
+        btnAllMenu1.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAllMenu1.setForeground(new java.awt.Color(255, 255, 255));
+        btnAllMenu1.setText("休日リスト");
+        btnAllMenu1.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAllMenu1.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAllMenu1.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAllMenu1.addActionListener(this::btnAllMenu1ActionPerformed);
+
+        javax.swing.GroupLayout pnlAllHolidayLayout = new javax.swing.GroupLayout(pnlAllHoliday);
+        pnlAllHoliday.setLayout(pnlAllHolidayLayout);
+        pnlAllHolidayLayout.setHorizontalGroup(
+            pnlAllHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAllHolidayLayout.setVerticalGroup(
+            pnlAllHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllMenu1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pnlHolidaymenu.add(pnlAllHoliday);
+
+        pnlSidebar.add(pnlHolidaymenu);
+
+        pnlMenuHeader.setBackground(new java.awt.Color(0, 0, 0));
         pnlMenuHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pnlMenuHeader.setForeground(new java.awt.Color(255, 255, 255));
         pnlMenuHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlMenuHeader.setPreferredSize(new java.awt.Dimension(254, 30));
         pnlMenuHeader.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnlMenuHeaderMouseClicked(evt);
             }
         });
-        pnlMenuHeader.setLayout(new java.awt.GridBagLayout());
 
-        lbMenuHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        lbMenuHeader.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuHeader.setText("メニュー");
-        pnlMenuHeader.add(lbMenuHeader, new java.awt.GridBagConstraints());
+        btnMenuHeader.setBackground(new java.awt.Color(0, 0, 102));
+        btnMenuHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnMenuHeader.setForeground(new java.awt.Color(255, 255, 255));
+        btnMenuHeader.setText("メニュー");
+        btnMenuHeader.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnMenuHeader.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnMenuHeader.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnMenuHeader.addActionListener(this::btnMenuHeaderActionPerformed);
+
+        javax.swing.GroupLayout pnlMenuHeaderLayout = new javax.swing.GroupLayout(pnlMenuHeader);
+        pnlMenuHeader.setLayout(pnlMenuHeaderLayout);
+        pnlMenuHeaderLayout.setHorizontalGroup(
+            pnlMenuHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnMenuHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlMenuHeaderLayout.setVerticalGroup(
+            pnlMenuHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlMenuHeaderLayout.createSequentialGroup()
+                .addComponent(btnMenuHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
+        );
 
         pnlSidebar.add(pnlMenuHeader);
 
+        pnlMenumenu.setBackground(new java.awt.Color(0, 0, 0));
         pnlMenumenu.setVisible(false);
         pnlMenumenu.setLayout(new javax.swing.BoxLayout(pnlMenumenu, javax.swing.BoxLayout.Y_AXIS));
 
-        pnlAddmenu.setBackground(new java.awt.Color(0, 51, 153));
-        pnlAddmenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAddmenu.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAddmenu.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAddmenu.setLayout(new java.awt.GridBagLayout());
+        pnlAddMenu.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAddMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAddMenu.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAddMenu.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        lbAddUser2.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAddUser2.setForeground(new java.awt.Color(255, 255, 255));
-        lbAddUser2.setText("新メニュー作成");
-        pnlAddmenu.add(lbAddUser2, new java.awt.GridBagConstraints());
+        btnAddMenu.setBackground(new java.awt.Color(0, 102, 102));
+        btnAddMenu.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAddMenu.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddMenu.setText("新メニュー作成");
+        btnAddMenu.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAddMenu.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAddMenu.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAddMenu.addActionListener(this::btnAddMenuActionPerformed);
 
-        pnlMenumenu.add(pnlAddmenu);
+        javax.swing.GroupLayout pnlAddMenuLayout = new javax.swing.GroupLayout(pnlAddMenu);
+        pnlAddMenu.setLayout(pnlAddMenuLayout);
+        pnlAddMenuLayout.setHorizontalGroup(
+            pnlAddMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAddMenuLayout.setVerticalGroup(
+            pnlAddMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAddMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
-        pnlAllmenu.setBackground(new java.awt.Color(0, 51, 153));
-        pnlAllmenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAllmenu.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAllmenu.setPreferredSize(new java.awt.Dimension(250, 30));
-        pnlAllmenu.setLayout(new java.awt.GridBagLayout());
+        pnlMenumenu.add(pnlAddMenu);
 
-        lbAllUser2.setFont(new java.awt.Font("Yu Gothic Medium", 0, 14)); // NOI18N
-        lbAllUser2.setForeground(new java.awt.Color(255, 255, 255));
-        lbAllUser2.setText("メニューリスト");
-        pnlAllmenu.add(lbAllUser2, new java.awt.GridBagConstraints());
+        pnlAllMenu.setBackground(new java.awt.Color(0, 51, 153));
+        pnlAllMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlAllMenu.setMaximumSize(new java.awt.Dimension(250, 30));
+        pnlAllMenu.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        pnlMenumenu.add(pnlAllmenu);
+        btnAllMenu.setBackground(new java.awt.Color(0, 102, 102));
+        btnAllMenu.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAllMenu.setForeground(new java.awt.Color(255, 255, 255));
+        btnAllMenu.setText("メニューリスト");
+        btnAllMenu.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAllMenu.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAllMenu.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAllMenu.addActionListener(this::btnAllMenuActionPerformed);
+
+        javax.swing.GroupLayout pnlAllMenuLayout = new javax.swing.GroupLayout(pnlAllMenu);
+        pnlAllMenu.setLayout(pnlAllMenuLayout);
+        pnlAllMenuLayout.setHorizontalGroup(
+            pnlAllMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlAllMenuLayout.setVerticalGroup(
+            pnlAllMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnAllMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pnlMenumenu.add(pnlAllMenu);
 
         pnlSidebar.add(pnlMenumenu);
 
-        // CHÈN DÒNG CODE GLUE - Gắn Panel Logout xuống cuối Sidebar
-        pnlSidebar.add(javax.swing.Box.createVerticalGlue());
+        pnlLogout.setBackground(new java.awt.Color(0, 0, 0));
+        pnlLogout.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlLogout.setMaximumSize(new java.awt.Dimension(250, 30));
 
-        pblLogout.setBackground(new java.awt.Color(255, 255, 255));
-        pblLogout.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pblLogout.setMaximumSize(new java.awt.Dimension(250, 30));
-        pblLogout.setLayout(new java.awt.GridBagLayout());
+        btnLogout.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnLogout.setText("ログアウト");
+        btnLogout.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnLogout.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnLogout.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnLogout.addActionListener(this::btnLogoutActionPerformed);
 
-        jLabel2.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        jLabel2.setText("ログアウト");
-        pblLogout.add(jLabel2, new java.awt.GridBagConstraints());
+        javax.swing.GroupLayout pnlLogoutLayout = new javax.swing.GroupLayout(pnlLogout);
+        pnlLogout.setLayout(pnlLogoutLayout);
+        pnlLogoutLayout.setHorizontalGroup(
+            pnlLogoutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlLogoutLayout.setVerticalGroup(
+            pnlLogoutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
-        pnlSidebar.add(pblLogout);
+        pnlSidebar.add(pnlLogout);
 
         getContentPane().add(pnlSidebar, java.awt.BorderLayout.LINE_START);
 
@@ -509,7 +929,7 @@ private void startClock() {
         pnlHeader.setPreferredSize(new java.awt.Dimension(100, 42));
         pnlHeader.setLayout(new java.awt.BorderLayout());
 
-        lbDatetime.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbDatetime.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbDatetime.setText("jLabel3");
         lbDatetime.setMaximumSize(new java.awt.Dimension(200, 60));
         lbDatetime.setPreferredSize(new java.awt.Dimension(250, 42));
@@ -525,47 +945,147 @@ private void startClock() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void pnlUserHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlUserHeaderMouseClicked
+    private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDashboardActionPerformed
+
+    private void UserHeaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UserHeaderActionPerformed
         pnlUsermenu.setVisible(!pnlUsermenu.isVisible());
-        // Yêu cầu Sidebar Panel tính toán lại bố cục do có sự thay đổi kích thước
-    pnlSidebar.revalidate(); 
-    pnlSidebar.repaint();
-    }//GEN-LAST:event_pnlUserHeaderMouseClicked
+        pnlSidebar.revalidate();
+        pnlSidebar.repaint();
+    }//GEN-LAST:event_UserHeaderActionPerformed
+
+    private void btnAllUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllUserActionPerformed
+
+    }//GEN-LAST:event_btnAllUserActionPerformed
+
+    private void btnAddUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddUserActionPerformed
+
+    }//GEN-LAST:event_btnAddUserActionPerformed
+
+    private void btnDepartmentHeaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDepartmentHeaderActionPerformed
+        pnlDepartmentmenu.setVisible(!pnlDepartmentmenu.isVisible());
+        pnlSidebar.revalidate();
+        pnlSidebar.repaint();
+    }//GEN-LAST:event_btnDepartmentHeaderActionPerformed
 
     private void pnlDepartmentHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlDepartmentHeaderMouseClicked
-        pnlDepartmentmenu.setVisible(!pnlDepartmentmenu.isVisible());
-    // Yêu cầu Sidebar Panel tính toán lại bố cục do có sự thay đổi kích thước
-    pnlSidebar.revalidate(); 
-    pnlSidebar.repaint();
+        // TODO add your handling code here:
     }//GEN-LAST:event_pnlDepartmentHeaderMouseClicked
 
-    private void pnlProjectHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlProjectHeaderMouseClicked
+    private void btnAddDepartmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDepartmentActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddDepartmentActionPerformed
+
+    private void btnAllDepartmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllDepartmentActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAllDepartmentActionPerformed
+
+    private void btnProjectHeaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProjectHeaderActionPerformed
         pnlProjectmenu.setVisible(!pnlProjectmenu.isVisible());
-    // Yêu cầu Sidebar Panel tính toán lại bố cục do có sự thay đổi kích thước
-    pnlSidebar.revalidate(); 
-    pnlSidebar.repaint();
+        pnlSidebar.revalidate();
+        pnlSidebar.repaint();
+    }//GEN-LAST:event_btnProjectHeaderActionPerformed
+
+    private void pnlProjectHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlProjectHeaderMouseClicked
+        // TODO add your handling code here:
     }//GEN-LAST:event_pnlProjectHeaderMouseClicked
 
+    private void btnAddDepartment1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDepartment1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddDepartment1ActionPerformed
+
+    private void btnAllDepartment1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllDepartment1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAllDepartment1ActionPerformed
+
+    private void btnTaskHeaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaskHeaderActionPerformed
+        pnlTaskmenu.setVisible(!pnlTaskmenu.isVisible());
+        pnlSidebar.revalidate();
+        pnlSidebar.repaint();
+    }//GEN-LAST:event_btnTaskHeaderActionPerformed
+
     private void pnlTaskHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlTaskHeaderMouseClicked
-            pnlTaskmenu.setVisible(!pnlTaskmenu.isVisible());
-    // Yêu cầu Sidebar Panel tính toán lại bố cục do có sự thay đổi kích thước
-    pnlSidebar.revalidate(); 
-    pnlSidebar.repaint();
+        // TODO add your handling code here:
     }//GEN-LAST:event_pnlTaskHeaderMouseClicked
 
-    private void pnlAttendanceHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlAttendanceHeaderMouseClicked
+    private void btnAddTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTaskActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddTaskActionPerformed
+
+    private void btnAllTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllTaskActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAllTaskActionPerformed
+
+    private void btnTaskHeader1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaskHeader1ActionPerformed
         pnlAttendancemenu.setVisible(!pnlAttendancemenu.isVisible());
-    // Yêu cầu Sidebar Panel tính toán lại bố cục do có sự thay đổi kích thước
-    pnlSidebar.revalidate(); 
-    pnlSidebar.repaint();
+        pnlSidebar.revalidate();
+        pnlSidebar.repaint();
+    }//GEN-LAST:event_btnTaskHeader1ActionPerformed
+
+    private void pnlAttendanceHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlAttendanceHeaderMouseClicked
+        // TODO add your handling code here:
     }//GEN-LAST:event_pnlAttendanceHeaderMouseClicked
 
-    private void pnlMenuHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlMenuHeaderMouseClicked
+    private void btnAddAttendanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddAttendanceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddAttendanceActionPerformed
+
+    private void btnViewAttendanceMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewAttendanceMonthActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnViewAttendanceMonthActionPerformed
+
+    private void btnViewAttendanceDayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewAttendanceDayActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnViewAttendanceDayActionPerformed
+
+    private void btnReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnReportActionPerformed
+
+    private void btnMenuHeaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuHeaderActionPerformed
         pnlMenumenu.setVisible(!pnlMenumenu.isVisible());
-    // Yêu cầu Sidebar Panel tính toán lại bố cục do có sự thay đổi kích thước
-    pnlSidebar.revalidate(); 
-    pnlSidebar.repaint();
+        pnlSidebar.revalidate();
+        pnlSidebar.repaint();
+    }//GEN-LAST:event_btnMenuHeaderActionPerformed
+
+    private void pnlMenuHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlMenuHeaderMouseClicked
+        // TODO add your handling code here:
     }//GEN-LAST:event_pnlMenuHeaderMouseClicked
+
+    private void btnAddMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddMenuActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddMenuActionPerformed
+
+    private void btnAllMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllMenuActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAllMenuActionPerformed
+
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLogoutActionPerformed
+
+    private void btnHolidayHeaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHolidayHeaderActionPerformed
+        pnlHolidaymenu.setVisible(!pnlHolidaymenu.isVisible());
+        pnlSidebar.revalidate();
+        pnlSidebar.repaint();
+    }//GEN-LAST:event_btnHolidayHeaderActionPerformed
+
+    private void pnlHolidayHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlHolidayHeaderMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pnlHolidayHeaderMouseClicked
+
+    private void btnAddMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddMenu1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddMenu1ActionPerformed
+
+    private void btnAllMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllMenu1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAllMenu1ActionPerformed
+
+    private void pnlLogOutActionPerformed(java.awt.event.ActionEvent evt) {
+        
+    }
 
     /**
      * @param args the command line arguments
@@ -573,9 +1093,6 @@ private void startClock() {
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -593,50 +1110,59 @@ private void startClock() {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton UserHeader;
+    private javax.swing.JButton btnAddAttendance;
+    private javax.swing.JButton btnAddDepartment;
+    private javax.swing.JButton btnAddDepartment1;
+    private javax.swing.JButton btnAddMenu;
+    private javax.swing.JButton btnAddMenu1;
+    private javax.swing.JButton btnAddTask;
+    private javax.swing.JButton btnAddUser;
+    private javax.swing.JButton btnAllDepartment;
+    private javax.swing.JButton btnAllDepartment1;
+    private javax.swing.JButton btnAllMenu;
+    private javax.swing.JButton btnAllMenu1;
+    private javax.swing.JButton btnAllTask;
+    private javax.swing.JButton btnAllUser;
+    private javax.swing.JButton btnDashboard;
+    private javax.swing.JButton btnDepartmentHeader;
+    private javax.swing.JButton btnHolidayHeader;
+    private javax.swing.JButton btnLogout;
+    private javax.swing.JButton btnMenuHeader;
+    private javax.swing.JButton btnProjectHeader;
+    private javax.swing.JButton btnReport;
+    private javax.swing.JButton btnTaskHeader;
+    private javax.swing.JButton btnTaskHeader1;
+    private javax.swing.JButton btnViewAttendanceDay;
+    private javax.swing.JButton btnViewAttendanceMonth;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel lbAddUser;
-    private javax.swing.JLabel lbAddUser2;
-    private javax.swing.JLabel lbAddattendance;
-    private javax.swing.JLabel lbAdddepartment;
-    private javax.swing.JLabel lbAddproject;
-    private javax.swing.JLabel lbAddtask;
-    private javax.swing.JLabel lbAllUser;
-    private javax.swing.JLabel lbAllUser2;
-    private javax.swing.JLabel lbAlldepartment;
-    private javax.swing.JLabel lbAllproject;
-    private javax.swing.JLabel lbAlltask;
-    private javax.swing.JLabel lbAttendanceHeader;
-    private javax.swing.JLabel lbDashboard;
     private javax.swing.JLabel lbDatetime;
-    private javax.swing.JLabel lbDepartmentHeader;
     private javax.swing.JLabel lbHeaderSidebar;
-    private javax.swing.JLabel lbMenuHeader;
-    private javax.swing.JLabel lbProjectHeader;
-    private javax.swing.JLabel lbReport;
-    private javax.swing.JLabel lbTaskHeader;
-    private javax.swing.JLabel lbUserHeader;
-    private javax.swing.JLabel lbViewday;
-    private javax.swing.JLabel lbViewmonth;
-    private javax.swing.JPanel pblLogout;
+    private javax.swing.JPanel pnlAddAttendance;
+    private javax.swing.JPanel pnlAddDepartment;
+    private javax.swing.JPanel pnlAddHoliday;
+    private javax.swing.JPanel pnlAddMenu;
+    private javax.swing.JPanel pnlAddProject;
+    private javax.swing.JPanel pnlAddTask;
     private javax.swing.JPanel pnlAddUser;
-    private javax.swing.JPanel pnlAddattendance;
-    private javax.swing.JPanel pnlAdddepartment;
-    private javax.swing.JPanel pnlAddmenu;
-    private javax.swing.JPanel pnlAddproject;
-    private javax.swing.JPanel pnlAddtask;
+    private javax.swing.JPanel pnlAllDeparment;
+    private javax.swing.JPanel pnlAllHoliday;
+    private javax.swing.JPanel pnlAllMenu;
+    private javax.swing.JPanel pnlAllProject;
+    private javax.swing.JPanel pnlAllTask;
     private javax.swing.JPanel pnlAllUser;
-    private javax.swing.JPanel pnlAlldepartment;
-    private javax.swing.JPanel pnlAllmenu;
-    private javax.swing.JPanel pnlAllproject;
-    private javax.swing.JPanel pnlAlltask;
+    private javax.swing.JPanel pnlAttendanceDay;
     private javax.swing.JPanel pnlAttendanceHeader;
+    private javax.swing.JPanel pnlAttendanceMonth;
     private javax.swing.JPanel pnlAttendancemenu;
     private javax.swing.JPanel pnlDashboard;
     private javax.swing.JPanel pnlDepartmentHeader;
     private javax.swing.JPanel pnlDepartmentmenu;
     private javax.swing.JPanel pnlHeader;
     private javax.swing.JPanel pnlHeaderSidebar;
+    private javax.swing.JPanel pnlHolidayHeader;
+    private javax.swing.JPanel pnlHolidaymenu;
+    private javax.swing.JPanel pnlLogout;
     private javax.swing.JPanel pnlMainContent;
     private javax.swing.JPanel pnlMenuHeader;
     private javax.swing.JPanel pnlMenumenu;
@@ -648,8 +1174,6 @@ private void startClock() {
     private javax.swing.JPanel pnlTaskmenu;
     private javax.swing.JPanel pnlUserHeader;
     private javax.swing.JPanel pnlUsermenu;
-    private javax.swing.JPanel pnlViewday;
-    private javax.swing.JPanel pnlViewmonth;
     private javax.swing.JPanel pnlWorkingArea;
     // End of variables declaration//GEN-END:variables
 }
