@@ -264,6 +264,9 @@ public class AllUser extends javax.swing.JFrame {
 
     private void btnAdduserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdduserActionPerformed
         // TODO add your handling code here:
+        AddUser addUserForm = new AddUser();
+        addUserForm.setVisible(true);
+        addUserForm.setLocationRelativeTo(null);
         
     }//GEN-LAST:event_btnAdduserActionPerformed
 
