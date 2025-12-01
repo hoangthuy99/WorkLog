@@ -1,6 +1,5 @@
 package com.ra.DAO.User;
 
-import com.ra.DTO.request.UserRequest;
 import com.ra.Model.Entity.Users;
 import com.ra.Utils.HibernateUtil;
 import org.hibernate.Session;
@@ -77,7 +76,11 @@ public class UserDAO implements IUserDAO {
     @Override
     public List<Users> findAll(String keyword, int page, int size) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM Users u WHERE u.userName LIKE :keyword OR u.email LIKE :keyword";
+            String hql = "SELECT DISTINCT u FROM Users u " +
+                    "LEFT JOIN FETCH u.tasks " +
+                    "LEFT JOIN FETCH u.department " +
+                    "LEFT JOIN FETCH u.role " +
+                    "WHERE u.userName LIKE :keyword OR u.email LIKE :keyword";
             return session.createQuery(hql, Users.class)
                     .setParameter("keyword", "%" + keyword + "%")
                     .setFirstResult((page - 1) * size)
@@ -91,7 +94,21 @@ public class UserDAO implements IUserDAO {
 
     @Override
     public Optional<Users> findById(int id) {
-        return Optional.empty();
+        //TODO: Tìm kiếm theo ID
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "SELECT u FROM Users u " +
+                    "LEFT JOIN FETCH u.tasks " + // load tasks
+                    "LEFT JOIN FETCH u.department " + // load department nếu muốn
+                    "LEFT JOIN FETCH u.role " +       // load role
+                    "WHERE u.id = :id";
+            Users user = session.createQuery(hql, Users.class)
+                    .setParameter("id", id)
+                    .uniqueResult();
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
 
