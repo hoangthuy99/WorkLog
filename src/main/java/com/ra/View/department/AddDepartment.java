@@ -42,15 +42,11 @@ public class AddDepartment extends javax.swing.JDialog {
 
         lbDepartmentname.setText("部署名");
 
-        txtDepartmentname.setText("jTextField1");
+        txtDepartmentname.addActionListener(this::txtDepartmentnameActionPerformed);
 
         lbProjectname.setText("プロジェクト名");
 
         lbTaskname.setText("タスク名");
-
-        cbbTaskname.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        cbbProjectname.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnCancel.setBackground(new java.awt.Color(255, 204, 0));
         btnCancel.setText("キャンセル");
@@ -113,6 +109,10 @@ public class AddDepartment extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtDepartmentnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDepartmentnameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDepartmentnameActionPerformed
 
     /**
      * @param args the command line arguments
