@@ -1,34 +1,41 @@
 package com.ra.Service.Project;
 
+import com.ra.DAO.Project.ProjectDAO;
 import com.ra.Model.Entity.Project;
 
 import java.util.List;
 
 public class ProjectIMPL implements ProjectService {
 
+    private final ProjectDAO projectDAO = new ProjectDAO();
+
     @Override
     public void create(Project project) {
+        projectDAO.create(project);
     }
+
     @Override
     public void update(Project project) {
+        projectDAO.update(project);
     }
+
     @Override
     public boolean deleteFindById(int id) {
-        return false;
+        return projectDAO.deleteFindById(id);
     }
 
     @Override
     public List<Project> findAll() {
-        return List.of();
+        return projectDAO.findAll();
     }
 
     @Override
     public List<Project> search(String keyword, int page, int size) {
-        return List.of();
+        return projectDAO.search(keyword, page, size);
     }
 
     @Override
     public Project findFindById(int id) {
-        return null;
+        return projectDAO.findFindById(id);
     }
 }

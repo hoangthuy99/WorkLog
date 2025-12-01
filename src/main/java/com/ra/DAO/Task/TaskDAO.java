@@ -1,5 +1,6 @@
 package com.ra.DAO.Task;
 
+import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Tasks;
 import com.ra.Utils.HibernateUtil;
 import org.hibernate.Hibernate;
@@ -131,6 +132,26 @@ public class TaskDAO implements ITaskDAO {
                     .uniqueResult();
 
             return Optional.ofNullable(task);
+        }
+    }
+
+    public List<Tasks> findTasksByDepartments(List<Department> departments) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            List<Integer> depIds = departments.stream()
+                    .map(Department::getId)
+                    .toList();
+
+            return session.createQuery(
+                            "SELECT t FROM Tasks t JOIN t.departments d WHERE d.id IN (:ids)",
+                            Tasks.class
+                    )
+                    .setParameter("ids", depIds)
+                    .list();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
         }
     }
 }
