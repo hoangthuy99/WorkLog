@@ -40,7 +40,7 @@ public class AttendanceMonth extends javax.swing.JFrame {
         cbMonth = new javax.swing.JComboBox<>();
         lbYear = new javax.swing.JLabel();
         lbMonth = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnFilter = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -73,7 +73,7 @@ public class AttendanceMonth extends javax.swing.JFrame {
 
         lbMonth.setText("月");
 
-        jButton1.setText("検索");
+        btnFilter.setText("フィルター");
 
         javax.swing.GroupLayout btnAttendanceDateLayout = new javax.swing.GroupLayout(btnAttendanceDate);
         btnAttendanceDate.setLayout(btnAttendanceDateLayout);
@@ -89,8 +89,8 @@ public class AttendanceMonth extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbMonth)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addComponent(btnFilter)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addComponent(txtAttendanceDate, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnSearch)
@@ -117,7 +117,7 @@ public class AttendanceMonth extends javax.swing.JFrame {
                             .addComponent(cbMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lbMonth)
                             .addComponent(lbYear)
-                            .addComponent(jButton1))
+                            .addComponent(btnFilter))
                         .addGap(19, 19, 19))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnAttendanceDateLayout.createSequentialGroup()
                         .addContainerGap()
@@ -201,11 +201,11 @@ public class AttendanceMonth extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btnAttendanceDate;
+    private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnView;
     private javax.swing.JComboBox<String> cbMonth;
     private javax.swing.JComboBox<String> cbYear;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbMonth;
     private javax.swing.JLabel lbYear;
