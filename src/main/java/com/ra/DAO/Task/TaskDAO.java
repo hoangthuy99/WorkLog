@@ -6,7 +6,6 @@ import com.ra.Utils.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -71,7 +70,9 @@ public class TaskDAO implements ITaskDAO {
                                     "LEFT JOIN FETCH t.projects " +
                                     "LEFT JOIN FETCH t.departments " +
                                     "LEFT JOIN FETCH t.users " +
-                                    "WHERE t.id = :id", Tasks.class)
+                                    "WHERE t.id = :id",
+                            Tasks.class
+                    )
                     .setParameter("id", id)
                     .uniqueResult();
 
@@ -99,12 +100,13 @@ public class TaskDAO implements ITaskDAO {
     public List<Tasks> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // 1 — Lấy danh sách Task thông thường, KHÔNG JOIN FETCH
+            // Không fetch nhiều bag tránh MultipleBagFetchException
             List<Tasks> tasks = session.createQuery(
-                    "FROM Tasks", Tasks.class
+                    "FROM Tasks",
+                    Tasks.class
             ).list();
 
-            // 2 — Tải thủ công các collection để tránh LazyInitializationException
+            // Tải thủ công quan hệ tránh LazyInitializationException
             for (Tasks t : tasks) {
                 Hibernate.initialize(t.getProjects());
                 Hibernate.initialize(t.getDepartments());
@@ -119,7 +121,6 @@ public class TaskDAO implements ITaskDAO {
         }
     }
 
-
     @Override
     public Optional<Tasks> findByName(String name) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -132,9 +133,16 @@ public class TaskDAO implements ITaskDAO {
                     .uniqueResult();
 
             return Optional.ofNullable(task);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
         }
     }
 
+    /**
+     * Lấy tất cả task thuộc danh sách department
+     */
     public List<Tasks> findTasksByDepartments(List<Department> departments) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
