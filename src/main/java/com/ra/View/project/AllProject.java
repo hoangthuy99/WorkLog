@@ -128,7 +128,7 @@ public class AllProject extends javax.swing.JFrame {
                 return;
             }
 
-            int id = (int) model.getValueAt(row, 0);
+            int id = (int) model.getValueAt(row, 1);
 
             // mở AddProject ở chế độ EDIT
             AddProject editForm = new AddProject(id);
