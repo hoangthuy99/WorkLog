@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,7 +41,7 @@ public class Attendance {
     private Integer overtimeMinutes; // tổng OT phút
     private Integer breakMinutes; // tổng phút nghỉ
 
-    private int isHoliday;
+    private boolean isHoliday;
     private int status; // đã xác nhận - từ chối - chờ duyệt
 
     private LocalDateTime deletedAt;
@@ -49,5 +50,21 @@ public class Attendance {
     // WorkRecord (1) - (n) WorkRecord
     @OneToMany(mappedBy = "attendance", cascade = CascadeType.ALL)
     private List<WorkRecord> workRecords;
+
+    public void calculateTimes() {
+        // Break time
+        this.breakMinutes = 60;
+
+        // Tổng phút làm việc
+        this.totalMinutes = (int) Duration.between(checkInTime, checkOutTime).toMinutes() - breakMinutes;
+
+        // Overtime
+        if (totalMinutes > 480) { // 8 tiếng
+            this.overtimeMinutes = totalMinutes - 480;
+        } else {
+            this.overtimeMinutes = 0;
+        }
+    }
+
 }
 
