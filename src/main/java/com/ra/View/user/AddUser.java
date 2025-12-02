@@ -403,74 +403,72 @@ public class AddUser extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cbRoleActionPerformed
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCancelActionPerformed
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
+        this.dispose();
+    }
+//GEN-LAST:event_btnCancelActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
+
         if (!validateForm()) {
-            return; // dừng lại, không tạo User
+            return;
         }
+
         String userName = txtUsername.getText();
         String password = new String(txtPassWord.getPassword());
         String roleName = cbRole.getSelectedItem().toString();
         String email = txtMail.getText();
         String fullName = txtEmployeename.getText();
         String departmentName = cbDepartment.getSelectedItem().toString();
-        List<Tasks> tasks = new ArrayList<>();
 
         try {
+
             Users user = new Users();
             user.setUserName(userName);
+
+            // Hash password
             PasswordHash passwordHash = new PasswordHash();
             String hashedPassword = passwordHash.hashPassword(password);
             user.setPassword(hashedPassword);
-            user.setFullName(fullName);
-            user.setUserCode(Users.generateUserCode());
-            user.setEmail(email);
-            user.getCreatedAt();
 
-            // Lấy Department theo tên
+            user.setFullName(fullName);
+            user.setEmail(email);
+            user.setUserCode(Users.generateUserCode());
+
+            // ----- Department -----
             DepartmentDAO departmentDAO = new DepartmentDAO();
             Department dept = departmentDAO.findFindByName(departmentName).orElse(null);
             if (dept != null) {
                 user.setDepartment(dept);
             }
 
-            // Role
+            // ----- Role -----
             AuthDAO roleDAO = new AuthDAO();
-            Optional<Roles> roleOpt = roleDAO.findByName(roleName); // tìm Role theo tên
-            if (roleOpt.isPresent()) {
-                user.setRole(roleOpt.get()); // gán Role vào User
-            } else {
+            Optional<Roles> roleOpt = roleDAO.findByName(roleName);
+            if (roleOpt.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Role không tồn tại!");
-                return; // dừng nếu role không có trong DB
+                return;
             }
+            user.setRole(roleOpt.get());
 
-            // Tasks
-            // Tasks
+            // ----- Tasks -----
             TaskDAO taskDAO = new TaskDAO();
-            // Lấy danh sách task đã chọn từ JList
-            List<String> selectedTasks = listTask.getSelectedValuesList();
-
-            // Luôn tạo list mới (tránh bị ghi đè vào list cũ đang dùng của Hibernate)
+            List<String> selected = listTask.getSelectedValuesList();
             List<Tasks> newTasks = new ArrayList<>();
 
-            for (String name : selectedTasks) {
-                taskDAO.findByName(name).ifPresent(newTasks::add);
+            for (String t : selected) {
+                taskDAO.findByName(t).ifPresent(newTasks::add);
             }
-            user.setTasks(tasks);
 
-            // Gọi Controller để lưu vào DB
+            user.setTasks(newTasks);   // <-- FIXED
+
+            // ----- Save -----
             userController.createUser(user);
 
             JOptionPane.showMessageDialog(this, "ユーザーが正常に作成されました！");
 
-           // Đóng form EditUser
             this.dispose();
 
-           // Mở lại form AllUser
             AllUser all = new AllUser();
             all.setVisible(true);
             all.setLocationRelativeTo(null);
@@ -479,7 +477,8 @@ public class AddUser extends javax.swing.JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
-    }//GEN-LAST:event_btnSaveActionPerformed
+    }
+//GEN-LAST:event_btnSaveActionPerformed
    
 
     /**

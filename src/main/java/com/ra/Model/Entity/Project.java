@@ -48,4 +48,10 @@ public class Project {
     public static String generateProjectCode() {
         return "PD" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8).toUpperCase();
     }
+
+    @Override
+    public String toString() {
+        return name;   // hiển thị tên dự án
+    }
+
 }

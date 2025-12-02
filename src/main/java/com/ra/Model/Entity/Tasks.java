@@ -47,5 +47,10 @@ public class Tasks {
     public static String generateTaskCode() {
         return "TS" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8).toUpperCase();
     }
+    @Override
+    public String toString() {
+        return this.name;    // hoặc getName()
+    }
+
 }
 
