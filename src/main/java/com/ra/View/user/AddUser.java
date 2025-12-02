@@ -407,7 +407,7 @@ public class AddUser extends javax.swing.JPanel {
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (!validateForm()) {
-            return; // dừng lại, không tạo User
+            return;
         }
 
         String userName = txtUsername.getText();
@@ -419,6 +419,7 @@ public class AddUser extends javax.swing.JPanel {
 
 
         try {
+
             Users user = new Users();
             user.setUserName(userName);
 
@@ -428,38 +429,38 @@ public class AddUser extends javax.swing.JPanel {
             user.setPassword(hashedPassword);
 
             user.setFullName(fullName);
-            user.setUserCode(Users.generateUserCode());
             user.setEmail(email);
             // user.getCreatedAt(); (Tạo trong logic DAO hoặc Model)
 
-            // Lấy Department theo tên
+            // ----- Department -----
             DepartmentDAO departmentDAO = new DepartmentDAO();
             Department dept = departmentDAO.findFindByName(departmentName).orElse(null);
             if (dept != null) {
                 user.setDepartment(dept);
             }
 
-            // Role
+            // ----- Role -----
             AuthDAO roleDAO = new AuthDAO();
-            Optional<Roles> roleOpt = roleDAO.findByName(roleName); // tìm Role theo tên
-            if (roleOpt.isPresent()) {
-                user.setRole(roleOpt.get()); // gán Role vào User
-            } else {
+            Optional<Roles> roleOpt = roleDAO.findByName(roleName);
+            if (roleOpt.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Role không tồn tại!");
-                return; // dừng nếu role không có trong DB
+                return;
             }
+            user.setRole(roleOpt.get());
 
             // Tasks
             TaskDAO taskDAO = new TaskDAO();
             List<String> selectedTasks = listTask.getSelectedValuesList();
             List<Tasks> newTasks = new ArrayList<>();
 
-            for (String name : selectedTasks) {
-                taskDAO.findByName(name).ifPresent(newTasks::add);
+            for (String t : selected) {
+                taskDAO.findByName(t).ifPresent(newTasks::add);
             }
             user.setTasks(newTasks);
 
-            // Gọi Controller để lưu vào DB
+            user.setTasks(newTasks);   // <-- FIXED
+
+            // ----- Save -----
             userController.createUser(user);
 
             JOptionPane.showMessageDialog(this, "ユーザーが正常に作成されました！");

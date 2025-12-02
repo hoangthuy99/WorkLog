@@ -4,6 +4,19 @@
  */
 package com.ra.View.attendance;
 
+import com.ra.Common.Constant;
+import com.ra.Controller.AttendanceController;
+import com.ra.Controller.HolidayController;
+import com.ra.DAO.Holiday.HolidayDAO;
+import com.ra.Model.Entity.Attendance;
+import com.ra.Model.Entity.Users;
+
+import javax.swing.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Date;
+
 /**
  *
  * @author admin
@@ -15,8 +28,14 @@ public class AddAttendance extends javax.swing.JFrame {
     /**
      * Creates new form AddAttendance
      */
-    public AddAttendance() {
+    private Users loggedInUser;
+
+    private Constant constant = new Constant();
+    private AttendanceController attendanceController = new AttendanceController();
+    public AddAttendance(Users user) {
         initComponents();
+        this.loggedInUser = user;
+        loadUserInfo();
     }
 
     /**
@@ -34,6 +53,7 @@ public class AddAttendance extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
+        jRadioButton1 = new javax.swing.JRadioButton();
         pnlAddAttendance = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
@@ -46,34 +66,72 @@ public class AddAttendance extends javax.swing.JFrame {
         lbCalendar = new javax.swing.JLabel();
         lbEarlieststarttime = new javax.swing.JLabel();
         lbLatestendtime = new javax.swing.JLabel();
-        txtEarlieststarttime = new javax.swing.JTextField();
-        txtLatestendtime = new javax.swing.JTextField();
         txtValidate = new javax.swing.JLabel();
         lbStarttime = new javax.swing.JLabel();
         lbEndtime = new javax.swing.JLabel();
-        txtBreaktimetotask = new javax.swing.JTextField();
-        txtStarttime = new javax.swing.JTextField();
-        txtEndtime = new javax.swing.JTextField();
-        txtWorktimetotask = new javax.swing.JTextField();
         lbBreaktimetotask = new javax.swing.JLabel();
-        lbWorktimetotask = new javax.swing.JLabel();
         lbProject = new javax.swing.JLabel();
         cbProject = new javax.swing.JComboBox<>();
         txtTask = new javax.swing.JComboBox<>();
         lbTaskName = new javax.swing.JLabel();
-        btnAdd = new javax.swing.JButton();
+        btnAddAttend = new javax.swing.JButton();
         jToggleButton1 = new javax.swing.JToggleButton();
         lbWorktime = new javax.swing.JLabel();
-        txtWorktime = new javax.swing.JTextField();
-        txtOvertime = new javax.swing.JTextField();
         lbOvertime = new javax.swing.JLabel();
-        txtBreaktime = new javax.swing.JTextField();
         lbBreaktime = new javax.swing.JLabel();
         btnCancel = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnSend = new javax.swing.JButton();
-        rdbtnHoliday = new javax.swing.JRadioButton();
+        rbHoliday = new javax.swing.JRadioButton();
         csDate = new com.toedter.calendar.JDateChooser();
+        fmCheckOut = fmCheckOut = new javax.swing.JFormattedTextField(
+            new javax.swing.text.DateFormatter(
+                new java.text.SimpleDateFormat("HH:mm")
+            )
+        );
+        ;
+        fmStart = fmCheckIn = new javax.swing.JFormattedTextField(
+            new javax.swing.text.DateFormatter(
+                new java.text.SimpleDateFormat("HH:mm")
+            )
+        );
+        ;
+        fmEnd = fmCheckIn = new javax.swing.JFormattedTextField(
+            new javax.swing.text.DateFormatter(
+                new java.text.SimpleDateFormat("HH:mm")
+            )
+        );
+        ;
+        fmCheckIn4 = fmCheckIn = new javax.swing.JFormattedTextField(
+            new javax.swing.text.DateFormatter(
+                new java.text.SimpleDateFormat("HH:mm")
+            )
+        );
+        ;
+        fmCheckIn5 = fmCheckIn = new javax.swing.JFormattedTextField(
+            new javax.swing.text.DateFormatter(
+                new java.text.SimpleDateFormat("HH:mm")
+            )
+        );
+        ;
+        fmCheckIn6 = fmCheckIn = new javax.swing.JFormattedTextField(
+            new javax.swing.text.DateFormatter(
+                new java.text.SimpleDateFormat("HH:mm")
+            )
+        );
+        ;
+        fmBreak = fmCheckIn = new javax.swing.JFormattedTextField(
+            new javax.swing.text.DateFormatter(
+                new java.text.SimpleDateFormat("HH:mm")
+            )
+        );
+        ;
+        fmCheckIn = fmCheckOut = new javax.swing.JFormattedTextField(
+            new javax.swing.text.DateFormatter(
+                new java.text.SimpleDateFormat("HH:mm")
+            )
+        );
+        ;
 
         popupMenu1.setLabel("popupMenu1");
 
@@ -92,6 +150,8 @@ public class AddAttendance extends javax.swing.JFrame {
 
         jLabel12.setText("jLabel11");
 
+        jRadioButton1.setText("jRadioButton1");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         tblAddAttendance.setModel(new javax.swing.table.DefaultTableModel(
@@ -102,7 +162,7 @@ public class AddAttendance extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "＋", "順番", "プロジェクト名", "タスク名", "開始", "終了", "休憩時間", "勤務時間"
+                "No", "順番", "プロジェクト名", "タスク名", "開始", "終了", "休憩時間", "勤務時間"
             }
         ));
         tblAddAttendance.setColumnSelectionAllowed(true);
@@ -129,11 +189,6 @@ public class AddAttendance extends javax.swing.JFrame {
 
         lbLatestendtime.setText("最終");
 
-        txtEarlieststarttime.setText("時/分");
-        txtEarlieststarttime.addActionListener(this::txtEarlieststarttimeActionPerformed);
-
-        txtLatestendtime.setText("時/分");
-
         txtValidate.setFont(new java.awt.Font("Yu Gothic", 0, 8)); // NOI18N
         txtValidate.setForeground(new java.awt.Color(255, 0, 51));
         txtValidate.setText("※未来の値入力不可");
@@ -142,21 +197,7 @@ public class AddAttendance extends javax.swing.JFrame {
 
         lbEndtime.setText("終了");
 
-        txtBreaktimetotask.setText("時/分");
-        txtBreaktimetotask.addActionListener(this::txtBreaktimetotaskActionPerformed);
-
-        txtStarttime.setText("時/分");
-        txtStarttime.addActionListener(this::txtStarttimeActionPerformed);
-
-        txtEndtime.setText("時/分");
-        txtEndtime.addActionListener(this::txtEndtimeActionPerformed);
-
-        txtWorktimetotask.setText("時/分");
-        txtWorktimetotask.addActionListener(this::txtWorktimetotaskActionPerformed);
-
         lbBreaktimetotask.setText("休憩");
-
-        lbWorktimetotask.setText("勤務時間");
 
         lbProject.setText("プロジェクト名");
 
@@ -164,9 +205,9 @@ public class AddAttendance extends javax.swing.JFrame {
 
         lbTaskName.setText("タスク名");
 
-        btnAdd.setBackground(new java.awt.Color(204, 255, 204));
-        btnAdd.setText("追加");
-        btnAdd.addActionListener(this::btnAddActionPerformed);
+        btnAddAttend.setBackground(new java.awt.Color(204, 255, 204));
+        btnAddAttend.setText("追加");
+        btnAddAttend.addActionListener(this::btnAddAttendActionPerformed);
 
         jToggleButton1.setBackground(new java.awt.Color(204, 204, 204));
         jToggleButton1.setText("合計");
@@ -174,14 +215,7 @@ public class AddAttendance extends javax.swing.JFrame {
 
         lbWorktime.setText("勤務時間");
 
-        txtWorktime.setText("時/分");
-        txtWorktime.addActionListener(this::txtWorktimeActionPerformed);
-
-        txtOvertime.setText("時/分");
-
         lbOvertime.setText("残業時間");
-
-        txtBreaktime.setText("時/分");
 
         lbBreaktime.setText("休憩時間");
 
@@ -192,9 +226,25 @@ public class AddAttendance extends javax.swing.JFrame {
         btnEdit.setText("削除");
 
         btnSend.setBackground(new java.awt.Color(153, 255, 153));
-        btnSend.setText("送信");
+        btnSend.setText("追加");
 
-        rdbtnHoliday.setText("休日");
+        rbHoliday.setText("休日");
+
+        fmCheckOut.addActionListener(this::fmCheckOutActionPerformed);
+
+        fmStart.addActionListener(this::fmStartActionPerformed);
+
+        fmEnd.addActionListener(this::fmEndActionPerformed);
+
+        fmCheckIn4.addActionListener(this::fmCheckIn4ActionPerformed);
+
+        fmCheckIn5.addActionListener(this::fmCheckIn5ActionPerformed);
+
+        fmCheckIn6.addActionListener(this::fmCheckIn6ActionPerformed);
+
+        fmBreak.addActionListener(this::fmBreakActionPerformed);
+
+        fmCheckIn.addActionListener(this::fmCheckInActionPerformed);
 
         javax.swing.GroupLayout pnlAddAttendanceLayout = new javax.swing.GroupLayout(pnlAddAttendance);
         pnlAddAttendance.setLayout(pnlAddAttendanceLayout);
@@ -205,89 +255,98 @@ public class AddAttendance extends javax.swing.JFrame {
                 .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAddAttendanceLayout.createSequentialGroup()
-                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
-                                .addGap(44, 44, 44)
-                                .addComponent(btnSend)
-                                .addGap(288, 288, 288)
-                                .addComponent(btnCancel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnEdit))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlAddAttendanceLayout.createSequentialGroup()
-                                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
-                                        .addGap(38, 38, 38)
-                                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
-                                                .addComponent(lbStarttime, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtStarttime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(lbEndtime, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtEndtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(47, 47, 47)
-                                                .addComponent(lbBreaktimetotask, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtBreaktimetotask, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addComponent(txtTask, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
-                                        .addComponent(lbProject)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(cbProject, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(lbTaskName, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(27, 27, 27)
-                                .addComponent(lbWorktimetotask)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtWorktimetotask, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(btnAdd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlAddAttendanceLayout.createSequentialGroup()
                                 .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(btnCreatecontent, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 584, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 514, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAddAttendanceLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnSend)
+                                .addGap(29, 29, 29)))
+                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 514, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                .addComponent(btnCancel)
+                                .addGap(33, 33, 33)
+                                .addComponent(btnEdit))))
+                    .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                .addComponent(lbProject)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cbProject, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                .addGap(50, 50, 50)
+                                .addComponent(lbStarttime, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fmStart, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(96, 96, 96)
+                                .addComponent(lbEndtime, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(lbTaskName, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fmEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtTask, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(14, 14, 14))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAddAttendanceLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lbBreaktimetotask, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)))
+                        .addComponent(fmBreak, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(481, 481, 481))
                     .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
                         .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnWorkinformation, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
-                                .addGap(33, 33, 33)
-                                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lbCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtValidate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtEmployeeName, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
-                                    .addComponent(csDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(30, 30, 30)
-                                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
-                                        .addComponent(lbEarlieststarttime, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtEarlieststarttime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(25, 25, 25)
-                                        .addComponent(lbLatestendtime, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtLatestendtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(rdbtnHoliday, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
                                 .addGap(35, 35, 35)
                                 .addComponent(lbWorktime)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtWorktime, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(61, 61, 61)
+                                .addGap(18, 18, 18)
+                                .addComponent(fmCheckIn4, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(59, 59, 59)
                                 .addComponent(lbOvertime)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtOvertime, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(56, 56, 56)
+                                .addGap(28, 28, 28)
+                                .addComponent(fmCheckIn5, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(44, 44, 44)
                                 .addComponent(lbBreaktime)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtBreaktime, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(fmCheckIn6, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 760, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                        .addComponent(lbEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtEmployeeName, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(37, 37, 37)
+                                        .addComponent(lbEarlieststarttime, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                        .addComponent(lbCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(38, 38, 38)
+                                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtValidate, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(csDate, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                        .addGap(28, 28, 28)
+                                        .addComponent(rbHoliday, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(fmCheckIn, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(106, 106, 106)
+                                .addComponent(lbLatestendtime, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(fmCheckOut, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnAddAttend, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -295,24 +354,29 @@ public class AddAttendance extends javax.swing.JFrame {
             pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
                 .addComponent(btnWorkinformation)
-                .addGap(7, 7, 7)
-                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtEmployeeName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lbEmployee))
-                    .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lbEarlieststarttime)
-                        .addComponent(lbLatestendtime)
-                        .addComponent(txtEarlieststarttime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtLatestendtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(rdbtnHoliday)
-                    .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(csDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lbCalendar)))
+                .addGap(4, 4, 4)
+                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(lbEmployee)
+                                .addComponent(txtEmployeeName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(lbEarlieststarttime)
+                                .addComponent(lbLatestendtime)
+                                .addComponent(fmCheckOut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(fmCheckIn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(csDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbCalendar)))
+                    .addComponent(rbHoliday))
                 .addGap(3, 3, 3)
-                .addComponent(txtValidate)
+                .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAddAttend, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(txtValidate)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -321,19 +385,16 @@ public class AddAttendance extends javax.swing.JFrame {
                 .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbStarttime)
                     .addComponent(lbEndtime)
-                    .addComponent(txtBreaktimetotask, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtStarttime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtWorktimetotask, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtEndtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbBreaktimetotask)
-                    .addComponent(lbWorktimetotask))
-                .addGap(17, 17, 17)
+                    .addComponent(fmStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fmEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fmBreak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
                 .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbProject)
                     .addComponent(cbProject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbTaskName)
-                    .addComponent(txtTask, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTask, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlAddAttendanceLayout.createSequentialGroup()
@@ -344,19 +405,19 @@ public class AddAttendance extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbWorktime)
-                    .addComponent(txtWorktime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbBreaktime)
-                    .addComponent(txtBreaktime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbOvertime)
-                    .addComponent(txtOvertime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fmCheckIn4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fmCheckIn5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fmCheckIn6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(28, 28, 28)
                 .addGroup(pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSend)
                     .addComponent(btnCancel)
-                    .addComponent(btnEdit)
-                    .addComponent(btnSend))
-                .addContainerGap(14, Short.MAX_VALUE))
+                    .addComponent(btnEdit))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -364,8 +425,8 @@ public class AddAttendance extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pnlAddAttendance, javax.swing.GroupLayout.PREFERRED_SIZE, 595, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(pnlAddAttendance, javax.swing.GroupLayout.PREFERRED_SIZE, 786, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -375,6 +436,110 @@ public class AddAttendance extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    private void loadUserInfo() {
+        try {
+            if (loggedInUser != null) {
+                // Tên nhân viên
+                txtEmployeeName.setText(loggedInUser.getUserName());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void validateTime(JFormattedTextField field) {
+        String value = field.getText().trim();
+
+        if (value.isEmpty()) return; // Cho phép bỏ trống (dùng cho checkout)
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            sdf.setLenient(false);
+            sdf.parse(value);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Định dạng giờ không hợp lệ (HH:mm).");
+            field.setText("");
+        }
+    }
+
+
+    private boolean validateForm() {
+
+        // ==== 1. Ngày làm việc không được sau hôm nay ====
+        Date today = new Date();
+        Date selectedDate = csDate.getDate();
+
+        if (selectedDate == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày làm việc!");
+            return false;
+        }
+
+        if (selectedDate.after(today)) {
+            JOptionPane.showMessageDialog(this, "Không được nhập ngày trong tương lai!");
+            return false;
+        }
+
+
+        // ==== 2. Check-in bắt buộc ====
+        String checkInStr = fmCheckIn.getText().trim();
+        if (checkInStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập giờ Check-in!");
+            return false;
+        }
+
+        // Parse check-in
+        LocalTime checkIn;
+        try {
+            checkIn = LocalTime.parse(checkInStr);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Giờ Check-in không hợp lệ!");
+            return false;
+        }
+
+
+        // ==== 3. Check-out: cho phép bỏ trống ====
+        String checkOutStr = fmCheckOut.getText().trim();
+        LocalTime checkOut = null;
+
+        if (!checkOutStr.isEmpty()) {
+            try {
+                checkOut = LocalTime.parse(checkOutStr);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Giờ Check-out không hợp lệ!");
+                return false;
+            }
+
+            // Nếu có nhập checkout → phải sau checkin
+            if (checkOut.isBefore(checkIn)) {
+                JOptionPane.showMessageDialog(this, "Check-out phải sau Check-in!");
+                return false;
+            }
+        }
+
+
+        // ==== 4. Validate Holiday ====
+        if (rbHoliday.isSelected()) {
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String selectedStr = sdf.format(selectedDate);
+
+            HolidayController holidayController = new HolidayController(new HolidayDAO());
+            boolean isHoliday = holidayController.findAll()
+                    .stream()
+                    .anyMatch(h -> sdf.format(h.getDateHoliday()).equals(selectedStr));
+
+            if (!isHoliday) {
+                JOptionPane.showMessageDialog(this,
+                        "Ngày này không phải ngày nghỉ! Không thể chọn Holiday.");
+                rbHoliday.setSelected(false);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     private void btnCreatecontentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreatecontentActionPerformed
         // TODO add your handling code here:
@@ -384,45 +549,115 @@ public class AddAttendance extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEmployeeNameActionPerformed
 
-    private void txtEarlieststarttimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEarlieststarttimeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEarlieststarttimeActionPerformed
-
     private void btnWorkinformationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWorkinformationActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnWorkinformationActionPerformed
 
-    private void txtBreaktimetotaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBreaktimetotaskActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBreaktimetotaskActionPerformed
 
-    private void txtStarttimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtStarttimeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtStarttimeActionPerformed
-
-    private void txtEndtimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEndtimeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEndtimeActionPerformed
-
-    private void txtWorktimetotaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtWorktimetotaskActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtWorktimetotaskActionPerformed
 
     private void txtTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTaskActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTaskActionPerformed
 
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+    private void btnAddAttendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddAttendActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnAddActionPerformed
+        if(!validateForm()){
+            return;
+        }
+        // Lấy dữ liệu từ form
+        String employeeName = txtEmployeeName.getText().trim();
+        txtEmployeeName.setEditable(false);
+        Date selectedDate = csDate.getDate();
+        String checkInStr = fmCheckIn.getText().trim();
+        String checkOutStr = fmCheckOut.getText().trim();
 
-    private void txtWorktimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtWorktimeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtWorktimeActionPerformed
+        // Check-in bắt buộc
+        if (checkInStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập giờ Check-in!");
+            return;
+        }
+
+
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            // Chuyển đổi dữ liệu
+            LocalDate date = LocalDate.parse(sdfDate.format(selectedDate));
+            LocalTime checkIn = LocalTime.parse(checkInStr);
+            LocalTime checkOut = LocalTime.parse(checkOutStr);
+
+            // Tạo entity Attendance
+            Attendance attendance = new Attendance();
+            attendance.setUser(loggedInUser);
+            attendance.setWorkDate(date);
+            attendance.setCheckInTime(checkIn);
+            attendance.setCheckOutTime(checkOut);
+
+            // Holiday
+            attendance.setHoliday(rbHoliday.isSelected());
+
+            // Tính toán các giá trị
+            attendance.calculateTimes();
+
+
+            // Mặc định status = 0 (pending)
+            attendance.setStatus(Constant.WORK_RECORD_STATUS_PENDING);
+
+            // Lưu DB
+            // attendanceController.createAttendance(attendance);
+
+            JOptionPane.showMessageDialog(this, "Attendance added successfully!");
+
+            // Reset form
+            txtEmployeeName.setText("");
+            csDate.setDate(null);
+            fmCheckIn.setText("");
+            fmCheckOut.setText("");
+            rbHoliday.setSelected(false);
+            attendanceController.create(attendance);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnAddAttendActionPerformed
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jToggleButton1ActionPerformed
+
+    private void fmCheckOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fmCheckOutActionPerformed
+        // TODO add your handling code here:
+        validateTime(fmCheckOut);
+    }//GEN-LAST:event_fmCheckOutActionPerformed
+
+    private void fmStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fmStartActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fmStartActionPerformed
+
+    private void fmEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fmEndActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fmEndActionPerformed
+
+    private void fmCheckIn4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fmCheckIn4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fmCheckIn4ActionPerformed
+
+    private void fmCheckIn5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fmCheckIn5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fmCheckIn5ActionPerformed
+
+    private void fmCheckIn6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fmCheckIn6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fmCheckIn6ActionPerformed
+
+    private void fmBreakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fmBreakActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fmBreakActionPerformed
+
+    private void fmCheckInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fmCheckInActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fmCheckInActionPerformed
 
     /**
      * @param args the command line arguments
@@ -445,12 +680,11 @@ public class AddAttendance extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AddAttendance().setVisible(true));
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnAddAttend;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnCreatecontent;
     private javax.swing.JButton btnEdit;
@@ -460,9 +694,18 @@ public class AddAttendance extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JComboBox<String> cbProject;
     private com.toedter.calendar.JDateChooser csDate;
+    private javax.swing.JFormattedTextField fmBreak;
+    private javax.swing.JFormattedTextField fmCheckIn;
+    private javax.swing.JFormattedTextField fmCheckIn4;
+    private javax.swing.JFormattedTextField fmCheckIn5;
+    private javax.swing.JFormattedTextField fmCheckIn6;
+    private javax.swing.JFormattedTextField fmCheckOut;
+    private javax.swing.JFormattedTextField fmEnd;
+    private javax.swing.JFormattedTextField fmStart;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
@@ -479,22 +722,12 @@ public class AddAttendance extends javax.swing.JFrame {
     private javax.swing.JLabel lbStarttime;
     private javax.swing.JLabel lbTaskName;
     private javax.swing.JLabel lbWorktime;
-    private javax.swing.JLabel lbWorktimetotask;
     private javax.swing.JPanel pnlAddAttendance;
     private java.awt.PopupMenu popupMenu1;
-    private javax.swing.JRadioButton rdbtnHoliday;
+    private javax.swing.JRadioButton rbHoliday;
     private javax.swing.JTable tblAddAttendance;
-    private javax.swing.JTextField txtBreaktime;
-    private javax.swing.JTextField txtBreaktimetotask;
-    private javax.swing.JTextField txtEarlieststarttime;
     private javax.swing.JTextField txtEmployeeName;
-    private javax.swing.JTextField txtEndtime;
-    private javax.swing.JTextField txtLatestendtime;
-    private javax.swing.JTextField txtOvertime;
-    private javax.swing.JTextField txtStarttime;
     private javax.swing.JComboBox<String> txtTask;
     private javax.swing.JLabel txtValidate;
-    private javax.swing.JTextField txtWorktime;
-    private javax.swing.JTextField txtWorktimetotask;
     // End of variables declaration//GEN-END:variables
 }

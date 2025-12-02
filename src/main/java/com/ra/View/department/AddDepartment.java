@@ -8,7 +8,7 @@ import com.ra.Model.Entity.Project;
 import com.ra.Model.Entity.Tasks;
 
 import javax.swing.*;
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.List;
 import java.awt.event.ActionEvent;
 
@@ -22,8 +22,10 @@ public class AddDepartment extends javax.swing.JPanel {
     private final ProjectController projectController = new ProjectController();
     private final TaskController taskController = new TaskController();
 
-    private List<Project> projectList = new ArrayList<>();
-    private List<Tasks> taskList = new ArrayList<>();
+    private Integer editingDepartmentId = null;
+    private Department editingDepartment;
+
+    private JDialog parentDialog;  // NEW
 
     public AddDepartment() {
         initComponents();
@@ -51,18 +53,29 @@ public class AddDepartment extends javax.swing.JPanel {
         for (Tasks t : taskList) {
             cbbTaskname.addItem(t.getName());
         }
+
+        txtDepartmentName.setText(editingDepartment.getName());
+
+        if (!editingDepartment.getProjects().isEmpty())
+            cbProject.setSelectedItem(editingDepartment.getProjects().get(0));
+
+        if (!editingDepartment.getTasks().isEmpty())
+            cbTask.setSelectedItem(editingDepartment.getTasks().get(0));
+
+        btnSave.setText("更新");
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lbDepartmentname = new javax.swing.JLabel();
-        txtDepartmentname = new javax.swing.JTextField();
-        lbProjectname = new javax.swing.JLabel();
-        lbTaskname = new javax.swing.JLabel();
-        cbbTaskname = new javax.swing.JComboBox<>();
-        cbbProjectname = new javax.swing.JComboBox<>();
+        pnlMain = new javax.swing.JPanel();
+        lbDepartmentName = new javax.swing.JLabel();
+        lbProject = new javax.swing.JLabel();
+        lbTask = new javax.swing.JLabel();
+        txtDepartmentName = new javax.swing.JTextField();
+        cbProject = new javax.swing.JComboBox<>();
+        cbTask = new javax.swing.JComboBox<>();
         btnCancel = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
 
@@ -77,11 +90,12 @@ public class AddDepartment extends javax.swing.JPanel {
 
         lbTaskname.setText("タスク名");
 
-        btnCancel.setBackground(new java.awt.Color(255, 204, 0));
+        btnCancel.setBackground(new java.awt.Color(255, 204, 204));
         btnCancel.setText("キャンセル");
 
-        btnSave.setBackground(new java.awt.Color(153, 255, 0));
+        btnSave.setBackground(new java.awt.Color(204, 204, 255));
         btnSave.setText("保存");
+        btnSave.addActionListener(evt -> saveDepartment());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -148,21 +162,19 @@ public class AddDepartment extends javax.swing.JPanel {
             return;
         }
 
-        int projIndex = cbbProjectname.getSelectedIndex();
-        List<Project> selectedProjects = new ArrayList<>();
-        if (projIndex >= 0) selectedProjects.add(projectList.get(projIndex));
+        Project project = (Project) cbProject.getSelectedItem();
+        Tasks task = (Tasks) cbTask.getSelectedItem();
 
-        int taskIndex = cbbTaskname.getSelectedIndex();
-        List<Tasks> selectedTasks = new ArrayList<>();
-        if (taskIndex >= 0) selectedTasks.add(taskList.get(taskIndex));
+        if (editingDepartmentId == null) {
 
-        Department d = new Department();
-        d.setName(depName);
-        d.setDepartmentCode(Department.generateDepartmentCode());
-        d.setProjects(selectedProjects);
-        d.setTasks(selectedTasks);
+            Department newDept = new Department();
+            newDept.setName(name);
+            newDept.setDepartmentCode(Department.generateDepartmentCode());
+            newDept.setProjects(List.of(project));
+            newDept.setTasks(List.of(task));
 
-        departmentController.create(d);
+            departmentController.create(newDept);
+            JOptionPane.showMessageDialog(this, "作成完了");
 
         JOptionPane.showMessageDialog(this, "部署が正常に作成されました！");
     }

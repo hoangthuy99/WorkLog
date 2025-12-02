@@ -51,7 +51,7 @@ public class AllDepartment extends javax.swing.JPanel {
         btnSearch.addActionListener(this::btnSearchActionPerformed);
 
         btnAddDepartment.setText("部署作成");
-        btnAddDepartment.addActionListener(this::btnAddDepartmentActionPerformed);
+        btnAddDepartment.addActionListener(e -> openAddDepartment());
 
         tblAddDepartment.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -74,6 +74,9 @@ public class AllDepartment extends javax.swing.JPanel {
             }
         });
         scrAdddepartment.setViewportView(tblAddDepartment);
+
+        tblAddDepartment.getColumnModel().getColumn(0).setMinWidth(0);
+        tblAddDepartment.getColumnModel().getColumn(0).setMaxWidth(0);
 
         btnEdit.setText("編集");
 
@@ -127,8 +130,13 @@ public class AllDepartment extends javax.swing.JPanel {
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {
         String keyword = txtSearch.getText().trim();
-        List<Department> list = departmentController.search(keyword);
-        loadTable(list);
+        loadTable(departmentController.search(keyword));
+    }
+
+    private void openAddDepartment() {
+        AddDepartment form = new AddDepartment(null, true);
+        form.showDialog();
+        loadTable(departmentController.findAll());
     }
 
     private void btnAddDepartmentActionPerformed(java.awt.event.ActionEvent evt) {
@@ -186,40 +194,43 @@ public class AllDepartment extends javax.swing.JPanel {
         }
     }
 
+    private void deleteDepartment() {
+        int row = tblAddDepartment.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "削除する行を選択してください！");
+            return;
+        }
+
+        int id = (int) tblAddDepartment.getValueAt(row, 0);
 
     // 5. CHUYỂN PHƯƠNG THỨC LOAD TABLE
 
-    private void loadTable(List<Department> list) {
+            departmentController.delete(id);
+            loadTable(departmentController.findAll());
+        }
+    }
 
-        String[] columns = {"部署名", "プロジェクト名", "タスク名"};
-        DefaultTableModel model = new DefaultTableModel(columns, 0);
+    private void loadTable(List<Department> list) {
+        DefaultTableModel model = (DefaultTableModel) tblAddDepartment.getModel();
+        model.setRowCount(0);
 
         for (Department d : list) {
 
-            // Project names
-            String projectNames = "";
-            if (d.getProjects() != null) {
-                projectNames = d.getProjects().stream()
-                        .map(Project::getName)
-                        .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
-            }
+            String projectNames = (d.getProjects() == null) ? "" :
+                    d.getProjects().stream().map(Project::getName)
+                            .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
 
-            // Task names
-            String taskNames = "";
-            if (d.getTasks() != null) {
-                taskNames = d.getTasks().stream()
-                        .map(Tasks::getName)
-                        .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
-            }
+            String taskNames = (d.getTasks() == null) ? "" :
+                    d.getTasks().stream().map(Tasks::getName)
+                            .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
 
             model.addRow(new Object[]{
+                    d.getId(),
                     d.getName(),
                     projectNames,
                     taskNames
             });
         }
-
-        tblAddDepartment.setModel(model);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -3,6 +3,7 @@ package com.ra.View.login;
 import com.ra.Controller.UserController;
 import com.ra.Model.Entity.Users;
 import com.ra.Sercurity.PasswordHash;
+import com.ra.View.attendance.AddAttendance;
 import com.ra.View.dashboard.MainDashboard;
 
 import javax.swing.*;
@@ -118,7 +119,6 @@ public class LoginScreen extends javax.swing.JFrame {
         }
     }
 
-    // ======================== LOGIN LOGIC ======================== //
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {
 
@@ -154,8 +154,13 @@ public class LoginScreen extends javax.swing.JFrame {
         System.out.println("User found: " + user.getUserName());
         System.out.println("User role: " + user.getRole().getName());
 
-        new MainDashboard().setVisible(true);
-        this.dispose();
+        if (user != null) {
+            AddAttendance attendance = new AddAttendance(user);
+            attendance.setVisible(true);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Sai tài khoản hoặc mật khẩu");
+        }
     }
 
 
