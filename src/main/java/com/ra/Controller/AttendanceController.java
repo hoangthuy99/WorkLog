@@ -1,24 +1,23 @@
 package com.ra.Controller;
 
-import com.ra.DAO.Attendance.IAttendanceDAO;
+import com.ra.Common.Constant;
 import com.ra.DAO.Attendance.AttendanceDAO;
-import com.ra.DTO.request.AttendanceRequest;
+import com.ra.Model.Entity.Attendance;
 
 import java.util.List;
-import java.util.Optional;
 
 public class AttendanceController {
 
-    private final IAttendanceDAO attendanceDAO;
+    private final AttendanceDAO attendanceDAO;
 
     public AttendanceController() {
         this.attendanceDAO = new AttendanceDAO();
     }
 
     // Create
-    public boolean create(AttendanceRequest req) {
+    public boolean create(Attendance attendance) {
         try {
-            attendanceDAO.create(req);
+            attendanceDAO.create(attendance);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -27,7 +26,7 @@ public class AttendanceController {
     }
 
     // Update
-    public boolean update(AttendanceRequest req) {
+    public boolean update(Attendance req) {
         try {
             attendanceDAO.update(req);
             return true;
@@ -39,33 +38,26 @@ public class AttendanceController {
 
     // Delete
     public boolean delete(int id) {
-        try {
-            Optional<AttendanceRequest> a = attendanceDAO.findFindById(id);
-            if (a.isEmpty()) return false;
-            return attendanceDAO.delete(a.get());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return attendanceDAO.delete(id);
     }
 
     // Find all
-    public List<AttendanceRequest> findAll() {
+    public List<Attendance> findAll() {
         return attendanceDAO.findAll();
     }
 
     // Search by keyword (userName)
-    public List<AttendanceRequest> search(String keyword, int page, int size) {
+    public List<Attendance> search(String keyword, int page, int size) {
         return attendanceDAO.search(keyword, page, size);
     }
 
     // Find by ID
-    public Optional<AttendanceRequest> findById(int id) {
+    public List<Attendance> findById(int id) {
         return attendanceDAO.findFindById(id);
     }
 
     // Find by username
-    public AttendanceRequest findByUsername(String username) {
+    public Attendance findByUsername(String username) {
         return attendanceDAO.findByUsername(username);
     }
 }
