@@ -1,7 +1,19 @@
 package com.ra.View.dashboard;
 
+// --------------- Import các JPanel mới bắt đầu -------------------------
 import com.ra.View.user.AddUser;
 import com.ra.View.user.AllUser;
+import com.ra.View.department.AddDepartment;
+import com.ra.View.department.AllDepartment;
+import com.ra.View.project.AddProject;
+import com.ra.View.project.AllProject;
+import com.ra.View.task.AddTask;
+import com.ra.View.task.AllTask;
+import com.ra.View.menu.AddMenu;
+import com.ra.View.menu.AllMenu;
+
+// --------------- Import các JPanel mới kết thúc -------------------------
+
 
 import java.time.ZonedDateTime; // Để lấy thời gian hiện tại
 import java.time.format.DateTimeFormatter; // Để định dạng chuỗi
@@ -9,17 +21,25 @@ import java.util.Locale; // Để định dạng theo Locale Nhật Bản
 import javax.swing.Timer; // Để cập nhật thời gian mỗi giây
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Color;
-import java.awt.Font;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.Box;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
 
 public class MainDashboard extends javax.swing.JFrame {
+
+    // ---------- Thêm phương thức showPanel -----------------
+    private void showPanel(javax.swing.JPanel panel) {
+
+        // 1. Xóa tất cả các component hiện có trong Working Area
+        pnlWorkingArea.removeAll();
+
+        // 2. Thiết lập Layout cho Working Area (quan trọng)
+        pnlWorkingArea.setLayout(new java.awt.BorderLayout());
+
+        // 3. Thêm JPanel mới vào Working Area
+        pnlWorkingArea.add(panel, java.awt.BorderLayout.CENTER);
+
+        // 4. Cập nhật giao diện để hiển thị Panel mới
+        pnlWorkingArea.revalidate();
+        pnlWorkingArea.repaint();
+    }
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainDashboard.class.getName());
 
@@ -80,9 +100,9 @@ public class MainDashboard extends javax.swing.JFrame {
         btnProjectHeader = new javax.swing.JButton();
         pnlProjectmenu = new javax.swing.JPanel();
         pnlAddProject = new javax.swing.JPanel();
-        btnAddDepartment1 = new javax.swing.JButton();
+        btnAddProject = new javax.swing.JButton();
         pnlAllProject = new javax.swing.JPanel();
-        btnAllDepartment1 = new javax.swing.JButton();
+        btnAllProject = new javax.swing.JButton();
         pnlTaskHeader = new javax.swing.JPanel();
         btnTaskHeader = new javax.swing.JButton();
         pnlTaskmenu = new javax.swing.JPanel();
@@ -126,6 +146,9 @@ public class MainDashboard extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ダッシュボード");
+        setMaximumSize(new java.awt.Dimension(1000, 800));
+        setMinimumSize(new java.awt.Dimension(1000, 800));
+        setPreferredSize(new java.awt.Dimension(1000, 800));
 
         pnlSidebar.setBackground(new java.awt.Color(0, 0, 0));
         pnlSidebar.setPreferredSize(new java.awt.Dimension(250, 300));
@@ -405,24 +428,24 @@ public class MainDashboard extends javax.swing.JFrame {
         pnlAddProject.setMaximumSize(new java.awt.Dimension(250, 30));
         pnlAddProject.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        btnAddDepartment1.setBackground(new java.awt.Color(0, 102, 102));
-        btnAddDepartment1.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        btnAddDepartment1.setForeground(new java.awt.Color(255, 255, 255));
-        btnAddDepartment1.setText("新プロジェクト作成");
-        btnAddDepartment1.setMaximumSize(new java.awt.Dimension(250, 30));
-        btnAddDepartment1.setMinimumSize(new java.awt.Dimension(250, 30));
-        btnAddDepartment1.setPreferredSize(new java.awt.Dimension(250, 30));
-        btnAddDepartment1.addActionListener(this::btnAddDepartment1ActionPerformed);
+        btnAddProject.setBackground(new java.awt.Color(0, 102, 102));
+        btnAddProject.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAddProject.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddProject.setText("新プロジェクト作成");
+        btnAddProject.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAddProject.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAddProject.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAddProject.addActionListener(this::btnAddProjectActionPerformed);
 
         javax.swing.GroupLayout pnlAddProjectLayout = new javax.swing.GroupLayout(pnlAddProject);
         pnlAddProject.setLayout(pnlAddProjectLayout);
         pnlAddProjectLayout.setHorizontalGroup(
             pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAddDepartment1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnAddProject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAddProjectLayout.setVerticalGroup(
             pnlAddProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAddDepartment1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnAddProject, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlProjectmenu.add(pnlAddProject);
@@ -432,24 +455,24 @@ public class MainDashboard extends javax.swing.JFrame {
         pnlAllProject.setMaximumSize(new java.awt.Dimension(250, 30));
         pnlAllProject.setPreferredSize(new java.awt.Dimension(250, 30));
 
-        btnAllDepartment1.setBackground(new java.awt.Color(0, 102, 102));
-        btnAllDepartment1.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        btnAllDepartment1.setForeground(new java.awt.Color(255, 255, 255));
-        btnAllDepartment1.setText("プロジェクトリスト");
-        btnAllDepartment1.setMaximumSize(new java.awt.Dimension(250, 30));
-        btnAllDepartment1.setMinimumSize(new java.awt.Dimension(250, 30));
-        btnAllDepartment1.setPreferredSize(new java.awt.Dimension(250, 30));
-        btnAllDepartment1.addActionListener(this::btnAllDepartment1ActionPerformed);
+        btnAllProject.setBackground(new java.awt.Color(0, 102, 102));
+        btnAllProject.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
+        btnAllProject.setForeground(new java.awt.Color(255, 255, 255));
+        btnAllProject.setText("プロジェクトリスト");
+        btnAllProject.setMaximumSize(new java.awt.Dimension(250, 30));
+        btnAllProject.setMinimumSize(new java.awt.Dimension(250, 30));
+        btnAllProject.setPreferredSize(new java.awt.Dimension(250, 30));
+        btnAllProject.addActionListener(this::btnAllProjectActionPerformed);
 
         javax.swing.GroupLayout pnlAllProjectLayout = new javax.swing.GroupLayout(pnlAllProject);
         pnlAllProject.setLayout(pnlAllProjectLayout);
         pnlAllProjectLayout.setHorizontalGroup(
             pnlAllProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAllDepartment1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnAllProject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAllProjectLayout.setVerticalGroup(
             pnlAllProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAllDepartment1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(btnAllProject, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlProjectmenu.add(pnlAllProject);
@@ -937,6 +960,7 @@ public class MainDashboard extends javax.swing.JFrame {
 
         pnlMainContent.add(pnlHeader, java.awt.BorderLayout.PAGE_START);
 
+        pnlWorkingArea.setBackground(new java.awt.Color(255, 255, 255));
         pnlWorkingArea.setLayout(new java.awt.CardLayout());
         pnlMainContent.add(pnlWorkingArea, java.awt.BorderLayout.CENTER);
 
@@ -944,6 +968,7 @@ public class MainDashboard extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
 
     private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
         // TODO add your handling code here:
@@ -956,11 +981,13 @@ public class MainDashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_UserHeaderActionPerformed
 
     private void btnAllUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllUserActionPerformed
-
+        // Gọi phương thức showPanel và truyền vào JPanel
+        showPanel(new AllUser());
     }//GEN-LAST:event_btnAllUserActionPerformed
 
     private void btnAddUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddUserActionPerformed
-
+        // Gọi phương thức showPanel và truyền vào JPanel
+        showPanel(new AddUser());
     }//GEN-LAST:event_btnAddUserActionPerformed
 
     private void btnDepartmentHeaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDepartmentHeaderActionPerformed
@@ -974,11 +1001,13 @@ public class MainDashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_pnlDepartmentHeaderMouseClicked
 
     private void btnAddDepartmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDepartmentActionPerformed
-        // TODO add your handling code here:
+        // Gọi phương thức showPanel và truyền vào JPanel
+        showPanel(new AddDepartment());
     }//GEN-LAST:event_btnAddDepartmentActionPerformed
 
     private void btnAllDepartmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllDepartmentActionPerformed
-        // TODO add your handling code here:
+        // Gọi phương thức showPanel và truyền vào JPanel
+        showPanel(new AllDepartment());
     }//GEN-LAST:event_btnAllDepartmentActionPerformed
 
     private void btnProjectHeaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProjectHeaderActionPerformed
@@ -991,13 +1020,15 @@ public class MainDashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_pnlProjectHeaderMouseClicked
 
-    private void btnAddDepartment1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDepartment1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAddDepartment1ActionPerformed
+    private void btnAddProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProjectActionPerformed
+        // Gọi phương thức showPanel và truyền vào JPanel
+        showPanel(new AddProject());
+    }//GEN-LAST:event_btnAddProjectActionPerformed
 
-    private void btnAllDepartment1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllDepartment1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAllDepartment1ActionPerformed
+    private void btnAllProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllProjectActionPerformed
+        // Gọi phương thức showPanel và truyền vào JPanel
+        showPanel(new AllProject());
+    }//GEN-LAST:event_btnAllProjectActionPerformed
 
     private void btnTaskHeaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaskHeaderActionPerformed
         pnlTaskmenu.setVisible(!pnlTaskmenu.isVisible());
@@ -1010,11 +1041,13 @@ public class MainDashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_pnlTaskHeaderMouseClicked
 
     private void btnAddTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTaskActionPerformed
-        // TODO add your handling code here:
+        // Gọi phương thức showPanel và truyền vào JPanel
+        showPanel(new AddTask());
     }//GEN-LAST:event_btnAddTaskActionPerformed
 
     private void btnAllTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllTaskActionPerformed
-        // TODO add your handling code here:
+        // Gọi phương thức showPanel và truyền vào JPanel
+        showPanel(new AllTask());
     }//GEN-LAST:event_btnAllTaskActionPerformed
 
     private void btnTaskHeader1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaskHeader1ActionPerformed
@@ -1054,11 +1087,13 @@ public class MainDashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_pnlMenuHeaderMouseClicked
 
     private void btnAddMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddMenuActionPerformed
-        // TODO add your handling code here:
+        // Gọi phương thức showPanel và truyền vào JPanel
+        showPanel(new AddMenu());
     }//GEN-LAST:event_btnAddMenuActionPerformed
 
     private void btnAllMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAllMenuActionPerformed
-        // TODO add your handling code here:
+        // Gọi phương thức showPanel và truyền vào JPanel
+        showPanel(new AllMenu());
     }//GEN-LAST:event_btnAllMenuActionPerformed
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
@@ -1113,15 +1148,15 @@ public class MainDashboard extends javax.swing.JFrame {
     private javax.swing.JButton UserHeader;
     private javax.swing.JButton btnAddAttendance;
     private javax.swing.JButton btnAddDepartment;
-    private javax.swing.JButton btnAddDepartment1;
     private javax.swing.JButton btnAddMenu;
     private javax.swing.JButton btnAddMenu1;
+    private javax.swing.JButton btnAddProject;
     private javax.swing.JButton btnAddTask;
     private javax.swing.JButton btnAddUser;
     private javax.swing.JButton btnAllDepartment;
-    private javax.swing.JButton btnAllDepartment1;
     private javax.swing.JButton btnAllMenu;
     private javax.swing.JButton btnAllMenu1;
+    private javax.swing.JButton btnAllProject;
     private javax.swing.JButton btnAllTask;
     private javax.swing.JButton btnAllUser;
     private javax.swing.JButton btnDashboard;
