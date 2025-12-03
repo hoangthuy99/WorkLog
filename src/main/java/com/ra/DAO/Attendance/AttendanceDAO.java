@@ -3,11 +3,14 @@ package com.ra.DAO.Attendance;
 
 import com.ra.DAO.Record.RecordDAO;
 import com.ra.Model.Entity.Attendance;
+import com.ra.Model.Entity.WorkRecord;
 import com.ra.Service.WorkRecord.WorkRecordIMPL;
 import com.ra.Utils.HibernateUtil;
+import jakarta.persistence.EntityManager;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +41,7 @@ public class AttendanceDAO implements IAttendanceDAO {
             Session session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
             // Thêm attendenceRequest vào DB
-            session.save(attendance);
+            session.merge(attendance);
             // Commit transaction
             transaction.commit();
             System.out.println("Attendence created successfully!");
@@ -134,7 +137,37 @@ public class AttendanceDAO implements IAttendanceDAO {
         }
     }
 
+    @Override
+    public List<WorkRecord> findByAttendanceId(int attendanceId) {
+       //TODO:Lấy danh sách bản ghi công việc theo attendanceId
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "FROM WorkRecord wr WHERE wr.attendance.id = :attendanceId";
+            List<WorkRecord> workRecords = session.createQuery(hql, WorkRecord.class)
+                    .setParameter("attendanceId", attendanceId)
+                    .list();
+            return workRecords;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
+    @Override
+    public List<Attendance> findByUserAndDate(int userId, LocalDate today) {
+        //TODO:Tìm kiếm dữ liệu điểm danh theo userId và date
+       try {
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            String hql = "FROM Attendance a WHERE a.user.id = :userId AND a.workDate = :workDate";
+            List<Attendance> attendances = session.createQuery(hql, Attendance.class)
+                    .setParameter("userId", userId)
+                    .setParameter("workDate", today)
+                    .list();
+            return attendances;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+       }
+    }
 
 
 }

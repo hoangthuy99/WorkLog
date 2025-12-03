@@ -110,13 +110,7 @@ public class MainDashboard extends javax.swing.JFrame {
         pnlHeader = new javax.swing.JPanel();
         lbDatetime = new javax.swing.JLabel();
         pnlWorkingArea = new javax.swing.JPanel();
-        jLocaleChooser1 = new com.toedter.components.JLocaleChooser();
-        jLocaleChooser2 = new com.toedter.components.JLocaleChooser();
-        jYearChooser1 = new com.toedter.calendar.JYearChooser();
-        jYearChooser2 = new com.toedter.calendar.JYearChooser();
-        jYearChooser3 = new com.toedter.calendar.JYearChooser();
-        jYearChooser4 = new com.toedter.calendar.JYearChooser();
-        jYearChooser5 = new com.toedter.calendar.JYearChooser();
+
 
         jLabel1.setText("jLabel1");
 
@@ -643,14 +637,7 @@ public class MainDashboard extends javax.swing.JFrame {
 
         pnlWorkingArea.setLayout(new java.awt.CardLayout());
 
-        jLocaleChooser1.addActionListener(this::jLocaleChooser1ActionPerformed);
-        pnlWorkingArea.add(jLocaleChooser1, "card2");
-        pnlWorkingArea.add(jLocaleChooser2, "card3");
-        pnlWorkingArea.add(jYearChooser1, "card4");
-        pnlWorkingArea.add(jYearChooser2, "card5");
-        pnlWorkingArea.add(jYearChooser3, "card6");
-        pnlWorkingArea.add(jYearChooser4, "card7");
-        pnlWorkingArea.add(jYearChooser5, "card8");
+
 
         pnlMainContent.add(pnlWorkingArea, java.awt.BorderLayout.CENTER);
 

@@ -62,7 +62,7 @@ public class WorkRecordIMPL implements WorkRecordService {
 
         for (WorkRecord r : records) {
             totalMinutes += r.getWorkMinutes();
-            breakMinutes += r.getBreakMinutes();
+            breakMinutes += r.getBreakWork();
         }
 
         // Gán lại vào Attendance
