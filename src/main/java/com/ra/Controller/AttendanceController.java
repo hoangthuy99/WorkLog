@@ -60,4 +60,8 @@ public class AttendanceController {
     public Attendance findByUsername(String username) {
         return attendanceDAO.findByUsername(username);
     }
+
+    public List<Attendance> findByUserAndDate(int userId, java.time.LocalDate date) {
+        return attendanceDAO.findByUserAndDate(userId, date);
+    }
 }

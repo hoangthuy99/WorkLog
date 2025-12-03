@@ -16,19 +16,7 @@ public class Main {
             Transaction transaction = session.beginTransaction();
             System.out.println("Kết nối thành công");
         }
-        // Tạo khung
-        JFrame frame = new JFrame("All Holiday Panel");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
 
-        // Gọi panel AddHoliday
-        AllHoliday panel = new AllHoliday();
-
-        // Thêm panel vào khung
-        frame.add(panel);
-
-        // Hiển thị
-        frame.setVisible(true);
 
     }
 }

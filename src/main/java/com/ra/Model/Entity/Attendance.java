@@ -33,7 +33,6 @@ public class Attendance {
 
     private LocalTime checkInTime;
     private LocalTime checkOutTime;
-    private LocalTime breakTime;// thời gian nghỉ giải lao
     @Column(nullable = false)
     private LocalDate workDate;   // ngày làm việc
 
@@ -50,21 +49,18 @@ public class Attendance {
     // WorkRecord (1) - (n) WorkRecord
     @OneToMany(mappedBy = "attendance", cascade = CascadeType.ALL)
     private List<WorkRecord> workRecords;
-
     public void calculateTimes() {
-        // Break time
-        this.breakMinutes = 60;
-
-        // Tổng phút làm việc
-        this.totalMinutes = (int) Duration.between(checkInTime, checkOutTime).toMinutes() - breakMinutes;
-
-        // Overtime
-        if (totalMinutes > 480) { // 8 tiếng
-            this.overtimeMinutes = totalMinutes - 480;
+        if (checkInTime != null && checkOutTime != null) {
+            long minutes = Duration.between(checkInTime, checkOutTime).toMinutes();
+            int breakTime = breakMinutes != null ? breakMinutes : 0;
+            totalMinutes = (int) minutes - breakTime;
+            overtimeMinutes = Math.max(0, totalMinutes - 480);
         } else {
-            this.overtimeMinutes = 0;
+            totalMinutes = 0;
+            overtimeMinutes = 0;
         }
     }
+
 
 }
 

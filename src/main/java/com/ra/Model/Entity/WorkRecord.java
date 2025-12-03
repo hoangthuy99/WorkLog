@@ -44,10 +44,10 @@ public class WorkRecord {
     private LocalTime endTime;     // giờ kết thúc block
 
     private Integer workMinutes; // tổng phút trong block
-    private Integer breakMinutes; // phút nghỉ trong block (nếu có)
+    private Integer breakWork; // phút nghỉ trong block (nếu có)
 
     private String remarks;
-    private String status;
+    private Integer status;
 
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
