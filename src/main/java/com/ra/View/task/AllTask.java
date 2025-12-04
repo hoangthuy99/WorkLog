@@ -34,6 +34,9 @@ public class AllTask extends javax.swing.JDialog {
         btnAll = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
+        btnEdit.addActionListener(this::btnEditActionPerformed);
+        btnDelete.addActionListener(this::btnDeleteActionPerformed);
+
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -109,15 +112,69 @@ public class AllTask extends javax.swing.JDialog {
         pack();
     }
 
-    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {
-        String kw = txtSearch.getText().trim();
-        loadTable(taskController.search(kw));
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {
+
+        int row = tblAddtask.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "タスクを選択してください！");
+            return;
+        }
+
+        int id = Integer.parseInt(tblAddtask.getValueAt(row, 0).toString());
+
+        taskController.findById(id).ifPresentOrElse(task -> {
+            AddTask dialog = new AddTask(null, true, task);
+            dialog.setVisible(true);
+
+            loadTable(taskController.findAll());
+
+        }, () -> JOptionPane.showMessageDialog(this, "Task not found!"));
     }
+
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {
+
+        int row = tblAddtask.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "タスクを選択してください！");
+            return;
+        }
+
+        int id = Integer.parseInt(tblAddtask.getValueAt(row, 0).toString());
+
+        if (JOptionPane.showConfirmDialog(this, "削除しますか？") == JOptionPane.YES_OPTION) {
+
+            if (taskController.delete(id)) {
+                JOptionPane.showMessageDialog(this, "削除完了！");
+                loadTable(taskController.findAll());
+            } else {
+                JOptionPane.showMessageDialog(this, "削除失敗！");
+            }
+        }
+    }
+
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {
+        String keyword = txtSearch.getText().trim();
+
+        if (keyword.isEmpty()) {
+            loadTable(taskController.findAll());
+            return;
+        }
+
+        List<Tasks> results = taskController.search(keyword);
+
+        if (results.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "検索結果がありません！");
+        }
+
+        loadTable(results);
+    }
+
 
     private void btnAddTaskActionPerformed(java.awt.event.ActionEvent evt) {
         AddTask dialog = new AddTask(null, true);
         dialog.setVisible(true);
-
         loadTable(taskController.findAll()); // reload
     }
 
@@ -127,40 +184,40 @@ public class AllTask extends javax.swing.JDialog {
 
     private void loadTable(List<Tasks> list) {
 
-        String[] cols = {"タスク名", "プロジェクト名", "部署名"};
-        DefaultTableModel model = new DefaultTableModel(cols, 0);
+        String[] cols = {"ID", "タスク名", "プロジェクト名", "部署名"};
+        DefaultTableModel model = new DefaultTableModel(cols, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         for (Tasks t : list) {
 
-            // Nhiều projects
-            String projectNames = "";
-            if (t.getProjects() != null) {
-                projectNames = t.getProjects()
-                        .stream()
-                        .map(Project::getName)
-                        .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
-            }
+            String projectNames = t.getProjects() == null ? "" :
+                    t.getProjects().stream().map(Project::getName)
+                            .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
 
-            // Nhiều departments
-            String departmentNames = "";
-            if (t.getDepartments() != null) {
-                departmentNames = t.getDepartments()
-                        .stream()
-                        .map(Department::getName)
-                        .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
-            }
+            String departmentNames = t.getDepartments() == null ? "" :
+                    t.getDepartments().stream().map(Department::getName)
+                            .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
 
             model.addRow(new Object[]{
+                    t.getId(),             // ⭐ Cột 0 BẮT BUỘC là ID
                     t.getName(),
                     projectNames,
-                    departmentNames,
-                    "編集",
-                    "削除"
+                    departmentNames
             });
         }
 
         tblAddtask.setModel(model);
+
+        // Ẩn cột ID
+        tblAddtask.getColumnModel().getColumn(0).setMinWidth(0);
+        tblAddtask.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblAddtask.getColumnModel().getColumn(0).setWidth(0);
     }
+
 
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(() -> {

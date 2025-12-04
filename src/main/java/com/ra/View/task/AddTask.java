@@ -26,6 +26,7 @@ public class AddTask extends javax.swing.JDialog {
     private final DepartmentController departmentController = new DepartmentController();
     private final ProjectController projectController = new ProjectController();
     // Danh sách dữ liệu nạp vào combobox
+    private Tasks editingTask = null;
     private List<Department> departmentList = new ArrayList<>();
     private List<Project> projectList = new ArrayList<>();
 
@@ -40,6 +41,55 @@ public class AddTask extends javax.swing.JDialog {
         loadDepartments();
         loadProjects();
     }
+    public AddTask(java.awt.Frame parent, boolean modal, Tasks task) {
+        super(parent, modal);
+        this.editingTask = task;
+        initComponents();
+
+        loadDepartments();
+        loadProjects();
+
+        loadEditingTask();
+        setTitle("タスク編集");
+        btnSave.setText("更新");
+    }
+    private void loadEditingTask() {
+        if (editingTask == null) return;
+
+        txtTaskname.setText(editingTask.getName());
+
+        // ----- Departments -----
+        if (editingTask.getDepartments() != null && !editingTask.getDepartments().isEmpty()) {
+            List<Department> deptList = new ArrayList<>(editingTask.getDepartments());
+            Department d = deptList.get(0);
+
+            for (int i = 0; i < departmentList.size(); i++) {
+                if (departmentList.get(i).getId() == d.getId()) {
+                    cbDepartmentname.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+
+        // ----- Projects -----
+        if (editingTask.getProjects() != null && !editingTask.getProjects().isEmpty()) {
+            List<Project> projList = new ArrayList<>(editingTask.getProjects());
+            Project p = projList.get(0);
+
+            for (int i = 0; i < projectList.size(); i++) {
+                if (projectList.get(i).getId() == p.getId()) {
+                    cbProjectname.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    }
+
+
+
+
+
+
 
 
 
@@ -144,40 +194,45 @@ public class AddTask extends javax.swing.JDialog {
             return;
         }
 
-        int depIndex = cbDepartmentname.getSelectedIndex();
-        int projIndex = cbProjectname.getSelectedIndex();
+        Department selectedDept = departmentList.get(cbDepartmentname.getSelectedIndex());
+        Project selectedProject = projectList.get(cbProjectname.getSelectedIndex());
 
-        Department selectedDept = depIndex >= 0 ? departmentList.get(depIndex) : null;
-        Project selectedProject = projIndex >= 0 ? projectList.get(projIndex) : null;
+        List<Department> deps = List.of(selectedDept);
+        List<Project> projs = List.of(selectedProject);
 
-        List<Department> deps = new ArrayList<>();
-        if (selectedDept != null) deps.add(selectedDept);
+        // ========== EDIT ==========
+        if (editingTask != null) {
 
-        List<Project> projs = new ArrayList<>();
-        if (selectedProject != null) projs.add(selectedProject);
+            editingTask.setName(taskName);
 
-        // TẠO TASK
+            // XÓA QUAN HỆ CŨ
+            editingTask.getDepartments().clear();
+            editingTask.getProjects().clear();
+
+            // THÊM QUAN HỆ MỚI
+            editingTask.getDepartments().addAll(deps);
+            editingTask.getProjects().addAll(projs);
+
+            taskController.update(editingTask);
+
+            JOptionPane.showMessageDialog(this, "Task updated successfully!");
+            this.dispose();
+            return;
+        }
+
+        // ========== CREATE ==========
         Tasks task = new Tasks();
         task.setName(taskName);
-        task.setTaskCode(Tasks.generateTaskCode());   // ⭐ FIX LỖI 1
+        task.setTaskCode(Tasks.generateTaskCode());
         task.setDepartments(deps);
         task.setProjects(projs);
 
-        // ⭐ FIX LỖI 2 — cập nhật quan hệ ngược lại
-        if (selectedDept != null) {
-            selectedDept.getTasks().add(task);
-        }
-        if (selectedProject != null) {
-            selectedProject.getTasks().add(task);
-        }
-
-        // SAVE
         taskController.create(task);
 
         JOptionPane.showMessageDialog(this, "Task created successfully!");
-
         this.dispose();
     }
+
 
 
     private void loadDepartments() {

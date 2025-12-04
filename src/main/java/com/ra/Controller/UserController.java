@@ -4,6 +4,8 @@ import com.ra.DAO.Auth.AuthDAO;
 import com.ra.DAO.User.UserDAO;
 import com.ra.Model.Entity.Users;
 import com.ra.Sercurity.PasswordHash;
+import com.ra.Utils.HibernateUtil;
+import org.hibernate.Session;
 
 import java.util.List;
 import java.util.Optional;
@@ -93,4 +95,12 @@ public class UserController {
     public Optional<Users> findByUsername(String username) {
         return userDAO.findByUsername(username);
     }
+    public long countUsers() {
+        try (Session s = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "SELECT COUNT(u) FROM Users u WHERE u.deletedAt IS NULL";
+            return s.createQuery(hql, Long.class).uniqueResult();
+        }
+    }
+
+
 }

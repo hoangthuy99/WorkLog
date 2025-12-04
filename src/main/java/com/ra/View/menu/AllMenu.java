@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.ra.Sercurity.PermissionUtil;
+
 
 public class AllMenu extends javax.swing.JFrame {
 
@@ -22,8 +24,34 @@ public class AllMenu extends javax.swing.JFrame {
 
     public AllMenu() {
         initComponents();
+        applyPermissions();     // <-- thêm dòng này
         loadTableData(controller.findAll());
     }
+
+    private void applyPermissions() {
+        // Quyền xem toàn bộ menu
+        boolean canView = PermissionUtil.hasPermission("MENU_VIEW");
+        boolean canAdd  = PermissionUtil.hasPermission("MENU_ADD");
+        boolean canEdit = PermissionUtil.hasPermission("MENU_EDIT");
+        boolean canDelete = PermissionUtil.hasPermission("MENU_DELETE");
+
+        // Nếu không có quyền xem → khóa toàn bộ màn hình
+        if (!canView) {
+            JOptionPane.showMessageDialog(this, "権限がありません！");
+            this.dispose();
+            return;
+        }
+
+        // Quyền tạo mới menu
+        btnAddmenu.setVisible(canAdd);
+
+        // Quyền sửa menu
+        btnEdit.setVisible(canEdit);
+
+        // Quyền xóa menu
+        btnDelete.setVisible(canDelete);
+    }
+
 
     // ========================= LOAD TABLE =========================
     private void loadTableData(List<Permission> list) {

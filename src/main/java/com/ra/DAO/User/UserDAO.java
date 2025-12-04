@@ -110,22 +110,34 @@ public class UserDAO implements IUserDAO {
             return Optional.empty();
         }
     }
+    @Override
     public Optional<Users> findByUsername(String username) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
             Users user = session.createQuery(
-                            "FROM Users u WHERE u.userName = :username AND u.deletedAt IS NULL",
+                            "SELECT DISTINCT u FROM Users u " +
+                                    "LEFT JOIN FETCH u.role r " +
+                                    "LEFT JOIN FETCH r.permissions " +   // <-- FIX
+                                    "LEFT JOIN FETCH u.department " +
+                                    "WHERE u.userName = :username AND u.deletedAt IS NULL",
                             Users.class
                     )
                     .setParameter("username", username)
                     .uniqueResult();
 
             return Optional.ofNullable(user);
+
         } catch (Exception e) {
             e.printStackTrace();
             return Optional.empty();
         }
     }
+
+
+
+
+
+
 
 
 

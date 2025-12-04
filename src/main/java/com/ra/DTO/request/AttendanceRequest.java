@@ -3,6 +3,7 @@ package com.ra.DTO.request;
 import com.ra.Model.Entity.Users;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
@@ -14,7 +15,7 @@ public class AttendanceRequest {
     private int id;
 
     private Users user;
-    private Date workDate;
+    private LocalDate workDate;
     private LocalTime checkInTime;
     private LocalTime checkOutTime;
     private Double totalHours;

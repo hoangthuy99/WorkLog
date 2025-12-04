@@ -1,5 +1,8 @@
 package com.ra.View.dashboard;
 
+import com.ra.Model.Entity.Users;
+import com.ra.Sercurity.PermissionUtil;
+
 import java.time.ZonedDateTime; // Để lấy thời gian hiện tại
 import java.time.format.DateTimeFormatter; // Để định dạng chuỗi
 import java.util.Locale; // Để định dạng theo Locale Nhật Bản
@@ -20,10 +23,45 @@ public class MainDashboard extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainDashboard.class.getName());
 
-    public MainDashboard() {
+    private Users currentUser;
+
+    public MainDashboard(Users user) {
+        this.currentUser = user;
         initComponents();
         startClock();
+        applyRoleAccess();   // GỌI PHÂN QUYỀN Ở ĐÂY
     }
+    private void applyRoleAccess() {
+        int roleId = currentUser.getRole().getId();
+
+        System.out.println("ROLE APPLY => " + roleId);
+        //tạm thời
+
+        switch (roleId) {
+            case 3: // ADMIN
+                // Admin xem tất cả
+                break;
+
+            case 2: // MANAGER
+
+                pnlMenuHeader.setVisible(false);
+                pnlProjectHeader.setVisible(false);
+                pnlDepartmentHeader.setVisible(false);
+                pnlTaskHeader.setVisible(false);
+                break;
+
+            case 1: // EMPLOYEE
+                pnlUserHeader.setVisible(false);
+                pnlDepartmentHeader.setVisible(false);
+                pnlProjectHeader.setVisible(false);
+                pnlMenuHeader.setVisible(false);
+                pnlTaskHeader.setVisible(false);
+                break;
+        }
+    }
+
+
+
 
     private String getCurrentDateTimeJapan() {
         ZonedDateTime now = ZonedDateTime.now();
@@ -32,6 +70,7 @@ public class MainDashboard extends javax.swing.JFrame {
                 .withLocale(Locale.JAPAN);
         return now.format(formatter);
     }
+
 
     private void startClock() {
         Timer timer = new Timer(1000, new ActionListener() {
@@ -110,13 +149,6 @@ public class MainDashboard extends javax.swing.JFrame {
         pnlHeader = new javax.swing.JPanel();
         lbDatetime = new javax.swing.JLabel();
         pnlWorkingArea = new javax.swing.JPanel();
-        jLocaleChooser1 = new com.toedter.components.JLocaleChooser();
-        jLocaleChooser2 = new com.toedter.components.JLocaleChooser();
-        jYearChooser1 = new com.toedter.calendar.JYearChooser();
-        jYearChooser2 = new com.toedter.calendar.JYearChooser();
-        jYearChooser3 = new com.toedter.calendar.JYearChooser();
-        jYearChooser4 = new com.toedter.calendar.JYearChooser();
-        jYearChooser5 = new com.toedter.calendar.JYearChooser();
 
         jLabel1.setText("jLabel1");
 
@@ -643,14 +675,6 @@ public class MainDashboard extends javax.swing.JFrame {
 
         pnlWorkingArea.setLayout(new java.awt.CardLayout());
 
-        jLocaleChooser1.addActionListener(this::jLocaleChooser1ActionPerformed);
-        pnlWorkingArea.add(jLocaleChooser1, "card2");
-        pnlWorkingArea.add(jLocaleChooser2, "card3");
-        pnlWorkingArea.add(jYearChooser1, "card4");
-        pnlWorkingArea.add(jYearChooser2, "card5");
-        pnlWorkingArea.add(jYearChooser3, "card6");
-        pnlWorkingArea.add(jYearChooser4, "card7");
-        pnlWorkingArea.add(jYearChooser5, "card8");
 
         pnlMainContent.add(pnlWorkingArea, java.awt.BorderLayout.CENTER);
 
@@ -709,8 +733,8 @@ public class MainDashboard extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
+    /*public static void main(String args[]) {
+        *//* Set the Nimbus look and feel *//*
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -724,9 +748,10 @@ public class MainDashboard extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new MainDashboard().setVisible(true));
-    }
+        *//* Create and display the form *//*
+        java.awt.EventQueue.invokeLater(() -> new MainDashboard(user).setVisible(true);
+
+    }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddUser;

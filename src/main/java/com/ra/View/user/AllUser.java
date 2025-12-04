@@ -15,6 +15,10 @@ import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.ra.Sercurity.SessionLocal;
+import com.ra.Utils.HibernateUtil;
+import org.hibernate.Session;
+
 
 /**
  *
@@ -31,6 +35,26 @@ public class AllUser extends javax.swing.JFrame {
     public AllUser() {
         userController = new UserController();  // <<--- BẮT BUỘC PHẢI CÓ
         initComponents();
+        // ===== PHÂN QUYỀN =====
+        String role = (String) SessionLocal.get("ROLE");
+        System.out.println("ROLE in AllUser = " + role);
+
+        if (role != null) {
+            switch (role) {
+                case "employee" -> {
+                    btnAdduser.setVisible(false);
+                    btnEdit.setVisible(false);
+                    btnDelete.setVisible(false);
+                }
+                case "manager" -> {
+                    btnDelete.setVisible(false); // manager không được xóa
+                }
+                case "admin" -> {
+                    // full quyền → không cần làm gì
+                }
+            }
+        }
+
 
 
         loadUserTable();
@@ -57,10 +81,8 @@ public class AllUser extends javax.swing.JFrame {
 
         for (int i = 0; i < list.size(); i++) {
             Users u = list.get(i);
-
             // STT tăng dần
             data[i][0] = String.valueOf((currentPage - 1) * pageSize + i + 1);
-
             data[i][1] = u.getUserCode();
             data[i][2] = u.getFullName();
             data[i][3] = u.getUserName();
@@ -69,21 +91,15 @@ public class AllUser extends javax.swing.JFrame {
             data[i][6] = (u.getTasks() != null && !u.getTasks().isEmpty())
                     ? u.getTasks().stream().map(Tasks::getName).collect(Collectors.joining(", "))
                     : "";
-
             // Lưu ID thật
             userIds.add(u.getId());
         }
 
         tbAllUser.setModel(new javax.swing.table.DefaultTableModel(
                 data,
-                new String[]{"STT", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール","タスク"}
+                new String[]{"No.", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール","タスク"}
         ));
     }
-
-
-
-
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -236,47 +252,36 @@ public class AllUser extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     private int currentPage = 1;
-    private final int pageSize = 10;
+    private final int pageSize =Integer.MAX_VALUE;
     private long totalUsers = 0;
     private int totalPages = 0;
-
-
-
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSearchActionPerformed
-
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         // TODO add your handling code here:
         currentPage = 1;
         loadUserTable();
     }//GEN-LAST:event_btnSearchActionPerformed
-
     private void btnAlluserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlluserActionPerformed
         // TODO add your handling code here:
         currentPage = 1;
         txtSearch.setText("");
         loadUserTable();
     }//GEN-LAST:event_btnAlluserActionPerformed
-
     private void btnAdduserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdduserActionPerformed
         // TODO add your handling code here:
         AddUser addUserForm = new AddUser();
         addUserForm.setVisible(true);
         addUserForm.setLocationRelativeTo(null);
-        
     }//GEN-LAST:event_btnAdduserActionPerformed
-
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
        //Lấy ID rồi chuyển qua màn khác
         int selectedRow = tbAllUser.getSelectedRow();
-
         Integer id = userIds.get(selectedRow);
-
        // Tìm user trong DB
         Optional<Users> user = userController.findById(id);
         if (user.isPresent()) {
@@ -286,10 +291,7 @@ public class AllUser extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
         }
-
-
     }//GEN-LAST:event_btnEditActionPerformed
-
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
         int row = tbAllUser.getSelectedRow();

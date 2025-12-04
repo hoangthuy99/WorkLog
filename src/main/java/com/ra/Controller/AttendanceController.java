@@ -3,6 +3,7 @@ package com.ra.Controller;
 import com.ra.DAO.Attendance.IAttendanceDAO;
 import com.ra.DAO.Attendance.AttendanceDAO;
 import com.ra.DTO.request.AttendanceRequest;
+import com.ra.Model.Entity.Attendance;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,57 +16,87 @@ public class AttendanceController {
         this.attendanceDAO = new AttendanceDAO();
     }
 
-    // Create
-    public boolean create(AttendanceRequest req) {
-        try {
-            attendanceDAO.create(req);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    // =============================
+    // CREATE Attendance (DTO → ENTITY)
+    // =============================
+    public Attendance create(AttendanceRequest req) {
+
+        Attendance a = new Attendance();
+        a.setUser(req.getUser());
+        a.setWorkDate(req.getWorkDate());
+        a.setCheckInTime(req.getCheckInTime());
+        a.setCheckOutTime(req.getCheckOutTime());
+        a.setBreakTime(req.getBreakTime());
+        a.setIsHoliday(req.getIsHoliday());
+        a.setStatus(req.getStatus());
+
+        a.setTotalMinutes((int) (req.getTotalHours() * 60));        // convert hours → minutes
+        a.setOvertimeMinutes((int) (req.getOvertimeHours() * 60));  // convert hours → minutes
+
+        attendanceDAO.create(a);  // save entity
+
+        return a;                 // return để lấy ID khi Insert WorkRecord
     }
 
-    // Update
-    public boolean update(AttendanceRequest req) {
-        try {
-            attendanceDAO.update(req);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    // =============================
+    // UPDATE Attendance
+    // =============================
+    public boolean update(int id, AttendanceRequest req) {
+
+        Optional<Attendance> opt = attendanceDAO.findById(id);
+        if (opt.isEmpty()) return false;
+
+        Attendance a = opt.get();
+
+        a.setWorkDate(req.getWorkDate());
+        a.setCheckInTime(req.getCheckInTime());
+        a.setCheckOutTime(req.getCheckOutTime());
+        a.setBreakTime(req.getBreakTime());
+        a.setIsHoliday(req.getIsHoliday());
+        a.setStatus(req.getStatus());
+        a.setTotalMinutes((int) (req.getTotalHours() * 60));
+        a.setOvertimeMinutes((int) (req.getOvertimeHours() * 60));
+
+        attendanceDAO.update(a);
+
+        return true;
     }
 
-    // Delete
+    // =============================
+    // DELETE Attendance
+    // =============================
     public boolean delete(int id) {
-        try {
-            Optional<AttendanceRequest> a = attendanceDAO.findFindById(id);
-            if (a.isEmpty()) return false;
-            return attendanceDAO.delete(a.get());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        Optional<Attendance> opt = attendanceDAO.findById(id);
+        if (opt.isEmpty()) return false;
+        return attendanceDAO.delete(opt.get());
     }
 
-    // Find all
-    public List<AttendanceRequest> findAll() {
+    // =============================
+    // FIND ALL
+    // =============================
+    public List<Attendance> findAll() {
         return attendanceDAO.findAll();
     }
 
-    // Search by keyword (userName)
-    public List<AttendanceRequest> search(String keyword, int page, int size) {
+    // =============================
+    // SEARCH by username
+    // =============================
+    public List<Attendance> search(String keyword, int page, int size) {
         return attendanceDAO.search(keyword, page, size);
     }
 
-    // Find by ID
-    public Optional<AttendanceRequest> findById(int id) {
-        return attendanceDAO.findFindById(id);
+    // =============================
+    // FIND by ID
+    // =============================
+    public Optional<Attendance> findById(int id) {
+        return attendanceDAO.findById(id);
     }
 
-    // Find by username
-    public AttendanceRequest findByUsername(String username) {
+    // =============================
+    // FIND by username
+    // =============================
+    public Attendance findByUsername(String username) {
         return attendanceDAO.findByUsername(username);
     }
+
 }

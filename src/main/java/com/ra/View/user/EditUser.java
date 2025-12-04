@@ -14,6 +14,7 @@ import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Roles;
 import com.ra.Model.Entity.Tasks;
 import com.ra.Model.Entity.Users;
+import com.ra.Sercurity.PasswordHash;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -402,70 +403,62 @@ public class EditUser extends javax.swing.JFrame {
         setVisible(false);
     }//GEN-LAST:event_btnCancelActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             if (currentUser == null) {
-                JOptionPane.showMessageDialog(this, "User dose not exist!");
+                JOptionPane.showMessageDialog(this, "User does not exist!");
                 return;
             }
 
-            // Lấy dữ liệu từ form
             String userName = txtUsername.getText();
-            String password = txtPassword.getText();
+            String newPass = txtPassword.getText().trim();  // password mới nếu có
             String roleName = cbRole.getSelectedItem().toString();
             String email = txtMail.getText();
             String fullName = txtEmployeename.getText();
             String departmentName = cbDepartment.getSelectedItem().toString();
 
-
             currentUser.setUserName(userName);
-            currentUser.setPassword(password);
             currentUser.setEmail(email);
             currentUser.setFullName(fullName);
 
-            // Department
-            DepartmentDAO departmentDAO = new DepartmentDAO();
-            Department dept = departmentDAO.findFindByName(departmentName).orElse(null);
-            if (dept != null) {
-                currentUser.setDepartment(dept);
+            // ---- PASSWORD ----
+            if (!newPass.isEmpty()) {
+                currentUser.setPassword(PasswordHash.hashPassword(newPass));
             }
 
-            // Role
+            // ---- DEPARTMENT ----
+            DepartmentDAO departmentDAO = new DepartmentDAO();
+            departmentDAO.findFindByName(departmentName)
+                    .ifPresent(currentUser::setDepartment);
+
+            // ---- ROLE ----
             AuthDAO roleDAO = new AuthDAO();
             Optional<Roles> roleOpt = roleDAO.findByName(roleName);
-            if (roleOpt.isPresent()) {
-                currentUser.setRole(roleOpt.get());
-            } else {
+            if (roleOpt.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Role không tồn tại!");
                 return;
             }
+            currentUser.setRole(roleOpt.get());
 
-            // Tasks
+            // ---- TASKS ----
             TaskDAO taskDAO = new TaskDAO();
-            // Lấy danh sách task đã chọn từ JList
-            List<String> selectedTasks = listTask.getSelectedValuesList();
-
-            // Luôn tạo list mới (tránh bị ghi đè vào list cũ đang dùng của Hibernate)
             List<Tasks> newTasks = new ArrayList<>();
-
-            for (String name : selectedTasks) {
-                taskDAO.findByName(name).ifPresent(newTasks::add);
+            for (String t : listTask.getSelectedValuesList()) {
+                taskDAO.findByName(t).ifPresent(newTasks::add);
             }
-
-           // Gán danh sách task mới cho user
             currentUser.setTasks(newTasks);
 
-            // Gọi Controller để update
             userController.updateUser(currentUser);
 
             JOptionPane.showMessageDialog(this, "User updated successfully!");
-            this.dispose(); // đóng form sau khi lưu
+            this.dispose();
+
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
     }
+
 //GEN-LAST:event_btnSaveActionPerformed
    
 

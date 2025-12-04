@@ -109,7 +109,7 @@ public class AddUser extends javax.swing.JFrame {
     private boolean validateForm() {
         String email = txtMail.getText().trim();
         String username = txtUsername.getText().trim();
-        String password = txtPassWord.getText().trim();
+        String password = new String(txtPassWord.getPassword()).trim();
         String fullName = txtEmployeename.getText().trim();
 
         // Email 空チェック
@@ -427,13 +427,11 @@ public class AddUser extends javax.swing.JFrame {
             user.setUserName(userName);
 
             // Hash password
-            PasswordHash passwordHash = new PasswordHash();
-            String hashedPassword = passwordHash.hashPassword(password);
-            user.setPassword(hashedPassword);
-
+            user.setPassword(password);
             user.setFullName(fullName);
             user.setEmail(email);
             user.setUserCode(Users.generateUserCode());
+
 
             // ----- Department -----
             DepartmentDAO departmentDAO = new DepartmentDAO();

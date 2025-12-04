@@ -28,17 +28,22 @@ public class Tasks {
     private String taskCode;
 
 
-    // Task - Project (n - n)
     @ManyToMany(mappedBy = "tasks")
     private List<Project> projects;
 
-    // Task - User (n - n)
-    @ManyToMany(mappedBy = "tasks")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "department_task",
+            joinColumns = @JoinColumn(name = "taskId"),
+            inverseJoinColumns = @JoinColumn(name = "departmentId")
+    )
+    private List<Department> departments;
+
+
+
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Users> users;
 
-    // Task - Department (n - n)
-    @ManyToMany(mappedBy = "tasks")
-    private List<Department> departments;
 
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;

@@ -65,34 +65,46 @@ public class TaskDAO implements ITaskDAO {
     public Optional<Tasks> findFindById(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
+            // ❌ Không fetch join nhiều List
             Tasks task = session.createQuery(
-                            "SELECT t FROM Tasks t " +
-                                    "LEFT JOIN FETCH t.projects " +
-                                    "LEFT JOIN FETCH t.departments " +
-                                    "LEFT JOIN FETCH t.users " +
-                                    "WHERE t.id = :id",
+                            "SELECT t FROM Tasks t WHERE t.id = :id",
                             Tasks.class
                     )
                     .setParameter("id", id)
                     .uniqueResult();
 
+            if (task != null) {
+                // ⭐ Load từng List thủ công — KHÔNG VI PHẠM MultipleBagFetch
+                Hibernate.initialize(task.getProjects());
+                Hibernate.initialize(task.getDepartments());
+                Hibernate.initialize(task.getUsers());
+            }
+
             return Optional.ofNullable(task);
         }
     }
+
 
     @Override
     public List<Tasks> search(String keyword) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            return session.createQuery(
-                            "SELECT DISTINCT t FROM Tasks t " +
-                                    "LEFT JOIN FETCH t.projects " +
-                                    "LEFT JOIN FETCH t.departments " +
-                                    "WHERE t.name LIKE :kw OR t.taskCode LIKE :kw",
+            // ❌ Không fetch join
+            List<Tasks> tasks = session.createQuery(
+                            "FROM Tasks t WHERE t.name LIKE :kw OR t.taskCode LIKE :kw",
                             Tasks.class
                     )
                     .setParameter("kw", "%" + keyword + "%")
                     .list();
+
+            // ⭐ Khởi tạo lazy để tránh MultipleBagFetchException
+            for (Tasks t : tasks) {
+                Hibernate.initialize(t.getProjects());
+                Hibernate.initialize(t.getDepartments());
+                Hibernate.initialize(t.getUsers());
+            }
+
+            return tasks;
         }
     }
 
