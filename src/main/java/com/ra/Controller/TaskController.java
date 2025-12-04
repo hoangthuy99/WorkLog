@@ -1,43 +1,74 @@
 package com.ra.Controller;
 
+import com.ra.DAO.Task.ITaskDAO;
+import com.ra.DAO.Task.TaskDAO;
 import com.ra.Model.Entity.Tasks;
-import com.ra.Service.Task.TaskIMPL;
-import com.ra.Service.Task.TaskSerVice;
 
 import java.util.List;
-import java.util.Optional;
 
 public class TaskController {
 
-    private final TaskSerVice taskService;
+    private final ITaskDAO taskDAO = new TaskDAO();
 
-    public TaskController() {
-        this.taskService = new TaskIMPL();   // khởi tạo Service
-    }
-
+    /**
+     * Tạo mới task
+     */
     public void create(Tasks task) {
-        taskService.create(task);
+        try {
+            taskDAO.create(task);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * Cập nhật task
+     */
     public void update(Tasks task) {
-        taskService.update(task);
+        try {
+            taskDAO.update(task);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * Xóa task theo ID
+     */
     public boolean delete(int id) {
-        return taskService.deleteFindById(id);
+        try {
+            return taskDAO.deleteFindById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-
-    public List<Tasks> search(String keyword) {
-        return taskService.search(keyword);
+    /**
+     * Tìm task theo ID
+     */
+    public Tasks findById(int id) {
+        return taskDAO.findFindById(id).orElse(null);
     }
 
-    public Optional<Tasks> findById(int id) {
-        return taskService.findFindById(id);
+    /**
+     * Tìm task theo tên (dùng cho Edit)
+     */
+    public Tasks findByName(String name) {
+        return taskDAO.findByName(name).orElse(null);
     }
 
+    /**
+     * Tìm tất cả task
+     */
     public List<Tasks> findAll() {
-        return taskService.findAll();
+        return taskDAO.findAll();
     }
 
+    /**
+     * Search task theo keyword
+     */
+    public List<Tasks> search(String keyword) {
+        return taskDAO.search(keyword);
+    }
 }

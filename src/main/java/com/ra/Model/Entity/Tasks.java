@@ -29,16 +29,28 @@ public class Tasks {
 
 
     // Task - Project (n - n)
-    @ManyToMany(mappedBy = "tasks")
+    @ManyToMany
+    @JoinTable(
+            name = "task_project",
+            joinColumns = @JoinColumn(name = "taskId"),
+            inverseJoinColumns = @JoinColumn(name = "projectId")
+    )
     private List<Project> projects;
+
+    // Task - Department (n - n)
+    @ManyToMany
+    @JoinTable(
+            name = "department_task",
+            joinColumns = @JoinColumn(name = "taskId"),
+            inverseJoinColumns = @JoinColumn(name = "departmentId")
+    )
+    private List<Department> departments;
+
 
     // Task - User (n - n)
     @ManyToMany(mappedBy = "tasks")
     private List<Users> users;
 
-    // Task - Department (n - n)
-    @ManyToMany(mappedBy = "tasks")
-    private List<Department> departments;
 
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;

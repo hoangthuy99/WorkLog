@@ -1,6 +1,8 @@
 package com.ra.DAO.Department;
 
 import com.ra.Model.Entity.Department;
+import com.ra.Model.Entity.Project;
+import com.ra.Model.Entity.Tasks;
 import com.ra.Utils.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -26,18 +28,66 @@ public class DepartmentDAO implements IDepartmentDAO {
     }
 
     @Override
-    public void update(Department department) {
-        Transaction transaction = null;
+    public void update(Department d) {
+        Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.update(department);
-            transaction.commit();
-            System.out.println("Department updated successfully!");
+
+            tx = session.beginTransaction();
+
+            // ====== 1) Lấy bản ghi gốc từ DB ======
+            Department dbDep = session.get(Department.class, d.getId());
+            if (dbDep == null) return;
+
+            // ====== 2) Update field đơn ======
+            dbDep.setName(d.getName());
+
+            // ============================================
+            // 🔥 UPDATE TASK (Department là owner → OK)
+            // ============================================
+            dbDep.getTasks().clear();
+            session.flush(); // tránh duplicate row
+
+            if (d.getTasks() != null) {
+                for (Tasks t : d.getTasks()) {
+                    Tasks tRef = session.get(Tasks.class, t.getId());
+                    dbDep.getTasks().add(tRef);
+                }
+            }
+
+            // ============================================
+            // 🔥 UPDATE PROJECT (Project là owner → phải update bên Project)
+            // ============================================
+
+            // 2.1 XÓA RELATION cũ
+            for (Project oldP : dbDep.getProjects()) {
+                oldP.getDepartments().remove(dbDep);
+                session.update(oldP);
+            }
+            session.flush();
+
+            dbDep.getProjects().clear();
+
+            // 2.2 THÊM LIÊN KẾT MỚI
+            if (d.getProjects() != null) {
+                for (Project p : d.getProjects()) {
+                    Project pRef = session.get(Project.class, p.getId());
+                    pRef.getDepartments().add(dbDep);
+                    dbDep.getProjects().add(pRef);
+                    session.update(pRef); // owner update
+                }
+            }
+
+            // ====== 3) Lưu vào DB ======
+            session.update(dbDep);
+
+            tx.commit();
+
         } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
+            if (tx != null) tx.rollback();
             e.printStackTrace();
         }
     }
+
 
     @Override
     public boolean deleteFindById(int id) {
