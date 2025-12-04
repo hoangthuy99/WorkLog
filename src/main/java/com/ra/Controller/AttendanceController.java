@@ -1,102 +1,67 @@
 package com.ra.Controller;
 
-import com.ra.DAO.Attendance.IAttendanceDAO;
+import com.ra.Common.Constant;
 import com.ra.DAO.Attendance.AttendanceDAO;
-import com.ra.DTO.request.AttendanceRequest;
 import com.ra.Model.Entity.Attendance;
 
 import java.util.List;
-import java.util.Optional;
 
 public class AttendanceController {
 
-    private final IAttendanceDAO attendanceDAO;
+    private final AttendanceDAO attendanceDAO;
 
     public AttendanceController() {
         this.attendanceDAO = new AttendanceDAO();
     }
 
-    // =============================
-    // CREATE Attendance (DTO → ENTITY)
-    // =============================
-    public Attendance create(AttendanceRequest req) {
-
-        Attendance a = new Attendance();
-        a.setUser(req.getUser());
-        a.setWorkDate(req.getWorkDate());
-        a.setCheckInTime(req.getCheckInTime());
-        a.setCheckOutTime(req.getCheckOutTime());
-        a.setBreakTime(req.getBreakTime());
-        a.setIsHoliday(req.getIsHoliday());
-        a.setStatus(req.getStatus());
-
-        a.setTotalMinutes((int) (req.getTotalHours() * 60));        // convert hours → minutes
-        a.setOvertimeMinutes((int) (req.getOvertimeHours() * 60));  // convert hours → minutes
-
-        attendanceDAO.create(a);  // save entity
-
-        return a;                 // return để lấy ID khi Insert WorkRecord
+    // Create
+    public boolean create(Attendance attendance) {
+        try {
+            attendanceDAO.create(attendance);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    // =============================
-    // UPDATE Attendance
-    // =============================
-    public boolean update(int id, AttendanceRequest req) {
-
-        Optional<Attendance> opt = attendanceDAO.findById(id);
-        if (opt.isEmpty()) return false;
-
-        Attendance a = opt.get();
-
-        a.setWorkDate(req.getWorkDate());
-        a.setCheckInTime(req.getCheckInTime());
-        a.setCheckOutTime(req.getCheckOutTime());
-        a.setBreakTime(req.getBreakTime());
-        a.setIsHoliday(req.getIsHoliday());
-        a.setStatus(req.getStatus());
-        a.setTotalMinutes((int) (req.getTotalHours() * 60));
-        a.setOvertimeMinutes((int) (req.getOvertimeHours() * 60));
-
-        attendanceDAO.update(a);
-
-        return true;
+    // Update
+    public boolean update(Attendance req) {
+        try {
+            attendanceDAO.update(req);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    // =============================
-    // DELETE Attendance
-    // =============================
+    // Delete
     public boolean delete(int id) {
-        Optional<Attendance> opt = attendanceDAO.findById(id);
-        if (opt.isEmpty()) return false;
-        return attendanceDAO.delete(opt.get());
+        return attendanceDAO.delete(id);
     }
 
-    // =============================
-    // FIND ALL
-    // =============================
+    // Find all
     public List<Attendance> findAll() {
         return attendanceDAO.findAll();
     }
 
-    // =============================
-    // SEARCH by username
-    // =============================
+    // Search by keyword (userName)
     public List<Attendance> search(String keyword, int page, int size) {
         return attendanceDAO.search(keyword, page, size);
     }
 
-    // =============================
-    // FIND by ID
-    // =============================
-    public Optional<Attendance> findById(int id) {
-        return attendanceDAO.findById(id);
+    // Find by ID
+    public List<Attendance> findById(int id) {
+        return attendanceDAO.findFindById(id);
     }
 
-    // =============================
-    // FIND by username
-    // =============================
+    // Find by username
     public Attendance findByUsername(String username) {
         return attendanceDAO.findByUsername(username);
     }
 
+    public List<Attendance> findByUserAndDate(int userId, java.time.LocalDate date) {
+        return attendanceDAO.findByUserAndDate(userId, date);
+    }
 }

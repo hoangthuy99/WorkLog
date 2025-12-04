@@ -35,12 +35,11 @@ public class Project {
     // Project - Task (n - n)
     @ManyToMany
     @JoinTable(
-            name="task_project",
-            joinColumns=@JoinColumn(name="projectId"),
-            inverseJoinColumns=@JoinColumn(name="taskId")
+            name = "task_project",
+            joinColumns = @JoinColumn(name = "projectId"),
+            inverseJoinColumns = @JoinColumn(name = "taskId")
     )
     private List<Tasks> tasks;
-
 
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
@@ -49,10 +48,4 @@ public class Project {
     public static String generateProjectCode() {
         return "PD" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8).toUpperCase();
     }
-
-    @Override
-    public String toString() {
-        return name;   // hiển thị tên dự án
-    }
-
 }

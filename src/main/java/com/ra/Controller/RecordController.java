@@ -1,55 +1,36 @@
 package com.ra.Controller;
 
-import com.ra.DAO.Record.IRecordDAO;
 import com.ra.DAO.Record.RecordDAO;
 import com.ra.Model.Entity.WorkRecord;
 
+import java.util.List;
+
 public class RecordController {
-
-    private final IRecordDAO recordDAO;
-
+    private RecordDAO recordDAO;
     public RecordController() {
         this.recordDAO = new RecordDAO();
     }
-
-    public boolean create(WorkRecord wr) {
-        try {
-            recordDAO.create(wr);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public WorkRecord createRecord(WorkRecord workRecord) {
+        return recordDAO.create(workRecord);
     }
-
-    public boolean update(WorkRecord wr) {
-        try {
-            recordDAO.update(wr);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public WorkRecord updateRecord(WorkRecord workRecord) {
+        return recordDAO.update(workRecord);
     }
-
-    public boolean delete(int id) {
-        try {
-            return recordDAO.deleteFindById(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public WorkRecord deleteRecord(WorkRecord workRecord) {
+        recordDAO.deleteFindById(workRecord.getId());
+        return workRecord;
     }
-
-    public java.util.List<WorkRecord> findAll() {
-        return recordDAO.findAll();
-    }
-
-    public java.util.List<WorkRecord> search(String keyword, int page, int size) {
-        return recordDAO.search(keyword, page, size);
-    }
-
-    public java.util.Optional<WorkRecord> findById(int id) {
+    public List<WorkRecord> findById(int id) {
         return recordDAO.findById(id);
     }
+    public List<WorkRecord> findAll() {
+        return recordDAO.findAll();
+    }
+    public List<WorkRecord> searchRecords(String keyword, int page, int size) {
+        return recordDAO.search(keyword, page, size);
+    }
+    public List<WorkRecord> findByAttendanceId(int attendanceId) {
+        return recordDAO.findByAttendanceId(attendanceId);
+    }
+
 }

@@ -3,7 +3,6 @@ package com.ra.DTO.request;
 import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Project;
 import com.ra.Model.Entity.Users;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

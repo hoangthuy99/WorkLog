@@ -1,7 +1,6 @@
 package com.ra.Service.User;
 
 import com.ra.DAO.User.UserDAO;
-import com.ra.DTO.request.UserRequest;
 import com.ra.Model.Entity.Users;
 import com.ra.Utils.HibernateUtil;
 import org.hibernate.Session;
@@ -31,6 +30,11 @@ public class UserServiceIMPL implements UserService {
 
     @Override
     public List<Users> findAll(String keyword, int page, int size) {
+        return List.of();
+    }
+
+    @Override
+    public List<Users> findAll() {
         return List.of();
     }
 

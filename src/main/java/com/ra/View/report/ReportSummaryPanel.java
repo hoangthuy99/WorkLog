@@ -1,4 +1,4 @@
-package com.ra.View.Report;
+package com.ra.View.report;
 import com.ra.Controller.ReportController;
 import com.ra.DTO.report.ReportRowDTO;
 
@@ -12,15 +12,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
-
-
 /**
  * ReportSummaryPanel - A GUI module for viewing and exporting summarized attendance data.
  * Added: Checkbox for bulk selection, and "Mass Delete" button.
  */
-public class ReportSummaryPanel extends javax.swing.JPanel {
+public class ReportSummaryPanel extends JPanel {
     private final ReportController reportController = new ReportController();
     // UI Components
     private JPanel viewFilterPanel;

@@ -1,8 +1,6 @@
 package com.ra.DAO.Department;
 
 import com.ra.Model.Entity.Department;
-import com.ra.Model.Entity.Project;
-import com.ra.Model.Entity.Tasks;
 import com.ra.Utils.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -15,109 +13,47 @@ public class DepartmentDAO implements IDepartmentDAO {
 
     @Override
     public void create(Department department) {
-        Transaction tx = null;
+        Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
-            tx = session.beginTransaction();
-
-            // Save department
+            transaction = session.beginTransaction();
             session.save(department);
-
-            // Insert department_project
-            if (department.getProjects() != null) {
-                for (Project p : department.getProjects()) {
-                    session.createNativeQuery(
-                                    "INSERT INTO department_project (departmentId, projectId) VALUES (:d, :p)")
-                            .setParameter("d", department.getId())
-                            .setParameter("p", p.getId())
-                            .executeUpdate();
-                }
-            }
-
-            // Insert department_task
-            if (department.getTasks() != null) {
-                for (Tasks t : department.getTasks()) {
-                    session.createNativeQuery(
-                                    "INSERT INTO department_task (departmentId, taskId) VALUES (:d, :t)")
-                            .setParameter("d", department.getId())
-                            .setParameter("t", t.getId())
-                            .executeUpdate();
-                }
-            }
-
-            tx.commit();
+            transaction.commit();
             System.out.println("Department created successfully!");
-
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
     }
 
-
     @Override
     public void update(Department department) {
-        Transaction tx = null;
+        Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
-
-            session.merge(department);
-
-            session.createNativeQuery("DELETE FROM department_project WHERE departmentId = :id")
-                    .setParameter("id", department.getId())
-                    .executeUpdate();
-
-            session.createNativeQuery("DELETE FROM department_task WHERE departmentId = :id")
-                    .setParameter("id", department.getId())
-                    .executeUpdate();
-
-            for (Project p : department.getProjects()) {
-                session.createNativeQuery(
-                                "INSERT INTO department_project (departmentId, projectId) VALUES (:d, :p)")
-                        .setParameter("d", department.getId())
-                        .setParameter("p", p.getId())
-                        .executeUpdate();
-            }
-
-            for (Tasks t : department.getTasks()) {
-                session.createNativeQuery(
-                                "INSERT INTO department_task (departmentId, taskId) VALUES (:d, :t)")
-                        .setParameter("d", department.getId())
-                        .setParameter("t", t.getId())
-                        .executeUpdate();
-            }
-
-            tx.commit();
-
+            transaction = session.beginTransaction();
+            session.update(department);
+            transaction.commit();
+            System.out.println("Department updated successfully!");
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
     }
 
     @Override
     public boolean deleteFindById(int id) {
-        Transaction tx = null;
+        Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
             Department dep = session.get(Department.class, id);
             if (dep == null) return false;
 
-            tx = session.beginTransaction();
-
-            session.createNativeQuery("DELETE FROM department_project WHERE departmentId = :id")
-                    .setParameter("id", id).executeUpdate();
-
-            session.createNativeQuery("DELETE FROM department_task WHERE departmentId = :id")
-                    .setParameter("id", id).executeUpdate();
-
+            transaction = session.beginTransaction();
             session.remove(dep);
+            transaction.commit();
 
-            tx.commit();
             return true;
-
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
         return false;
@@ -139,12 +75,23 @@ public class DepartmentDAO implements IDepartmentDAO {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Department dep = session.get(Department.class, id);
             return Optional.ofNullable(dep);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Optional.empty();
         }
     }
 
+    @Override
+    public Optional<Department> findFindByIdFetchAll(int id) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        Department dep = session.get(Department.class, id);
+
+        dep.getProjects().size();
+        dep.getTasks().size();
+
+        session.getTransaction().commit();
+        session.close();
+        return Optional.ofNullable(dep);
+    }
 
     @Override
     public List<Department> findAll() {
@@ -165,16 +112,22 @@ public class DepartmentDAO implements IDepartmentDAO {
         }
     }
 
+
     @Override
     public Optional<Department> findFindByName(String name) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Department dept = session.createQuery(
-                            "FROM Department d WHERE d.name = :name",
-                            Department.class)
-                    .setParameter("name", name)
-                    .uniqueResult();
+            try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+                String hql = "FROM Department d WHERE d.name = :name";
+                Department dept = session.createQuery(hql, Department.class)
+                        .setParameter("name", name)
+                        .uniqueResult();
+                return Optional.ofNullable(dept);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                return Optional.empty();
+            }
 
-            return Optional.ofNullable(dept);
-        }
+
     }
+
+
 }

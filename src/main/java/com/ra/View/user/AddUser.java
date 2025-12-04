@@ -1,23 +1,21 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package com.ra.View.user;
 
+// Import cần thiết cho việc căn giữa
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+// ... các imports khác ...
 import com.ra.Controller.UserController;
 import com.ra.DAO.Auth.AuthDAO;
 import com.ra.DAO.Department.DepartmentDAO;
 import com.ra.DAO.Task.TaskDAO;
-
-import com.ra.DTO.request.UserRequest;
 import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Roles;
 import com.ra.Model.Entity.Tasks;
 import com.ra.Model.Entity.Users;
-import com.ra.Sercurity.PasswordHash;
-import com.ra.View.menu.AllMenu;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,22 +24,32 @@ import java.util.Optional;
  *
  * @author Admin
  */
-public class AddUser extends javax.swing.JFrame {
-    
+public class AddUser extends JPanel {
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddUser.class.getName());
 
-    /**
-     * Creates new form AddUser
-     */
+    // KHAI BÁO BIẾN CHO LOGIC XỬ LÝ
+    private final UserController userController = new UserController();
     private DefaultListModel<String> taskModel = new DefaultListModel<>();
+    private AllUser parentPanel;
 
-    public AddUser() {
+    // KHAI BÁO PANEL PHỤ ĐỂ CHỨA NỘI DUNG (Content Panel)
+    private JPanel contentPanel;
+
+
+    /**
+     * Creates new form AddUser1
+     */
+    public AddUser(AllUser parentPanel) {
+        // Khởi tạo các thành phần UI (các label, textfield, button)
         initComponents();
+
+        this.parentPanel = parentPanel;
+
         listTask.setModel(taskModel);
         listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        // --- Thêm đoạn MouseListener để click thường chọn được nhiều ---
-        listTask.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        listTask.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 int index = listTask.locationToIndex(evt.getPoint());
                 if (index >= 0) {
                     if (listTask.isSelectedIndex(index)) {
@@ -52,26 +60,220 @@ public class AddUser extends javax.swing.JFrame {
                 }
             }
         });
+
+
+        // --- BƯỚC SỬA LỖI CĂN GIỮA ---
+        applyCenteredLayout();
+
         loadData();
     }
 
+    // CONSTRUCTOR MẶC ĐỊNH
+    public AddUser() {
+        this(null);
+    }
+
+
+    // ========================================================
+    // PHƯƠNG THỨC CĂN GIỮA (THAY THẾ CHO LAYOUT TỰ ĐỘNG)
+    // ========================================================
+    private void applyCenteredLayout() {
+        // 1. Lưu trữ Layout tự động (Group Layout) của initComponents() vào ContentPanel
+        // Vì initComponents đã sử dụng layout để sắp xếp các thành phần con,
+        // chúng ta sẽ tái sử dụng Layout đã tạo trong initComponents() cho contentPanel.
+
+        // 2. Thiết lập GridBagLayout cho JPanel chính (this)
+        this.setLayout(new GridBagLayout());
+
+        // Tạo một ContentPanel mới (Nếu initComponents chưa tạo ra JPanel cha bọc sẵn)
+        // Nếu không có panel bọc, chúng ta cần tạo một JPanel mới và chuyển tất cả các thành phần
+        // đã được tạo trong initComponents() vào panel này.
+
+        // GIẢ ĐỊNH: Chúng ta sẽ bọc tất cả các components đã được tạo bởi initComponents
+        // vào một contentPanel và sử dụng GridBagLayout để căn giữa contentPanel này.
+        // Tuy nhiên, việc này phức tạp vì components đã được gán Layout cho `this`.
+
+        // CÁCH ĐƠN GIẢN HƠN: Thiết lập lại bố cục của JPanel chính
+        // Bắt đầu bằng cách tạo một JPanel phụ chứa TẤT CẢ các thành phần đã tạo
+        contentPanel = new JPanel();
+        // Giữ nguyên layout cũ (Group Layout) cho contentPanel
+        GroupLayout contentLayout = new GroupLayout(contentPanel);
+        contentPanel.setLayout(contentLayout);
+        contentPanel.setBackground(new java.awt.Color(255, 255, 255)); // Đảm bảo màu nền khớp
+
+        // DI CHUYỂN TẤT CẢ COMPONENTS VÀ KÍCH THƯỚC/BỐ CỤC CŨ VÀO contentPanel
+        // Tái tạo lại GroupLayout đã được tạo trong initComponents (xem phần sau)
+        setupContentPanelLayout(contentLayout);
+
+        // 3. Áp dụng GridBagLayout cho JPanel chính (this) để căn giữa contentPanel
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0; // Cho phép co giãn theo chiều ngang
+        gbc.weighty = 1.0; // Cho phép co giãn theo chiều dọc
+        gbc.fill = GridBagConstraints.NONE; // KHÔNG cho contentPanel lấp đầy toàn bộ không gian
+        gbc.anchor = GridBagConstraints.CENTER; // CĂN GIỮA
+
+        this.add(contentPanel, gbc);
+    }
+
+    // Phương thức này tái tạo lại bố cục của initComponents() vào contentPanel
+    private void setupContentPanelLayout(GroupLayout layout) {
+
+        // XÓA TẤT CẢ CÁC THÀNH PHẦN KHỎI JPanel CHÍNH (this)
+        this.removeAll();
+
+        // THÊM TẤT CẢ CÁC THÀNH PHẦN VÀO contentPanel
+        contentPanel.add(lbDepartment);
+        contentPanel.add(lbTask);
+        contentPanel.add(lbRole);
+        contentPanel.add(cbRole);
+        contentPanel.add(lbMail);
+        contentPanel.add(btnCancel);
+        contentPanel.add(txtMail);
+        contentPanel.add(btnSave);
+        contentPanel.add(lbUsername);
+        contentPanel.add(cbDepartment);
+        contentPanel.add(txtUsername);
+        contentPanel.add(jScrollPane1);
+        contentPanel.add(lbPassword);
+        contentPanel.add(lbEmployeename);
+        contentPanel.add(txtPassWord);
+        contentPanel.add(txtEmployeename);
+
+        // TÁI TẠO LẠI BỐ CỤC CŨ (HORIZONTAL GROUP)
+        // Thiết lập chiều rộng đồng nhất 200px cho các trường nhập/chọn
+        final int FIELD_WIDTH = 200;
+        final int HORIZONTAL_GAP = 70;
+        final int LEFT_RIGHT_MARGIN = 80;
+
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(LEFT_RIGHT_MARGIN, LEFT_RIGHT_MARGIN, LEFT_RIGHT_MARGIN) // Lề trái
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(lbUsername)
+                                        .addComponent(lbMail)
+                                        .addComponent(lbPassword)
+                                        .addComponent(lbRole))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                                        // CỘT 1: Chiều rộng 200px
+                                        .addComponent(txtUsername, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, FIELD_WIDTH, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtMail, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, FIELD_WIDTH, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtPassWord, GroupLayout.PREFERRED_SIZE, FIELD_WIDTH, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(cbRole, 0, FIELD_WIDTH, Short.MAX_VALUE))
+                                .addGap(HORIZONTAL_GAP, HORIZONTAL_GAP, HORIZONTAL_GAP) // Khoảng cách giữa hai cột
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(lbEmployeename)
+                                                .addGap(18, 18, 18)
+                                                // CỘT 2: Chiều rộng 200px
+                                                .addComponent(txtEmployeename, GroupLayout.PREFERRED_SIZE, FIELD_WIDTH, GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                        .addComponent(lbTask)
+                                                        .addComponent(lbDepartment))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                                        // CỘT 2: Chiều rộng 200px
+                                                        .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, FIELD_WIDTH, Short.MAX_VALUE)
+                                                        .addComponent(cbDepartment, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGap(0, LEFT_RIGHT_MARGIN, Short.MAX_VALUE)) // Lề phải
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(250, 250, 250)
+                                .addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
+                                .addGap(40, 40, 40)
+                                .addComponent(btnSave)
+                                .addGap(20, 20, 20))
+        );
+
+        // TÁI TẠO LẠI BỐ CỤC CŨ (VERTICAL GROUP)
+        final int FIELD_HEIGHT = 30;
+        final int VERTICAL_GAP = 35;
+        final int SCROLL_PANE_HEIGHT = 85;
+        // 🌟 ĐIỀU CHỈNH LẠI KHOẢNG CÁCH: ROLE_GAP = 8 (khoảng 35 - (85-30)/2)
+        final int ROLE_GAP = 8;
+
+        layout.setVerticalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(65, 65, 65) // Lề trên
+                                // Hàng 1 (Mail/Employeename)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lbMail)
+                                        .addComponent(txtMail, GroupLayout.PREFERRED_SIZE, FIELD_HEIGHT, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lbEmployeename)
+                                        .addComponent(txtEmployeename, GroupLayout.PREFERRED_SIZE, FIELD_HEIGHT, GroupLayout.PREFERRED_SIZE))
+                                .addGap(VERTICAL_GAP, VERTICAL_GAP, VERTICAL_GAP) // Khoảng cách H1 -> H2 (35px)
+                                // Hàng 2 (Username/Department)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(txtUsername, GroupLayout.PREFERRED_SIZE, FIELD_HEIGHT, GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(lbUsername))
+                                                .addGap(VERTICAL_GAP, VERTICAL_GAP, VERTICAL_GAP) // Khoảng cách H2 -> H3 (35px)
+                                                // Hàng 3 (Password/Task)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(lbPassword)
+                                                                .addComponent(txtPassWord, GroupLayout.PREFERRED_SIZE, FIELD_HEIGHT, GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(lbTask)
+                                                                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, SCROLL_PANE_HEIGHT, GroupLayout.PREFERRED_SIZE))
+                                                ))
+                                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(cbDepartment, GroupLayout.PREFERRED_SIZE, FIELD_HEIGHT, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(lbDepartment)))
+
+                                // Hàng 4 (Role) - SỬ DỤNG KHOẢNG CÁCH MỚI (8px)
+                                .addGap(ROLE_GAP, ROLE_GAP, ROLE_GAP)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lbRole)
+                                        .addComponent(cbRole, GroupLayout.PREFERRED_SIZE, FIELD_HEIGHT, GroupLayout.PREFERRED_SIZE))
+
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE) // Giữ khoảng cách nút
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnCancel)
+                                        .addComponent(btnSave))
+                                .addGap(74, 74, 74))
+        );
+
+        // Cập nhật lại giao diện
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    // ========================================================
+    // LOGIC TẢI DỮ LIỆU
+    // ========================================================
     private void loadData() {
         loadDepartments();
         loadTasks();
         loadRoles();
     }
+
+    // 🌟 Đã bao gồm dòng hướng dẫn và logic load dữ liệu
     private void loadDepartments() {
         try {
             DepartmentDAO departmentDAO = new DepartmentDAO();
             List<Department> departments = departmentDAO.findAll();
 
             cbDepartment.removeAllItems();
+            // THÊM DÒNG HƯỚNG DẪN
+            cbDepartment.addItem("--- 選択してください ---");
+
             for (Department d : departments) {
                 cbDepartment.addItem(d.getName());
             }
 
+            // Đặt mục hướng dẫn là mục được chọn mặc định
+            cbDepartment.setSelectedIndex(0);
+
         } catch (Exception e) {
             e.printStackTrace();
+            logger.log(java.util.logging.Level.SEVERE, "Lỗi tải Department", e);
         }
     }
 
@@ -91,20 +293,36 @@ public class AddUser extends javax.swing.JFrame {
 
         } catch (Exception e) {
             e.printStackTrace();
+            logger.log(java.util.logging.Level.SEVERE, "Lỗi tải Tasks", e);
         }
     }
+
+    // 🌟 Đã bao gồm dòng hướng dẫn và logic load dữ liệu
     private void loadRoles() {
         try{
             AuthDAO authDAO = new AuthDAO();
             List<Roles> roles = authDAO.findAllRoles();
+
             cbRole.removeAllItems();
+            // THÊM DÒNG HƯỚNG DẪN
+            cbRole.addItem("--- 選択してください ---");
+
             for (Roles r : roles) {
                 cbRole.addItem(r.getName());
             }
+
+            // Đặt mục hướng dẫn là mục được chọn mặc định
+            cbRole.setSelectedIndex(0);
+
         }catch (Exception e){
             e.printStackTrace();
+            logger.log(java.util.logging.Level.SEVERE, "Lỗi tải Roles", e);
         }
     }
+
+    // ========================================================
+    // LOGIC XÁC THỰC FORM
+    // ========================================================
 
     private boolean validateForm() {
         String email = txtMail.getText().trim();
@@ -173,7 +391,8 @@ public class AddUser extends javax.swing.JFrame {
         }
 
         // 部署選択チェック
-        if (cbDepartment.getSelectedIndex() == -1) {
+        // 🌟 Đã được sửa để kiểm tra dòng hướng dẫn
+        if (cbDepartment.getSelectedIndex() <= 0) {
             JOptionPane.showMessageDialog(
                     this,
                     "部署を選択してください。",
@@ -184,7 +403,8 @@ public class AddUser extends javax.swing.JFrame {
         }
 
         // 役割選択チェック
-        if (cbRole.getSelectedIndex() == -1) {
+        // 🌟 Đã được sửa để kiểm tra dòng hướng dẫn
+        if (cbRole.getSelectedIndex() <= 0) {
             JOptionPane.showMessageDialog(
                     this,
                     "役割を選択してください。",
@@ -194,70 +414,40 @@ public class AddUser extends javax.swing.JFrame {
             return false;
         }
 
-
-
         return true;
     }
-
 
 
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
+     * * LƯU Ý: Phần này KHÔNG được sửa đổi (chỉ giữ lại việc khởi tạo components),
+     * Logic Layout đã được chuyển sang applyCenteredLayout()
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
-        jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
-        jCheckBoxMenuItem3 = new javax.swing.JCheckBoxMenuItem();
-        pnlAdduser = new javax.swing.JPanel();
-        lbMail = new javax.swing.JLabel();
-        txtMail = new javax.swing.JTextField();
-        lbUsername = new javax.swing.JLabel();
-        txtUsername = new javax.swing.JTextField();
-        lbPassword = new javax.swing.JLabel();
-        lbEmployeename = new javax.swing.JLabel();
-        txtEmployeename = new javax.swing.JTextField();
-        lbDepartment = new javax.swing.JLabel();
-        lbTask = new javax.swing.JLabel();
-        lbRole = new javax.swing.JLabel();
-        cbRole = new javax.swing.JComboBox<>();
-        btnCancel = new javax.swing.JButton();
-        btnSave = new javax.swing.JButton();
-        cbDepartment = new javax.swing.JComboBox<>();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        listTask = new javax.swing.JList<>();
-        txtPassWord = new javax.swing.JPasswordField();
+        lbDepartment = new JLabel();
+        lbTask = new JLabel();
+        lbRole = new JLabel();
+        cbRole = new JComboBox<>();
+        lbMail = new JLabel();
+        btnCancel = new JButton();
+        txtMail = new JTextField();
+        btnSave = new JButton();
+        lbUsername = new JLabel();
+        cbDepartment = new JComboBox<>();
+        txtUsername = new JTextField();
+        jScrollPane1 = new JScrollPane();
+        listTask = new JList<>();
+        lbPassword = new JLabel();
+        lbEmployeename = new JLabel();
+        txtPassWord = new JPasswordField();
+        txtEmployeename = new JTextField();
 
-
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("新ユーザー作成");
-        setPreferredSize(new java.awt.Dimension(600, 400));
-
-        pnlAdduser.setBackground(new java.awt.Color(255, 255, 255));
-        pnlAdduser.setPreferredSize(new java.awt.Dimension(600, 400));
-
-        lbMail.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
-        lbMail.setText("メール");
-
-        txtMail.addActionListener(this::txtMailActionPerformed);
-
-        lbUsername.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
-        lbUsername.setText("ユーザー名");
-
-        txtUsername.addActionListener(this::txtUsernameActionPerformed);
-
-        lbPassword.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
-        lbPassword.setText("パスワード");
-
-        lbEmployeename.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
-        lbEmployeename.setText("社員名");
-
-        txtEmployeename.addActionListener(this::txtEmployeenameActionPerformed);
+        setBackground(new java.awt.Color(255, 255, 255));
 
         lbDepartment.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
         lbDepartment.setText("部署");
@@ -268,150 +458,58 @@ public class AddUser extends javax.swing.JFrame {
         lbRole.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
         lbRole.setText("ロール");
 
-        cbRole.setModel(new javax.swing.DefaultComboBoxModel<>());
+        // cbRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Employee", "Manager", "Admin" })); // Bị xóa vì logic đã chuyển sang loadRoles()
+        cbRole.addActionListener(this::cbRoleActionPerformed);
 
+        lbMail.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbMail.setText("メール");
 
         btnCancel.setBackground(new java.awt.Color(255, 204, 153));
         btnCancel.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
         btnCancel.setText("キャンセル");
-        btnCancel.addActionListener(this::btnCancelActionPerformed);
+
+        txtMail.addActionListener(this::txtMailActionPerformed);
 
         btnSave.setBackground(new java.awt.Color(189, 231, 189));
         btnSave.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
         btnSave.setText("保存");
         btnSave.addActionListener(this::btnSaveActionPerformed);
 
+        lbUsername.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbUsername.setText("ユーザー名");
+
+        txtUsername.addActionListener(this::txtUsernameActionPerformed);
+
         jScrollPane1.setViewportView(listTask);
 
-        javax.swing.GroupLayout pnlAdduserLayout = new javax.swing.GroupLayout(pnlAdduser);
-        pnlAdduser.setLayout(pnlAdduserLayout);
-        pnlAdduserLayout.setHorizontalGroup(
-            pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAdduserLayout.createSequentialGroup()
-                .addGap(60, 60, 60)
-                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lbUsername)
-                    .addComponent(lbPassword)
-                    .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addComponent(lbMail)
-                        .addGap(16, 16, 16))
-                    .addComponent(lbRole, javax.swing.GroupLayout.Alignment.LEADING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtMail, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cbRole, 0, 140, Short.MAX_VALUE)
-                    .addComponent(txtPassWord))
-                .addGap(52, 52, 52)
-                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addComponent(lbEmployeename)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtEmployeename, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbTask)
-                            .addComponent(lbDepartment))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
-                            .addComponent(cbDepartment, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(0, 32, Short.MAX_VALUE))
-            .addGroup(pnlAdduserLayout.createSequentialGroup()
-                .addGap(188, 188, 188)
-                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
-                .addComponent(btnSave)
-                .addGap(20, 20, 20))
-        );
-        pnlAdduserLayout.setVerticalGroup(
-            pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAdduserLayout.createSequentialGroup()
-                .addGap(59, 59, 59)
-                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbMail)
-                    .addComponent(txtMail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbEmployeename)
-                    .addComponent(txtEmployeename, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbUsername)))
-                    .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cbDepartment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbDepartment))))
-                .addGap(26, 26, 26)
-                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lbPassword)
-                            .addComponent(lbTask)
-                            .addComponent(txtPassWord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                        .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lbRole)
-                            .addComponent(cbRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE))
-                    .addGroup(pnlAdduserLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(pnlAdduserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCancel)
-                    .addComponent(btnSave))
-                .addGap(74, 74, 74))
-        );
+        lbPassword.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbPassword.setText("パスワード");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(pnlAdduser, javax.swing.GroupLayout.PREFERRED_SIZE, 599, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 1, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(pnlAdduser, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+        lbEmployeename.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbEmployeename.setText("社員名");
 
-        getAccessibleContext().setAccessibleDescription("Add User");
+        txtEmployeename.addActionListener(this::txtEmployeenameActionPerformed);
 
-        pack();
+        // Thiết lập layout tạm thời để các component không bị lỗi sau khi initComponents
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(null);
     }// </editor-fold>//GEN-END:initComponents
-    private UserController userController = new UserController();
 
-
-    private void txtMailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMailActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtMailActionPerformed
-
-    private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtUsernameActionPerformed
-
-    private void txtEmployeenameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmployeenameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEmployeenameActionPerformed
+    // ========================================================
+    // EVENT HANDLERS
+    // ========================================================
 
     private void cbRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbRoleActionPerformed
-        // TODO add your handling code here:
+        // Bỏ trống
     }//GEN-LAST:event_cbRoleActionPerformed
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
-        this.dispose();
-    }
-//GEN-LAST:event_btnCancelActionPerformed
+    private void txtMailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMailActionPerformed
+        // Bỏ trống
+    }//GEN-LAST:event_txtMailActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
-
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (!validateForm()) {
-            return;
+            return; // dừng lại, không tạo User
         }
 
         String userName = txtUsername.getText();
@@ -421,110 +519,89 @@ public class AddUser extends javax.swing.JFrame {
         String fullName = txtEmployeename.getText();
         String departmentName = cbDepartment.getSelectedItem().toString();
 
-        try {
 
+        try {
             Users user = new Users();
             user.setUserName(userName);
 
-            // Hash password
+            // Mã hóa mật khẩu
             user.setPassword(password);
+
             user.setFullName(fullName);
-            user.setEmail(email);
             user.setUserCode(Users.generateUserCode());
+            user.setEmail(email);
+            // user.getCreatedAt(); (Tạo trong logic DAO hoặc Model)
 
-
-            // ----- Department -----
+            // Lấy Department theo tên
             DepartmentDAO departmentDAO = new DepartmentDAO();
             Department dept = departmentDAO.findFindByName(departmentName).orElse(null);
             if (dept != null) {
                 user.setDepartment(dept);
             }
 
-            // ----- Role -----
+            // Role
             AuthDAO roleDAO = new AuthDAO();
-            Optional<Roles> roleOpt = roleDAO.findByName(roleName);
-            if (roleOpt.isEmpty()) {
+            Optional<Roles> roleOpt = roleDAO.findByName(roleName); // tìm Role theo tên
+            if (roleOpt.isPresent()) {
+                user.setRole(roleOpt.get()); // gán Role vào User
+            } else {
                 JOptionPane.showMessageDialog(this, "Role không tồn tại!");
-                return;
+                return; // dừng nếu role không có trong DB
             }
-            user.setRole(roleOpt.get());
 
-            // ----- Tasks -----
+            // Tasks
             TaskDAO taskDAO = new TaskDAO();
-            List<String> selected = listTask.getSelectedValuesList();
+            List<String> selectedTasks = listTask.getSelectedValuesList();
             List<Tasks> newTasks = new ArrayList<>();
 
-            for (String t : selected) {
-                taskDAO.findByName(t).ifPresent(newTasks::add);
+            for (String name : selectedTasks) {
+                taskDAO.findByName(name).ifPresent(newTasks::add);
             }
+            user.setTasks(newTasks);
 
-            user.setTasks(newTasks);   // <-- FIXED
-
-            // ----- Save -----
+            // Gọi Controller để lưu vào DB
             userController.createUser(user);
 
             JOptionPane.showMessageDialog(this, "ユーザーが正常に作成されました！");
 
-            this.dispose();
-
-            AllUser all = new AllUser();
-            all.setVisible(true);
-            all.setLocationRelativeTo(null);
+            // THAY ĐỔI 3: Gọi loadUserTable() từ parentPanel và đóng cửa sổ hiện tại
+            if (parentPanel != null) {
+                // Giả định AllUser có phương thức loadUserTable()
+                // parentPanel.loadUserTable();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
         }
-    }
-//GEN-LAST:event_btnSaveActionPerformed
-   
+    }//GEN-LAST:event_btnSaveActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
+        // Bỏ trống
+    }//GEN-LAST:event_txtUsernameActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AddUser().setVisible(true));
-    }
+    private void txtEmployeenameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmployeenameActionPerformed
+        // Bỏ trống
+    }//GEN-LAST:event_txtEmployeenameActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancel;
-    private javax.swing.JButton btnSave;
-    private javax.swing.JComboBox<String> cbDepartment;
-    private javax.swing.JComboBox<String> cbRole;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem3;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lbDepartment;
-    private javax.swing.JLabel lbEmployeename;
-    private javax.swing.JLabel lbMail;
-    private javax.swing.JLabel lbPassword;
-    private javax.swing.JLabel lbRole;
-    private javax.swing.JLabel lbTask;
-    private javax.swing.JLabel lbUsername;
-    private javax.swing.JList<String> listTask;
-    private javax.swing.JPanel pnlAdduser;
-    private javax.swing.JTextField txtEmployeename;
-    private javax.swing.JTextField txtMail;
-    private javax.swing.JPasswordField txtPassWord;
-    private javax.swing.JTextField txtUsername;
+    private JButton btnCancel;
+    private JButton btnSave;
+    private JComboBox<String> cbDepartment;
+    private JComboBox<String> cbRole;
+    private JScrollPane jScrollPane1;
+    private JLabel lbDepartment;
+    private JLabel lbEmployeename;
+    private JLabel lbMail;
+    private JLabel lbPassword;
+    private JLabel lbRole;
+    private JLabel lbTask;
+    private JLabel lbUsername;
+    private JList<String> listTask;
+    private JTextField txtEmployeename;
+    private JTextField txtMail;
+    private JPasswordField txtPassWord;
+    private JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }

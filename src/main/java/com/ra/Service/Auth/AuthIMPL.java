@@ -23,7 +23,7 @@ public class AuthIMPL implements AuthSerVice {
     public UserRequest login(String username, String password) {
         Users user = authDAO.findByUsername(username);
         if(user == null){
-           throw new RuntimeException("User do not exist");
+            throw new RuntimeException("User do not exist");
         }
 
         if (!PasswordHash.verifyPassword(password, user.getPassword())) {
@@ -34,7 +34,7 @@ public class AuthIMPL implements AuthSerVice {
         userRequest.setId(user.getId());
         userRequest.setUsername(user.getUserName());
         userRequest.setEmail(user.getEmail());
-       return userRequest;
+        return userRequest;
 
     }
 

@@ -8,212 +8,313 @@ import com.ra.Model.Entity.Project;
 import com.ra.Model.Entity.Tasks;
 
 import javax.swing.*;
-import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Window;
+import java.util.logging.Logger;
 
 public class AddDepartment extends JPanel {
+
+    // Interface để thông báo cho màn hình cha khi thao tác hoàn tất
+    public interface DepartmentListener {
+        void onDepartmentOperationComplete();
+    }
+
+    // Khai báo Listener và ID
+    private DepartmentListener listener;
+    private Integer editingDepartmentId = null;
+    private Department editingDepartment = null;
+    private Window parentWindow;
+
+    private static final Logger logger = Logger.getLogger(AddDepartment.class.getName());
 
     private final DepartmentController departmentController = new DepartmentController();
     private final ProjectController projectController = new ProjectController();
     private final TaskController taskController = new TaskController();
 
-    private Integer editingDepartmentId = null;
-    private Department editingDepartment;
+    private List<Project> projectList = new ArrayList<>();
+    private List<Tasks> taskList = new ArrayList<>();
 
-    private JDialog parentDialog;  // NEW
+    private JPanel contentPanel;
 
-    /** ---------- MODE: ADD ---------- */
-    public AddDepartment(Frame parent, boolean modal) {
-        this.parentDialog = createDialog(parent, modal);
-        initComponents();
-        loadComboBoxes();
-        parentDialog.setTitle("部署作成");
+    // 🌟 CONSTRUCTOR 1: Dành cho MainDashboard gọi (new AddDepartment()) - CHẾ ĐỘ NHÚNG
+    public AddDepartment() {
+        this.listener = null;
+        this.parentWindow = null;
+        this.editingDepartmentId = null;
+
+        initializeForm(null);
+        btnSave.setText("保存");
     }
 
-    /** ---------- MODE: EDIT ---------- */
-    public AddDepartment(Frame parent, boolean modal, int id) {
+    // 🌟 CONSTRUCTOR 2: Dùng cho Pop-up Add/Edit (Được gọi từ AllDepartment) - CHẾ ĐỘ POP-UP
+    public AddDepartment(Window parentWindow, DepartmentListener listener, Integer id) {
+        this.parentWindow = parentWindow;
+        this.listener = listener;
         this.editingDepartmentId = id;
-        this.parentDialog = createDialog(parent, modal);
+
+        initializeForm(id);
+
+        if (id != null) {
+            btnSave.setText("更新");
+        } else {
+            btnSave.setText("保存");
+        }
+    }
+
+    // PHƯƠNG THỨC KHỞI TẠO FORM (Logic chung)
+    private void initializeForm(Integer id) {
         initComponents();
-        loadComboBoxes();
-        loadDepartmentData();
-        parentDialog.setTitle("部署編集");
-    }
+        applyCenteredLayout();
 
-    /** Tạo JDialog chứa JPanel này */
-    private JDialog createDialog(Frame parent, boolean modal) {
-        JDialog d = new JDialog(parent, modal);
-        d.setContentPane(this);
+        loadProjects();
+        loadTasks();
 
-        // 💥 THÊM 2 DÒNG NÀY
-        this.setPreferredSize(new Dimension(500, 350));  // Panel size
-        d.setMinimumSize(new Dimension(520, 380));        // Dialog size
-
-        d.pack();
-        d.setLocationRelativeTo(null);
-        return d;
-    }
-
-    /** SHOW FORM (thay thế setVisible của JDialog cũ) */
-    public void showDialog() {
-        parentDialog.setVisible(true);
-    }
-
-    private void loadComboBoxes() {
-        cbProject.removeAllItems();
-        cbTask.removeAllItems();
-
-        List<Project> projects = projectController.findAll();
-        for (Project p : projects) cbProject.addItem(p);
-
-        List<Tasks> tasks = taskController.findAll();
-        for (Tasks t : tasks) cbTask.addItem(t);
-    }
-
-    private void loadDepartmentData() {
-        editingDepartment = departmentController.findAll()
-                .stream().filter(d -> d.getId() == editingDepartmentId)
-                .findFirst().orElse(null);
-
-        if (editingDepartment == null) {
-            JOptionPane.showMessageDialog(this, "部署データ取得失敗！");
-            parentDialog.dispose();
-            return;
+        // Load data nếu đang ở chế độ chỉnh sửa
+        if (id != null) {
+            loadDepartmentData(id);
         }
 
-        txtDepartmentName.setText(editingDepartment.getName());
-
-        if (!editingDepartment.getProjects().isEmpty())
-            cbProject.setSelectedItem(editingDepartment.getProjects().get(0));
-
-        if (!editingDepartment.getTasks().isEmpty())
-            cbTask.setSelectedItem(editingDepartment.getTasks().get(0));
-
-        btnSave.setText("更新");
+        btnCancel.addActionListener(this::btnCancelActionPerformed);
+        btnSave.addActionListener(this::btnSaveActionPerformed);
     }
+
+    // Tải dữ liệu cho chế độ EDIT
+    private void loadDepartmentData(int id) {
+        editingDepartment = departmentController.findById(id);
+
+        if (editingDepartment != null) {
+            txtDepartmentname.setText(editingDepartment.getName());
+
+            // Xử lý Project
+            if (editingDepartment.getProjects() != null && !editingDepartment.getProjects().isEmpty()) {
+                String projectName = editingDepartment.getProjects().get(0).getName();
+                cbbProjectname.setSelectedItem(projectName);
+            } else {
+                cbbProjectname.setSelectedIndex(0);
+            }
+
+            // Xử lý Task
+            if (editingDepartment.getTasks() != null && !editingDepartment.getTasks().isEmpty()) {
+                String taskName = editingDepartment.getTasks().get(0).getName();
+                cbbTaskname.setSelectedItem(taskName);
+            } else {
+                cbbTaskname.setSelectedIndex(0);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "部署データが見つかりません！", "Error", JOptionPane.ERROR_MESSAGE);
+            closeAndNotify();
+        }
+    }
+
+    private void loadProjects() {
+        projectList = projectController.findAll();
+        cbbProjectname.removeAllItems();
+        cbbProjectname.addItem("--- 選択してください ---");
+        for (Project p : projectList) {
+            cbbProjectname.addItem(p.getName());
+        }
+    }
+
+    private void loadTasks() {
+        taskList = taskController.findAll();
+        cbbTaskname.removeAllItems();
+        cbbTaskname.addItem("--- 選択してください ---");
+        for (Tasks t : taskList) {
+            cbbTaskname.addItem(t.getName());
+        }
+    }
+
+    // Phương thức đóng cửa sổ và thông báo cho Listener
+    private void closeAndNotify() {
+        if (listener != null) {
+            listener.onDepartmentOperationComplete();
+        }
+        if (parentWindow != null) {
+            parentWindow.dispose();
+        }
+    }
+
+
+    // ==========================================================
+    // PHƯƠNG THỨC LAYOUT VÀ initComponents (GIỮ NGUYÊN DESIGN)
+    // ==========================================================
+    private void applyCenteredLayout() {
+        contentPanel = new JPanel();
+        contentPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        GroupLayout contentLayout = new GroupLayout(contentPanel);
+        contentPanel.setLayout(contentLayout);
+
+        this.removeAll();
+
+        contentPanel.add(lbDepartmentname);
+        contentPanel.add(txtDepartmentname);
+        contentPanel.add(lbProjectname);
+        contentPanel.add(lbTaskname);
+        contentPanel.add(cbbTaskname);
+        contentPanel.add(cbbProjectname);
+        contentPanel.add(btnCancel);
+        contentPanel.add(btnSave);
+
+        contentLayout.setHorizontalGroup(
+                contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(contentLayout.createSequentialGroup()
+                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addGroup(contentLayout.createSequentialGroup()
+                                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                        .addGroup(contentLayout.createSequentialGroup()
+                                                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                                                        .addGroup(contentLayout.createSequentialGroup()
+                                                                                .addContainerGap()
+                                                                                .addComponent(lbTaskname, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE))
+                                                                        .addGroup(GroupLayout.Alignment.LEADING, contentLayout.createSequentialGroup()
+                                                                                .addGap(87, 87, 87)
+                                                                                .addComponent(lbProjectname, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)))
+                                                                .addGap(41, 41, 41))
+                                                        .addGroup(GroupLayout.Alignment.TRAILING, contentLayout.createSequentialGroup()
+                                                                .addComponent(lbDepartmentname, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(26, 26, 26)))
+                                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(txtDepartmentname, GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
+                                                        .addComponent(cbbTaskname, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(cbbProjectname, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addGroup(contentLayout.createSequentialGroup()
+                                                .addGap(153, 153, 153)
+                                                .addComponent(btnCancel)
+                                                .addGap(59, 59, 59)
+                                                .addComponent(btnSave, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(130, Short.MAX_VALUE))
+        );
+        contentLayout.setVerticalGroup(
+                contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(contentLayout.createSequentialGroup()
+                                .addGap(76, 76, 76)
+                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lbDepartmentname)
+                                        .addComponent(txtDepartmentname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lbProjectname)
+                                        .addComponent(cbbProjectname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addGap(27, 27, 27)
+                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(lbTaskname)
+                                        .addComponent(cbbTaskname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addGap(32, 32, 32)
+                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnCancel)
+                                        .addComponent(btnSave))
+                                .addContainerGap(93, Short.MAX_VALUE))
+        );
+
+        this.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.weightx = 1.0; gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
+
+        this.add(contentPanel, gbc);
+        this.revalidate();
+        this.repaint();
+    }
+
 
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        lbDepartmentname = new JLabel();
+        txtDepartmentname = new JTextField();
+        lbProjectname = new JLabel();
+        lbTaskname = new JLabel();
+        cbbTaskname = new JComboBox<>();
+        cbbProjectname = new JComboBox<>();
+        btnCancel = new JButton();
+        btnSave = new JButton();
 
-        pnlMain = new javax.swing.JPanel();
-        lbDepartmentName = new javax.swing.JLabel();
-        lbProject = new javax.swing.JLabel();
-        lbTask = new javax.swing.JLabel();
-        txtDepartmentName = new javax.swing.JTextField();
-        cbProject = new javax.swing.JComboBox<>();
-        cbTask = new javax.swing.JComboBox<>();
-        btnCancel = new javax.swing.JButton();
-        btnSave = new javax.swing.JButton();
-
-        lbDepartmentName.setText("部署名");
-        lbProject.setText("プロジェクト名");
-        lbTask.setText("タスク名");
-
-        btnCancel.setBackground(new java.awt.Color(255, 204, 204));
+        setBackground(new java.awt.Color(255, 255, 255));
+        lbDepartmentname.setText("部署名");
+        lbProjectname.setText("プロジェクト名");
+        lbTaskname.setText("タスク名");
+        btnCancel.setBackground(new java.awt.Color(255, 204, 0));
         btnCancel.setText("キャンセル");
-        btnCancel.addActionListener(evt -> parentDialog.dispose()); // FIX
-
-        btnSave.setBackground(new java.awt.Color(204, 204, 255));
+        btnSave.setBackground(new java.awt.Color(153, 255, 0));
         btnSave.setText("保存");
-        btnSave.addActionListener(evt -> saveDepartment());
 
-        javax.swing.GroupLayout pnlMainLayout = new javax.swing.GroupLayout(pnlMain);
-        pnlMain.setLayout(pnlMainLayout);
-        pnlMainLayout.setHorizontalGroup(
-                pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlMainLayout.createSequentialGroup()
-                                .addGap(40)
-                                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(lbDepartmentName)
-                                        .addComponent(lbProject)
-                                        .addComponent(lbTask))
-                                .addGap(20)
-                                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(txtDepartmentName)
-                                        .addComponent(cbProject, 0, 300, Short.MAX_VALUE)
-                                        .addComponent(cbTask, 0, 300, Short.MAX_VALUE))
-                                .addContainerGap(40, Short.MAX_VALUE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMainLayout.createSequentialGroup()
-                                .addContainerGap(150, Short.MAX_VALUE)
-                                .addComponent(btnCancel)
-                                .addGap(40)
-                                .addComponent(btnSave)
-                                .addGap(120))
-        );
-        pnlMainLayout.setVerticalGroup(
-                pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlMainLayout.createSequentialGroup()
-                                .addGap(40)
-                                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(lbDepartmentName)
-                                        .addComponent(txtDepartmentName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(20)
-                                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(lbProject)
-                                        .addComponent(cbProject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(20)
-                                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(lbTask)
-                                        .addComponent(cbTask, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(30)
-                                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(40, Short.MAX_VALUE))
-        );
+        GroupLayout layout = new GroupLayout(this);
+    }// </editor-fold>//GEN-END:initComponents
 
-        setLayout(new BorderLayout());
-        add(pnlMain, BorderLayout.CENTER);
-    }
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
+        String depName = txtDepartmentname.getText().trim();
 
-    private void saveDepartment() {
-        String name = txtDepartmentName.getText().trim();
-        if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "部署名を入力してください");
+        if (depName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "部署名は空にできません！", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        Project project = (Project) cbProject.getSelectedItem();
-        Tasks task = (Tasks) cbTask.getSelectedItem();
-
-        if (editingDepartmentId == null) {
-
-            Department newDept = new Department();
-            newDept.setName(name);
-            newDept.setDepartmentCode(Department.generateDepartmentCode());
-            newDept.setProjects(List.of(project));
-            newDept.setTasks(List.of(task));
-
-            departmentController.create(newDept);
-            JOptionPane.showMessageDialog(this, "作成完了");
-
-        } else {
-            editingDepartment.setName(name);
-            editingDepartment.setProjects(List.of(project));
-            editingDepartment.setTasks(List.of(task));
-
-            departmentController.update(editingDepartment);
-            JOptionPane.showMessageDialog(this, "更新完了");
+        Project selectedProject = null;
+        if (cbbProjectname.getSelectedIndex() > 0) {
+            String projName = (String) cbbProjectname.getSelectedItem();
+            selectedProject = projectList.stream()
+                    .filter(p -> p.getName().equals(projName))
+                    .findFirst().orElse(null);
         }
 
-        parentDialog.dispose(); // FIX
+        Tasks selectedTask = null;
+        if (cbbTaskname.getSelectedIndex() > 0) {
+            String taskName = (String) cbbTaskname.getSelectedItem();
+            selectedTask = taskList.stream()
+                    .filter(t -> t.getName().equals(taskName))
+                    .findFirst().orElse(null);
+        }
+
+        List<Project> projects = selectedProject != null ? List.of(selectedProject) : new ArrayList<>();
+        List<Tasks> tasks = selectedTask != null ? List.of(selectedTask) : new ArrayList<>();
+
+        if (editingDepartmentId == null) {
+            // Logic Thêm mới
+            Department d = new Department();
+            d.setName(depName);
+            d.setDepartmentCode(Department.generateDepartmentCode());
+            d.setProjects(projects);
+            d.setTasks(tasks);
+
+            departmentController.create(d);
+            JOptionPane.showMessageDialog(this, "部署が正常に作成されました！");
+        } else {
+            // Logic Cập nhật
+            if (editingDepartment == null) {
+                JOptionPane.showMessageDialog(this, "更新する部署データが見つかりません。", "Error", JOptionPane.ERROR_MESSAGE);
+                closeAndNotify();
+                return;
+            }
+            editingDepartment.setName(depName);
+            editingDepartment.setProjects(projects);
+            editingDepartment.setTasks(tasks);
+
+            departmentController.update(editingDepartment);
+            JOptionPane.showMessageDialog(this, "部署が正常に更新されました！");
+        }
+
+        closeAndNotify();
     }
 
-    /** MAIN giữ nguyên */
-    public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(() -> {
-            AddDepartment dialog = new AddDepartment(null, true);
-            dialog.showDialog();
-        });
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
+        closeAndNotify();
     }
 
-    private javax.swing.JButton btnCancel;
-    private javax.swing.JButton btnSave;
-    private javax.swing.JComboBox<Project> cbProject;
-    private javax.swing.JComboBox<Tasks> cbTask;
-    private javax.swing.JLabel lbDepartmentName;
-    private javax.swing.JLabel lbProject;
-    private javax.swing.JLabel lbTask;
-    private javax.swing.JPanel pnlMain;
-    private javax.swing.JTextField txtDepartmentName;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JButton btnCancel;
+    private JButton btnSave;
+    private JComboBox<String> cbbProjectname;
+    private JComboBox<String> cbbTaskname;
+    private JLabel lbDepartmentname;
+    private JLabel lbProjectname;
+    private JLabel lbTaskname;
+    private JTextField txtDepartmentname;
+    // End of variables declaration//GEN-END:variables
 }

@@ -8,7 +8,9 @@ import org.hibernate.Transaction;
 import java.util.List;
 import java.util.Optional;
 
+
 public class UserDAO implements IUserDAO {
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UserDAO.class.getName());
 
     @Override
     public Users create(Users user) {
@@ -91,6 +93,21 @@ public class UserDAO implements IUserDAO {
             return List.of();
         }
     }
+    @Override
+    public List<Users> findAll() {
+        logger.info("Finding all users");
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "SELECT DISTINCT u FROM Users u " +
+                    "LEFT JOIN FETCH u.tasks " +
+                    "LEFT JOIN FETCH u.department " +
+                    "LEFT JOIN FETCH u.role ";
+            return session.createQuery(hql, Users.class)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
 
     @Override
     public Optional<Users> findById(int id) {
@@ -114,14 +131,14 @@ public class UserDAO implements IUserDAO {
     public Optional<Users> findByUsername(String username) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            Users user = session.createQuery(
-                            "SELECT DISTINCT u FROM Users u " +
-                                    "LEFT JOIN FETCH u.role r " +
-                                    "LEFT JOIN FETCH r.permissions " +   // <-- FIX
-                                    "LEFT JOIN FETCH u.department " +
-                                    "WHERE u.userName = :username AND u.deletedAt IS NULL",
-                            Users.class
-                    )
+            String hql =
+                    "SELECT DISTINCT u FROM Users u " +
+                            "LEFT JOIN FETCH u.role r " +
+                            "LEFT JOIN FETCH r.permissions " +
+                            "LEFT JOIN FETCH u.department " +
+                            "WHERE u.userName = :username AND u.deletedAt IS NULL";
+
+            Users user = session.createQuery(hql, Users.class)
                     .setParameter("username", username)
                     .uniqueResult();
 
@@ -132,15 +149,6 @@ public class UserDAO implements IUserDAO {
             return Optional.empty();
         }
     }
-
-
-
-
-
-
-
-
-
 
 
 

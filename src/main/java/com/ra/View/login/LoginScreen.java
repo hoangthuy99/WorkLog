@@ -35,7 +35,6 @@ public class LoginScreen extends javax.swing.JFrame {
         txtPassword = new javax.swing.JPasswordField();
         btnLogin = new javax.swing.JButton();
         chkShowPassword = new javax.swing.JCheckBox();
-        txtPassword.addActionListener(this::btnLoginActionPerformed);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("LOGINSCREEN");
@@ -136,8 +135,9 @@ public class LoginScreen extends javax.swing.JFrame {
         }
 
         Optional<Users> userOpt = userController.findByUsername(username);
-
+        logger.info("login with username " + username);
         if (userOpt.isEmpty()) {
+            logger.info("Không tìm thấy username : " + username);
             JOptionPane.showMessageDialog(this, "ユーザーが存在しません。");
             return;
         }
@@ -185,6 +185,9 @@ public class LoginScreen extends javax.swing.JFrame {
         this.dispose();
         // Lưu role của user
         SessionLocal.set("USER_ROLE", user.getRole().getName());
+
+
+
     }
 
 

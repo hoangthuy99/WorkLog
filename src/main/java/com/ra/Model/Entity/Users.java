@@ -17,17 +17,18 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Users {
+public class        Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(unique = true, nullable = false)
     private String userName;
     @Column(name = "userCode", length = 10, unique = true, nullable = false)
     private String userCode;
     private String password;
     private String email;
     private String fullName;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "roleId", nullable = false)
     private Roles role;
     @ManyToOne (fetch = FetchType.EAGER)

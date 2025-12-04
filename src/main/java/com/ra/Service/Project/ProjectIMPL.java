@@ -4,6 +4,7 @@ import com.ra.DAO.Project.ProjectDAO;
 import com.ra.Model.Entity.Project;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ProjectIMPL implements ProjectService {
 
@@ -37,5 +38,10 @@ public class ProjectIMPL implements ProjectService {
     @Override
     public Project findFindById(int id) {
         return projectDAO.findFindById(id);
+    }
+
+    @Override
+    public Optional<Project> findByName(String name) {
+        return Optional.empty();
     }
 }

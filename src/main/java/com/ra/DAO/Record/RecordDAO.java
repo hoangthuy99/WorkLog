@@ -11,7 +11,7 @@ import java.util.Optional;
 public class RecordDAO implements IRecordDAO {
 
     @Override
-    public void create(WorkRecord workRecord) {
+    public WorkRecord create(WorkRecord workRecord) {
         //TODO: Tạo mới bản ghi công việc vào DB
         Transaction transaction = null;
         try{
@@ -28,10 +28,11 @@ public class RecordDAO implements IRecordDAO {
             }
             e.printStackTrace();
         }
+        return workRecord;
     }
 
     @Override
-    public void update(WorkRecord workRecord) {
+    public WorkRecord update(WorkRecord workRecord) {
         //TODO:Cập nhật bản ghi công việc
         Transaction transaction = null;
         try{
@@ -44,6 +45,7 @@ public class RecordDAO implements IRecordDAO {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
+        return workRecord;
     }
 
     @Override
@@ -86,7 +88,7 @@ public class RecordDAO implements IRecordDAO {
         Transaction transaction = null;
         try{
             Session session = HibernateUtil.getSessionFactory().openSession();
-            String hql = "FROM WorkRecord wr WHERE wr.user.userName LIKE :keyword OR wr.remarks LIKE :keyword";
+            String hql = "FROM WorkRecord wr WHERE wr.attendance.user.userName  LIKE :keyword";
             return session.createQuery(hql, WorkRecord.class)
                     .setParameter("keyword", "%" + keyword + "%")
                     .setFirstResult((page - 1) * size)
@@ -101,7 +103,7 @@ public class RecordDAO implements IRecordDAO {
     }
 
     @Override
-    public Optional<WorkRecord> findById(int id) {
+    public List<WorkRecord> findById(int id) {
         //TODO:Tìm kiếm bản ghi công việc theo ID
         Transaction transaction = null;
         try{
@@ -109,11 +111,29 @@ public class RecordDAO implements IRecordDAO {
             transaction = session.beginTransaction();
             WorkRecord workRecord = session.get(WorkRecord.class, id);
             transaction.commit();
-            return Optional.ofNullable(workRecord);
+            return List.of(workRecord);
         }catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
-        return Optional.empty();
+        return List.of();
+    }
+
+    @Override
+    public List<WorkRecord> findByAttendanceId(int attendanceId) {
+        //TODO:Tìm kiếm bản ghi công việc theo Attendance ID
+        Transaction transaction = null;
+        try{
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            String hql = "FROM WorkRecord wr WHERE wr.attendance.id = :attendanceId";
+            List<WorkRecord> workRecords = session.createQuery(hql, WorkRecord.class)
+                    .setParameter("attendanceId", attendanceId)
+                    .list();
+            return workRecords;
+        }catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+            return List.of();
+        }
     }
 }

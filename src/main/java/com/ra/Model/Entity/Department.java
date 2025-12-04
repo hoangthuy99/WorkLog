@@ -2,7 +2,6 @@ package com.ra.Model.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Generated;
 
 import java.time.LocalDateTime;
 import java.util.List;
