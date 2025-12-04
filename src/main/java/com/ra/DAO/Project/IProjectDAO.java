@@ -3,6 +3,7 @@ package com.ra.DAO.Project;
 import com.ra.Model.Entity.Project;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IProjectDAO
 {
@@ -12,4 +13,5 @@ public interface IProjectDAO
     List<Project> findAll();
     List<Project> search(String keyword, int page, int size);
     Project findFindById(int id);
+    Optional<Project> findByName(String name);
 }

@@ -46,6 +46,11 @@
     </Component>
     <Component class="javax.swing.ButtonGroup" name="buttonGroup2">
     </Component>
+    <Component class="javax.swing.JRadioButton" name="jRadioButton1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="jRadioButton1"/>
+      </Properties>
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
@@ -70,8 +75,8 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="32767" attributes="0"/>
-              <Component id="pnlAddAttendance" min="-2" pref="595" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="pnlAddAttendance" pref="841" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -93,109 +98,126 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jSeparator1" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
-                                  <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
-                                  <Component id="btnSend" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="288" max="-2" attributes="0"/>
-                                  <Component id="btnCancel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="btnEdit" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="1" attributes="0">
-                                              <Group type="102" attributes="0">
-                                                  <Component id="lbStarttime" min="-2" pref="31" max="-2" attributes="0"/>
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="txtStarttime" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="lbEndtime" min="-2" pref="37" max="-2" attributes="0"/>
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="txtEndtime" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
-                                                  <Component id="lbBreaktimetotask" min="-2" pref="31" max="-2" attributes="0"/>
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="txtBreaktimetotask" min="-2" pref="55" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Component id="txtTask" min="-2" pref="120" max="-2" attributes="0"/>
-                                          </Group>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="lbProject" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="cbProject" min="-2" pref="111" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="lbTaskName" min="-2" pref="61" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                                  <Component id="lbWorktimetotask" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="txtWorktimetotask" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
-                                      <Component id="btnAdd" alignment="1" min="-2" pref="98" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="btnCreatecontent" min="-2" pref="108" max="-2" attributes="0"/>
                                       <Component id="jToggleButton1" alignment="0" min="-2" pref="584" max="-2" attributes="0"/>
                                   </Group>
+                                  <EmptySpace max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <Component id="btnAddRecord" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jSeparator2" min="-2" pref="514" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="btnWorkinformation" min="-2" pref="108" max="-2" attributes="0"/>
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="lbCalendar" min="-2" pref="37" max="-2" attributes="0"/>
-                                      <Component id="lbEmployee" min="-2" pref="37" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="txtValidate" max="32767" attributes="0"/>
-                                      <Component id="txtEmployeeName" alignment="0" pref="116" max="32767" attributes="0"/>
-                                      <Component id="csDate" max="32767" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="lbEarlieststarttime" min="-2" pref="37" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="txtEarlieststarttime" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                                          <Component id="lbLatestendtime" min="-2" pref="37" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="txtLatestendtime" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="rdbtnHoliday" alignment="0" min="-2" pref="98" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
+                              <Component id="jSeparator2" min="-2" pref="514" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
-                                  <Component id="lbWorktime" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="txtWorktime" min="-2" pref="71" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
-                                  <Component id="lbOvertime" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="txtOvertime" min="-2" pref="71" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
-                                  <Component id="lbBreaktime" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="txtBreaktime" min="-2" pref="71" max="-2" attributes="0"/>
+                                  <Component id="btnUpdateRecord" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+                                  <Component id="btnDelete" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
+                          <Component id="lbStarttime" min="-2" pref="31" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="fmStart" min="-2" pref="85" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="78" max="-2" attributes="0"/>
+                          <Component id="lbEndtime" min="-2" pref="37" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="fmEnd" min="-2" pref="89" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="lbBreaktimetotask" min="-2" pref="31" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="txtBreak" min="-2" pref="81" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                          <Component id="lbBreaktimetotask1" min="-2" pref="42" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="cbStatus" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="324" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="lbEmployee" min="-2" pref="69" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="txtEmployeeName" min="-2" pref="116" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                                      <Component id="lbEarlieststarttime" min="-2" pref="37" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="lbCalendar" min="-2" pref="37" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="txtValidate" min="-2" pref="116" max="-2" attributes="0"/>
+                                          <Component id="csDate" min="-2" pref="184" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Component id="rbHoliday" min="-2" pref="98" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" alignment="0" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="fmCheckIn" min="-2" pref="88" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="68" max="-2" attributes="0"/>
+                                          <Component id="lbLatestendtime" min="-2" pref="37" max="-2" attributes="0"/>
+                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                          <Component id="fmCheckOut" min="-2" pref="88" max="-2" attributes="0"/>
+                                          <EmptySpace min="10" max="32767" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" pref="205" max="-2" attributes="0"/>
+                                          <Component id="btnAddAttend" min="-2" pref="98" max="-2" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="btnWorkinformation" min="-2" pref="108" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                                      <Component id="lbWorktime" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="fmTotal" min="-2" pref="67" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
+                                      <Component id="lbOvertime" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Component id="fmOverTime" min="-2" pref="67" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+                                      <Component id="lbBreaktime" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="fmBreakTime" min="-2" pref="67" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="jScrollPane1" alignment="0" min="-2" pref="760" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="lbProject" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="cbProject" min="-2" pref="132" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="lbTaskName" min="-2" pref="61" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="cbTask" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
+                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="txtRemark" min="-2" pref="119" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="427" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -206,29 +228,37 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Component id="btnWorkinformation" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="txtEmployeeName" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbEmployee" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                  <Component id="lbEmployee" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtEmployeeName" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                  <Component id="lbEarlieststarttime" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lbLatestendtime" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="fmCheckIn" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="fmCheckOut" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="csDate" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbCalendar" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="lbEarlieststarttime" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbLatestendtime" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtEarlieststarttime" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtLatestendtime" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="rdbtnHoliday" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                          <Component id="csDate" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbCalendar" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="rbHoliday" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                  <Component id="txtValidate" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="btnAddAttend" min="-2" pref="33" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+                          <Component id="txtValidate" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -237,20 +267,21 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbStarttime" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbEndtime" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtBreaktimetotask" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtStarttime" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtWorktimetotask" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtEndtime" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbBreaktimetotask" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="lbWorktimetotask" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="fmStart" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="fmEnd" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lbBreaktimetotask1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cbStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtBreak" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbProject" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="cbProject" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbTaskName" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtTask" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnAdd" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                      <Component id="cbTask" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtRemark" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -265,21 +296,21 @@
                   </Group>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbWorktime" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtWorktime" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbBreaktime" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtBreaktime" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbOvertime" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtOvertime" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="fmTotal" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="fmOverTime" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="fmBreakTime" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jScrollPane1" min="-2" pref="157" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="btnCancel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnEdit" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnSend" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnAddRecord" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnUpdateRecord" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnDelete" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="14" max="32767" attributes="0"/>
+                  <EmptySpace pref="24" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -296,22 +327,28 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="tblAddAttendance">
+            <Component class="javax.swing.JTable" name="tblRecord">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="8" rowCount="4">
-                    <Column editable="true" title="&#xff0b;" type="java.lang.Object"/>
-                    <Column editable="true" title="&#x9806;&#x756a;" type="java.lang.Object"/>
+                  <Table columnCount="9" rowCount="4">
+                    <Column editable="true" title="No" type="java.lang.Integer"/>
                     <Column editable="true" title="&#x30d7;&#x30ed;&#x30b8;&#x30a7;&#x30af;&#x30c8;&#x540d;" type="java.lang.Object"/>
                     <Column editable="true" title="&#x30bf;&#x30b9;&#x30af;&#x540d;" type="java.lang.Object"/>
-                    <Column editable="true" title="&#x958b;&#x59cb;" type="java.lang.Object"/>
-                    <Column editable="true" title="&#x7d42;&#x4e86;" type="java.lang.Object"/>
-                    <Column editable="true" title="&#x4f11;&#x61a9;&#x6642;&#x9593;" type="java.lang.Object"/>
-                    <Column editable="true" title="&#x52e4;&#x52d9;&#x6642;&#x9593;" type="java.lang.Object"/>
+                    <Column editable="true" title="&#x958b;&#x59cb;" type="java.lang.String"/>
+                    <Column editable="true" title="&#x7d42;&#x4e86;" type="java.lang.String"/>
+                    <Column editable="true" title="&#x52e4;&#x52d9;&#x6642;&#x9593;" type="java.lang.String"/>
+                    <Column editable="true" title="&#x4f11;&#x61a9;&#x6642;&#x9593;" type="java.lang.String"/>
+                    <Column editable="true" title="Status" type="java.lang.String"/>
+                    <Column editable="true" title="Remark" type="java.lang.String"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="3">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
                     <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                       <Title/>
                       <Editor/>
@@ -413,19 +450,6 @@
             <Property name="text" type="java.lang.String" value="&#x6700;&#x7d42;"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtEarlieststarttime">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x6642;/&#x5206;"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtEarlieststarttimeActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtLatestendtime">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x6642;/&#x5206;"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="txtValidate">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -447,46 +471,9 @@
             <Property name="text" type="java.lang.String" value="&#x7d42;&#x4e86;"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtBreaktimetotask">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x6642;/&#x5206;"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtBreaktimetotaskActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtStarttime">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x6642;/&#x5206;"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtStarttimeActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtEndtime">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x6642;/&#x5206;"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtEndtimeActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtWorktimetotask">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x6642;/&#x5206;"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtWorktimetotaskActionPerformed"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JLabel" name="lbBreaktimetotask">
           <Properties>
             <Property name="text" type="java.lang.String" value="&#x4f11;&#x61a9;"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="lbWorktimetotask">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x52e4;&#x52d9;&#x6642;&#x9593;"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lbProject">
@@ -504,14 +491,14 @@
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JComboBox" name="txtTask">
+        <Component class="javax.swing.JComboBox" name="cbTask">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="0"/>
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTaskActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbTaskActionPerformed"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -522,15 +509,18 @@
             <Property name="text" type="java.lang.String" value="&#x30bf;&#x30b9;&#x30af;&#x540d;"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btnAdd">
+        <Component class="javax.swing.JButton" name="btnAddAttend">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="cc" green="ff" red="cc" type="rgb"/>
             </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Helvetica Neue" size="13" style="1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="&#x8ffd;&#x52a0;"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddAttendActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JToggleButton" name="jToggleButton1">
@@ -549,27 +539,9 @@
             <Property name="text" type="java.lang.String" value="&#x52e4;&#x52d9;&#x6642;&#x9593;"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtWorktime">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x6642;/&#x5206;"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtWorktimeActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtOvertime">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x6642;/&#x5206;"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="lbOvertime">
           <Properties>
             <Property name="text" type="java.lang.String" value="&#x6b8b;&#x696d;&#x6642;&#x9593;"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtBreaktime">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&#x6642;/&#x5206;"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lbBreaktime">
@@ -577,7 +549,7 @@
             <Property name="text" type="java.lang.String" value="&#x4f11;&#x61a9;&#x6642;&#x9593;"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btnCancel">
+        <Component class="javax.swing.JButton" name="btnUpdateRecord">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="cc" type="rgb"/>
@@ -585,7 +557,7 @@
             <Property name="text" type="java.lang.String" value="&#x7de8;&#x96c6;"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btnEdit">
+        <Component class="javax.swing.JButton" name="btnDelete">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="cc" green="cc" red="ff" type="rgb"/>
@@ -593,20 +565,103 @@
             <Property name="text" type="java.lang.String" value="&#x524a;&#x9664;"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btnSend">
+        <Component class="javax.swing.JButton" name="btnAddRecord">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="99" green="ff" red="99" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="&#x9001;&#x4fe1;"/>
+            <Property name="text" type="java.lang.String" value="&#x8ffd;&#x52a0;"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddRecordActionPerformed"/>
+          </Events>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="rdbtnHoliday">
+        <Component class="javax.swing.JRadioButton" name="rbHoliday">
           <Properties>
             <Property name="text" type="java.lang.String" value="&#x4f11;&#x65e5;"/>
           </Properties>
         </Component>
         <Component class="com.toedter.calendar.JDateChooser" name="csDate">
+        </Component>
+        <Component class="javax.swing.JFormattedTextField" name="fmStart">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fmStartActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="fmCheckIn = new javax.swing.JFormattedTextField(&#xa;        new javax.swing.text.DateFormatter(&#xa;                new java.text.SimpleDateFormat(&quot;HH:mm&quot;)&#xa;        )&#xa;);&#xa;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JFormattedTextField" name="fmEnd">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fmEndActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="fmCheckIn = new javax.swing.JFormattedTextField(&#xa;        new javax.swing.text.DateFormatter(&#xa;                new java.text.SimpleDateFormat(&quot;HH:mm&quot;)&#xa;        )&#xa;);&#xa;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JFormattedTextField" name="fmTotal">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fmTotalActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="fmTotal = new javax.swing.JFormattedTextField(&#xa;        new javax.swing.text.DateFormatter(&#xa;                new java.text.SimpleDateFormat(&quot;HH:mm&quot;)&#xa;        )&#xa;);&#xa;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JFormattedTextField" name="fmOverTime">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fmOverTimeActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="fmOverTime = new javax.swing.JFormattedTextField(&#xa;        new javax.swing.text.DateFormatter(&#xa;                new java.text.SimpleDateFormat(&quot;HH:mm&quot;)&#xa;        )&#xa;);&#xa;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JFormattedTextField" name="fmBreakTime">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fmBreakTimeActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="fmBreakTime = new javax.swing.JFormattedTextField(&#xa;        new javax.swing.text.DateFormatter(&#xa;                new java.text.SimpleDateFormat(&quot;HH:mm&quot;)&#xa;        )&#xa;);&#xa;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JFormattedTextField" name="fmCheckIn">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fmCheckInActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="fmCheckOut = new javax.swing.JFormattedTextField(&#xa;        new javax.swing.text.DateFormatter(&#xa;                new java.text.SimpleDateFormat(&quot;HH:mm&quot;)&#xa;        )&#xa;);&#xa;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JFormattedTextField" name="fmCheckOut">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fmCheckOutActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="fmCheckOut = new javax.swing.JFormattedTextField(&#xa;        new javax.swing.text.DateFormatter(&#xa;                new java.text.SimpleDateFormat(&quot;HH:mm&quot;)&#xa;        )&#xa;);&#xa;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&#x8ff0;&#x3079;&#x308b;"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtRemark">
+        </Component>
+        <Component class="javax.swing.JLabel" name="lbBreaktimetotask1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&#x72b6;&#x614b;"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="cbStatus">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="0"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtBreak">
         </Component>
       </SubComponents>
     </Container>

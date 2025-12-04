@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package com.ra.View.task;
 
 import com.ra.Controller.DepartmentController;
@@ -14,32 +10,30 @@ import com.ra.Model.Entity.Tasks;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
-/**
- *
- * @author HP
- */
-public class AddTask extends javax.swing.JDialog {
+public class AddTask extends javax.swing.JPanel {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddTask.class.getName());
+    // 1. CHUYỂN KHAI BÁO CONTROLLER VÀ DANH SÁCH DỮ LIỆU
+    private static final java.util.logging.Logger logger = Logger.getLogger(AddTask.class.getName());
     private final TaskController taskController = new TaskController();
     private final DepartmentController departmentController = new DepartmentController();
     private final ProjectController projectController = new ProjectController();
+
     // Danh sách dữ liệu nạp vào combobox
     private Tasks editingTask = null;
     private List<Department> departmentList = new ArrayList<>();
     private List<Project> projectList = new ArrayList<>();
 
-
-    /**
-     * Creates new form CreateNewTask
-     */
-    public AddTask(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public AddTask() {
         initComponents();
 
+        // 3. GỌI HÀM TẢI DỮ LIỆU VÀ GẮN LẠI SỰ KIỆN
         loadDepartments();
         loadProjects();
+        // Gắn lại sự kiện cho các nút
+        btnCancel.addActionListener(this::btnCancelActionPerformed);
+        btnSave.addActionListener(this::btnSaveActionPerformed);
     }
     public AddTask(java.awt.Frame parent, boolean modal, Tasks task) {
         super(parent, modal);
@@ -91,7 +85,25 @@ public class AddTask extends javax.swing.JDialog {
 
 
 
+    // 2. CHUYỂN CÁC PHƯƠNG THỨC TẢI DỮ LIỆU (Load Data)
 
+    private void loadDepartments() {
+        departmentList = departmentController.findAll();
+        cbDepartmentname.removeAllItems();
+
+        for (Department d : departmentList) {
+            cbDepartmentname.addItem(d.getName());
+        }
+    }
+
+    private void loadProjects() {
+        projectList = projectController.findAll();
+        cbProjectname.removeAllItems();
+
+        for (Project p : projectList) {
+            cbProjectname.addItem(p.getName());
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -102,20 +114,16 @@ public class AddTask extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        txtTaskname = new javax.swing.JTextField();
-        lbTaskname = new javax.swing.JLabel();
-        lbDepartmentname = new javax.swing.JLabel();
-        cbDepartmentname = new javax.swing.JComboBox<>();
         cbProjectname = new javax.swing.JComboBox<>();
         lbProjectname = new javax.swing.JLabel();
         btnCancel = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
+        txtTaskname = new javax.swing.JTextField();
+        lbTaskname = new javax.swing.JLabel();
+        lbDepartmentname = new javax.swing.JLabel();
+        cbDepartmentname = new javax.swing.JComboBox<>();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        lbTaskname.setText("タスク名");
-
-        lbDepartmentname.setText("部署名");
+        setBackground(new java.awt.Color(255, 255, 255));
 
         lbProjectname.setText("プロジェクト名");
 
@@ -127,39 +135,44 @@ public class AddTask extends javax.swing.JDialog {
         btnSave.setText("保存");
         btnSave.addActionListener(this::btnSaveActionPerformed);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        lbTaskname.setText("タスク名");
+
+        lbDepartmentname.setText("部署名");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(96, 96, 96)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(114, 114, 114)
-                        .addComponent(lbProjectname, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(150, 150, 150)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbProjectname, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(36, 36, 36)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(lbTaskname)
+                                    .addComponent(lbDepartmentname))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 312, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(52, 52, 52)
+                        .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(108, 108, 108))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(118, 118, 118)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lbTaskname)
-                            .addComponent(lbDepartmentname))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(166, 166, 166)
-                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
-                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(182, 182, 182))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtTaskname, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbDepartmentname, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbProjectname, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(74, 74, 74))
+                            .addComponent(txtTaskname, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cbDepartmentname, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cbProjectname, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(92, 92, 92))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(134, 134, 134)
+                .addGap(118, 118, 118)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtTaskname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbTaskname))
@@ -175,14 +188,18 @@ public class AddTask extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancel)
                     .addComponent(btnSave))
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addContainerGap(140, Short.MAX_VALUE))
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // 4. CHUYỂN CÁC PHƯƠNG THỨC XỬ LÝ SỰ KIỆN
+
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
-        this.dispose();
+        // Trong JPanel, cần đóng cửa sổ cha (thường là JFrame hoặc JDialog) chứa nó.
+        java.awt.Window parentWindow = SwingUtilities.getWindowAncestor(this);
+        if (parentWindow != null) {
+            parentWindow.dispose();
+        }
     }
 
 
@@ -244,52 +261,6 @@ public class AddTask extends javax.swing.JDialog {
         }
     }
 
-    private void loadProjects() {
-        projectList = projectController.findAll();
-        cbProjectname.removeAllItems();
-
-        for (Project p : projectList) {
-            cbProjectname.addItem(p.getName());
-        }
-    }
-
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                AddTask dialog = new AddTask(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
@@ -301,4 +272,38 @@ public class AddTask extends javax.swing.JDialog {
     private javax.swing.JLabel lbTaskname;
     private javax.swing.JTextField txtTaskname;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(AddTask.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> {
+            // Tạo một JFrame tạm thời để chứa JPanel AddTask1
+            JFrame frame = new JFrame("プロジェクトとタスク追加 (テスト)");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            // Thêm JPanel vào JFrame
+            frame.add(new AddTask());
+
+            // Tự động điều chỉnh kích thước và hiển thị
+            frame.pack();
+            frame.setLocationRelativeTo(null); // Đặt ở giữa màn hình
+            frame.setVisible(true);
+        });
+    }
 }

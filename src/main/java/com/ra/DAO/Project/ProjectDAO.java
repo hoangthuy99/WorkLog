@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ProjectDAO implements IProjectDAO {
 
@@ -55,13 +56,30 @@ public class ProjectDAO implements IProjectDAO {
         }
     }
 
-    /**
-     * ❗❗ FIND BY ID — KHÔNG FETCH BAG
-     */
+
     @Override
     public Project findFindById(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.get(Project.class, id);
+        }
+    }
+
+    @Override
+    public Optional<Project> findByName(String name) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            Project project = session.createQuery(
+                            "FROM Project p WHERE p.name = :name",
+                            Project.class
+                    )
+                    .setParameter("name", name)
+                    .uniqueResult();
+
+            return Optional.ofNullable(project);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
         }
     }
 
