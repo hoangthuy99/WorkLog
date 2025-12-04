@@ -5,6 +5,7 @@ package com.ra.View.dashboard;
 
 // --------------- Import các JPanel mới bắt đầu -------------------------
 import com.ra.Model.Entity.Users;
+import com.ra.View.login.LoginScreen;
 import com.ra.View.user.AddUser;
 import com.ra.View.user.AllUser;
 import com.ra.View.department.AddDepartment;
@@ -33,7 +34,7 @@ import com.ra.View.holidays.AllHoliday;
 import java.time.ZonedDateTime; // Để lấy thời gian hiện tại
 import java.time.format.DateTimeFormatter; // Để định dạng chuỗi
 import java.util.Locale; // Để định dạng theo Locale Nhật Bản
-import javax.swing.Timer; // Để cập nhật thời gian mỗi giây
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -1174,9 +1175,6 @@ public class MainDashboard extends javax.swing.JFrame {
         showPanel(new AllMenu());
     }//GEN-LAST:event_btnAllMenuActionPerformed
 
-    private void btnLogoutActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnHolidayHeaderActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnHolidayHeaderActionPerformed
         pnlHolidaymenu.setVisible(!pnlHolidaymenu.isVisible());
@@ -1198,9 +1196,27 @@ public class MainDashboard extends javax.swing.JFrame {
         showPanel(new AllHoliday());
     }//GEN-LAST:event_btnAllMenu1ActionPerformed
 
-    private void pnlLogOutActionPerformed(ActionEvent evt) {
+    private void btnLogoutActionPerformed(ActionEvent evt) {
 
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "ログアウトしますか？",
+                "確認",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+
+            // Đóng Dashboard trước
+            this.dispose();
+
+            // Mở lại LoginScreen
+            java.awt.EventQueue.invokeLater(() -> {
+                new LoginScreen().setVisible(true);
+            });
+        }
     }
+
 
     /**
      * @param args the command line arguments

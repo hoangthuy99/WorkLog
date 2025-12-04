@@ -24,6 +24,14 @@ public class LoginScreen extends javax.swing.JFrame {
         setLocationRelativeTo(null); // căn giữa màn hình
     }
 
+    public LoginScreen() {
+        initComponents();
+        setLocationRelativeTo(null);
+    }
+
+
+
+
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
