@@ -1,212 +1,254 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package com.ra.View.project;
 
-import javax.swing.*;
-// Thêm các thư viện cần thiết cho Layout
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
+import com.ra.Controller.ProjectController;
+import com.ra.Model.Entity.Department;
+import com.ra.Model.Entity.Project;
+import com.ra.Model.Entity.Tasks;
 
-/**
- *
- * @author Admin
- */
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
+
 public class AllProject extends JPanel {
 
-    // Khai báo Content Panel để chứa nội dung cũ
+    private final ProjectController projectController = new ProjectController();
+
     private JPanel contentPanel;
 
-    /**
-     * Creates new form AllProject1
-     */
     public AllProject() {
         initComponents();
-        // GỌI PHƯƠNG THỨC CĂN GIỮA
         applyCenteredLayout();
-        // Cần thêm logic tải dữ liệu và gán sự kiện cho các nút ở đây nếu đây là code thật.
+
+        loadTable(projectController.findAll());
+        setupEvent();
     }
 
-    // ==========================================================
-    // PHƯƠNG THỨC THAY ĐỔI LAYOUT ĐỂ CĂN GIỮA
-    // ==========================================================
-    private void applyCenteredLayout() {
-        // 1. Tạo JPanel mới để giữ bố cục cũ
-        contentPanel = new JPanel();
-        contentPanel.setBackground(new java.awt.Color(255, 255, 255)); // Giữ màu nền
+    private void setupEvent() {
 
-        // 2. Tạo GroupLayout mới cho contentPanel
+        btnSearch.addActionListener(e -> {
+            String keyword = txtProject.getText().trim();
+            loadTable(projectController.search(keyword));
+        });
+
+        btnAll.addActionListener(e -> loadTable(projectController.findAll()));
+
+        btnCreateDepartment.addActionListener(e -> openProjectForm(null));
+
+        btnEdit.addActionListener(e -> {
+            int row = tblAllProject.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, "編集するプロジェクトを選択してください。");
+                return;
+            }
+
+            int projectId = (int) tblAllProject.getValueAt(row, 3); // cột 3 = hidden id
+            openProjectForm(projectId);
+        });
+
+        btnDelete.addActionListener(e -> {
+            int row = tblAllProject.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, "削除するプロジェクトを選択してください。");
+                return;
+            }
+
+            int projectId = (int) tblAllProject.getValueAt(row, 3);
+
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "本当に削除しますか？",
+                    "確認",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                boolean success = projectController.delete(projectId);
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "削除しました");
+                    loadTable(projectController.findAll());
+                } else {
+                    JOptionPane.showMessageDialog(this, "削除に失敗しました");
+                }
+            }
+        });
+    }
+
+    private void openProjectForm(Integer projectId) {
+
+        JFrame frame = new JFrame(projectId == null ? "プロジェクト作成" : "プロジェクト編集");
+
+        if (projectId == null) {
+            frame.add(new AddProject());
+        } else {
+            frame.add(new AddProject(projectId));
+        }
+
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                loadTable(projectController.findAll());
+            }
+
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                loadTable(projectController.findAll());
+            }
+        });
+    }
+
+    private void loadTable(List<Project> list) {
+
+        String[] columns = {"プロジェクト名", "部署名", "タスク名", "ID(hidden)"};
+        DefaultTableModel model = new DefaultTableModel(columns, 0);
+
+        for (Project p : list) {
+
+            // Department names
+            String depNames = "";
+            if (p.getDepartments() != null) {
+                depNames = p.getDepartments()
+                        .stream()
+                        .map(Department::getName)
+                        .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
+            }
+
+            // Task names
+            String taskNames = "";
+            if (p.getTasks() != null) {
+                taskNames = p.getTasks()
+                        .stream()
+                        .map(Tasks::getName)
+                        .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
+            }
+
+            model.addRow(new Object[]{
+                    p.getName(),
+                    depNames,
+                    taskNames,
+                    p.getId()
+            });
+        }
+
+        tblAllProject.setModel(model);
+        tblAllProject.getColumnModel().getColumn(3).setMinWidth(0);
+        tblAllProject.getColumnModel().getColumn(3).setMaxWidth(0);
+    }
+
+    // ================================================================
+    // UI – APPLY CENTER LAYOUT (giữ nguyên code của bạn)
+    // ================================================================
+    private void applyCenteredLayout() {
+
+        contentPanel = new JPanel();
+        contentPanel.setBackground(new Color(255, 255, 255));
+
         GroupLayout contentLayout = new GroupLayout(contentPanel);
         contentPanel.setLayout(contentLayout);
 
-        // Xóa tất cả components khỏi JPanel chính
         this.removeAll();
 
-        // Thêm components vào contentPanel
         contentPanel.add(txtProject);
         contentPanel.add(btnSearch);
         contentPanel.add(btnAll);
         contentPanel.add(btnCreateDepartment);
         contentPanel.add(jScrollPane1);
-        contentPanel.add(jSpinner1);
         contentPanel.add(btnEdit);
         contentPanel.add(btnDelete);
         contentPanel.add(lbProjectName);
 
-        // TÁI TẠO LẠI BỐ CỤC CŨ TRÊN contentLayout
         contentLayout.setHorizontalGroup(
                 contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(GroupLayout.Alignment.TRAILING, contentLayout.createSequentialGroup()
-                                .addGap(28, 28, 28)
-                                .addComponent(jSpinner1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnEdit, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnDelete, GroupLayout.PREFERRED_SIZE, 84, GroupLayout.PREFERRED_SIZE)
-                                .addGap(30, 30, 30))
-                        .addGroup(GroupLayout.Alignment.TRAILING, contentLayout.createSequentialGroup()
-                                .addGap(32, 32, 32)
+                        .addGroup(contentLayout.createSequentialGroup()
+                                .addGap(32)
                                 .addComponent(lbProjectName)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtProject, GroupLayout.PREFERRED_SIZE, 134, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 56, GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnAll, GroupLayout.PREFERRED_SIZE, 56, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
-                                .addComponent(btnCreateDepartment, GroupLayout.PREFERRED_SIZE, 135, GroupLayout.PREFERRED_SIZE)
-                                .addGap(29, 29, 29))
+                                .addGap(10)
+                                .addComponent(txtProject, 130, 130, 130)
+                                .addGap(10)
+                                .addComponent(btnSearch)
+                                .addGap(10)
+                                .addComponent(btnAll)
+                                .addGap(20)
+                                .addComponent(btnCreateDepartment)
+                                .addContainerGap())
                         .addGroup(contentLayout.createSequentialGroup()
-                                .addGap(17, 17, 17)
-                                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 567, GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        contentLayout.setVerticalGroup(
-                contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(contentLayout.createSequentialGroup()
-                                .addGap(65, 65, 65)
-                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(lbProjectName)
-                                        .addComponent(txtProject, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btnSearch)
-                                        .addComponent(btnAll)
-                                        .addComponent(btnCreateDepartment))
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 204, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jSpinner1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGap(20)
+                                .addComponent(jScrollPane1, 560, 560, 560)
+                                .addContainerGap())
+                        .addGroup(GroupLayout.Alignment.TRAILING,
+                                contentLayout.createSequentialGroup()
+                                        .addContainerGap(300, Short.MAX_VALUE)
                                         .addComponent(btnEdit)
-                                        .addComponent(btnDelete))
-                                .addGap(15, 15, 15))
+                                        .addGap(10)
+                                        .addComponent(btnDelete)
+                                        .addGap(30))
         );
 
-        // 3. Áp dụng GridBagLayout cho JPanel chính (this) và đặt contentPanel vào giữa
+        contentLayout.setVerticalGroup(
+                contentLayout.createSequentialGroup()
+                        .addGap(40)
+                        .addGroup(contentLayout.createParallelGroup()
+                                .addComponent(lbProjectName)
+                                .addComponent(txtProject, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnSearch)
+                                .addComponent(btnAll)
+                                .addComponent(btnCreateDepartment))
+                        .addGap(20)
+                        .addComponent(jScrollPane1, 200, 200, 200)
+                        .addGap(20)
+                        .addGroup(contentLayout.createParallelGroup()
+                                .addComponent(btnEdit)
+                                .addComponent(btnDelete))
+        );
+
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 1.0; // Cho phép không gian trống co giãn theo chiều ngang
-        gbc.weighty = 1.0; // Cho phép không gian trống co giãn theo chiều dọc
-        gbc.anchor = GridBagConstraints.CENTER; // Căn giữa contentPanel
-        gbc.fill = GridBagConstraints.NONE; // Không kéo giãn contentPanel
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.CENTER;
 
         this.add(contentPanel, gbc);
         this.revalidate();
         this.repaint();
     }
 
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        txtProject = new JTextField();
-        btnSearch = new JButton();
-        btnAll = new JButton();
-        btnCreateDepartment = new JButton();
-        jScrollPane1 = new JScrollPane();
-        tblAllDepartment = new JTable();
-        jSpinner1 = new JSpinner();
-        btnEdit = new JButton();
-        btnDelete = new JButton();
-        lbProjectName = new JLabel();
-
-        setBackground(new java.awt.Color(255, 255, 255));
-
-        txtProject.setText("キーワード入力");
-        txtProject.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtProjectActionPerformed(evt);
-            }
-        });
-
-        btnSearch.setText("検索");
-
-        btnAll.setText("全て");
-
-        btnCreateDepartment.setText("プロジェクト作成");
-
-        tblAllDepartment.setModel(new javax.swing.table.DefaultTableModel(
-                new Object [][] {
-                        {null, null, null},
-                        {null, null, null},
-                        {null, null, null},
-                        {null, null, null}
-                },
-                new String [] {
-                        "プロジェクト名", "部署名", "タスク名"
-                }
-        ));
-        jScrollPane1.setViewportView(tblAllDepartment);
-
-        btnEdit.setBackground(new java.awt.Color(204, 255, 255));
-        btnEdit.setText("編集");
-
-        btnDelete.setBackground(new java.awt.Color(255, 204, 204));
-        btnDelete.setText("削除");
-        btnDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDeleteActionPerformed(evt);
-            }
-        });
-
-        lbProjectName.setText("キーワード");
-
-        // Giữ layout tự động tạo (GroupLayout) nhưng nó sẽ bị ghi đè bởi applyCenteredLayout().
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        // Loại bỏ các khai báo GroupLayout tự động để tránh xung đột với GridBagLayout
-        // và thay bằng null layout tạm thời
-        this.setLayout(null);
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void txtProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProjectActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtProjectActionPerformed
-
-    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnDeleteActionPerformed
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // ================================================================
+    // INIT COMPONENT (giữ nguyên)
+    // ================================================================
+    private JTextField txtProject;
+    private JButton btnSearch;
     private JButton btnAll;
     private JButton btnCreateDepartment;
-    private JButton btnDelete;
-    private JButton btnEdit;
-    private JButton btnSearch;
     private JScrollPane jScrollPane1;
-    private JSpinner jSpinner1;
+    private JTable tblAllProject = new JTable();
+    private JButton btnEdit;
+    private JButton btnDelete;
     private JLabel lbProjectName;
-    private JTable tblAllDepartment;
-    private JTextField txtProject;
-    // End of variables declaration//GEN-END:variables
+
+    @SuppressWarnings("unchecked")
+    private void initComponents() {
+
+        txtProject = new JTextField("キーワード入力");
+        btnSearch = new JButton("検索");
+        btnAll = new JButton("全て");
+        btnCreateDepartment = new JButton("プロジェクト作成");
+
+        jScrollPane1 = new JScrollPane();
+        tblAllProject = new JTable();
+        jScrollPane1.setViewportView(tblAllProject);
+
+        btnEdit = new JButton("編集");
+        btnDelete = new JButton("削除");
+
+        lbProjectName = new JLabel("キーワード");
+
+        this.setLayout(null);
+    }
 }

@@ -254,11 +254,6 @@ public class AddProject extends JPanel {
             JOptionPane.showMessageDialog(this, "更新完了");
         }
 
-        // Đóng cửa sổ cha sau khi Lưu/Cập nhật thành công
-        java.awt.Window parentWindow = SwingUtilities.getWindowAncestor(this);
-        if (parentWindow != null) {
-            parentWindow.dispose();
-        }
     }
 
 

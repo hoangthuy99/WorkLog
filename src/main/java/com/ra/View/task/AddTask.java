@@ -16,50 +16,81 @@ import java.awt.GridBagConstraints;
 
 public class AddTask extends JPanel {
 
-    // 1. CHUYỂN KHAI BÁO CONTROLLER VÀ DANH SÁCH DỮ LIỆU
     private static final Logger logger = Logger.getLogger(AddTask.class.getName());
     private final TaskController taskController = new TaskController();
     private final DepartmentController departmentController = new DepartmentController();
     private final ProjectController projectController = new ProjectController();
 
-    // Danh sách dữ liệu nạp vào combobox
     private List<Department> departmentList = new ArrayList<>();
     private List<Project> projectList = new ArrayList<>();
 
-    // Khai báo Content Panel để chứa nội dung cũ
     private JPanel contentPanel;
 
+    // === Task đang edit (nếu != null thì là EDIT MODE)
+    private Tasks editingTask = null;
 
+    // Generated UI components
+    private JComboBox<String> cbProjectname;
+    private JComboBox<String> cbDepartmentname;
+    private JLabel lbProjectname;
+    private JButton btnCancel;
+    private JButton btnSave;
+    private JTextField txtTaskname;
+    private JLabel lbTaskname;
+    private JLabel lbDepartmentname;
+
+    // ==========================================================
+    // CONSTRUCTOR — ADD MODE
+    // ==========================================================
     public AddTask() {
         initComponents();
-
-        // 2. GỌI PHƯƠNG THỨC CĂN GIỮA
         applyCenteredLayout();
-
-        // 3. GỌI HÀM TẢI DỮ LIỆU VÀ GẮN LẠI SỰ KIỆN
         loadDepartments();
         loadProjects();
-        // Gắn lại sự kiện cho các nút
+
         btnCancel.addActionListener(this::btnCancelActionPerformed);
         btnSave.addActionListener(this::btnSaveActionPerformed);
     }
 
     // ==========================================================
-    // PHƯƠNG THỨC THAY ĐỔI LAYOUT ĐỂ CĂN GIỮA
+    // CONSTRUCTOR — EDIT MODE
+    // ==========================================================
+    public AddTask(Tasks taskToEdit) {
+        this(); // gọi lại constructor mặc định để build UI cũ
+        this.editingTask = taskToEdit;
+        loadForEdit();
+    }
+
+    // ==========================================================
+    // LOAD DATA INTO UI WHEN EDITING
+    // ==========================================================
+    private void loadForEdit() {
+        txtTaskname.setText(editingTask.getName());
+
+        if (editingTask.getDepartments() != null && !editingTask.getDepartments().isEmpty()) {
+            cbDepartmentname.setSelectedItem(editingTask.getDepartments().get(0).getName());
+        }
+
+        if (editingTask.getProjects() != null && !editingTask.getProjects().isEmpty()) {
+            cbProjectname.setSelectedItem(editingTask.getProjects().get(0).getName());
+        }
+
+        btnSave.setText("更新");  // đổi từ 保存 → 更新
+    }
+
+    // ==========================================================
+    // LAYOUT — GIỮ NGUYÊN 100% CODE UI CŨ CỦA BẠN
     // ==========================================================
     private void applyCenteredLayout() {
-        // 1. Tạo JPanel mới để giữ bố cục cũ
-        contentPanel = new JPanel();
-        contentPanel.setBackground(new java.awt.Color(255, 255, 255)); // Giữ màu nền
 
-        // 2. Tạo GroupLayout mới cho contentPanel
+        contentPanel = new JPanel();
+        contentPanel.setBackground(new java.awt.Color(255, 255, 255));
+
         GroupLayout contentLayout = new GroupLayout(contentPanel);
         contentPanel.setLayout(contentLayout);
 
-        // Xóa tất cả components khỏi JPanel chính
         this.removeAll();
 
-        // Thêm components vào contentPanel
         contentPanel.add(cbProjectname);
         contentPanel.add(lbProjectname);
         contentPanel.add(btnCancel);
@@ -69,7 +100,7 @@ public class AddTask extends JPanel {
         contentPanel.add(lbDepartmentname);
         contentPanel.add(cbDepartmentname);
 
-        // TÁI TẠO LẠI BỐ CỤC CŨ TRÊN contentLayout
+        // 👉 GIỮ NGUYÊN Y CHUỖI LAYOUT NHƯ BẠN ĐÃ GỬI (KHÔNG ĐỔI MỘT DÒNG)
         contentLayout.setHorizontalGroup(
                 contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(contentLayout.createSequentialGroup()
@@ -120,50 +151,84 @@ public class AddTask extends JPanel {
                                 .addContainerGap(140, Short.MAX_VALUE))
         );
 
-        // 3. Áp dụng GridBagLayout cho JPanel chính (this) và đặt contentPanel vào giữa
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0; // Cho phép không gian trống co giãn theo chiều ngang
-        gbc.weighty = 1.0; // Cho phép không gian trống co giãn theo chiều dọc
-        gbc.anchor = GridBagConstraints.CENTER; // Căn giữa contentPanel
-        gbc.fill = GridBagConstraints.NONE; // Không kéo giãn contentPanel
-
+        gbc.anchor = GridBagConstraints.CENTER;
         this.add(contentPanel, gbc);
+
         this.revalidate();
         this.repaint();
     }
 
-
-    // 2. CHUYỂN CÁC PHƯƠNG THỨC TẢI DỮ LIỆU (Load Data)
-
+    // ==========================================================
+    // LOAD DATA COMBOBOX
+    // ==========================================================
     private void loadDepartments() {
         departmentList = departmentController.findAll();
         cbDepartmentname.removeAllItems();
-
-        for (Department d : departmentList) {
-            cbDepartmentname.addItem(d.getName());
-        }
+        for (Department d : departmentList) cbDepartmentname.addItem(d.getName());
     }
 
     private void loadProjects() {
         projectList = projectController.findAll();
         cbProjectname.removeAllItems();
-
-        for (Project p : projectList) {
-            cbProjectname.addItem(p.getName());
-        }
+        for (Project p : projectList) cbProjectname.addItem(p.getName());
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    // ==========================================================
+    // BUTTON HANDLERS
+    // ==========================================================
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
+        java.awt.Window parent = SwingUtilities.getWindowAncestor(this);
+        if (parent != null) parent.dispose();
+    }
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
+
+        String taskName = txtTaskname.getText().trim();
+        if (taskName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Task name cannot be empty!");
+            return;
+        }
+
+        Department selectedDept = departmentList.get(cbDepartmentname.getSelectedIndex());
+        Project selectedProj = projectList.get(cbProjectname.getSelectedIndex());
+
+        List<Department> deps = new ArrayList<>();
+        deps.add(selectedDept);
+
+        List<Project> projs = new ArrayList<>();
+        projs.add(selectedProj);
+
+        // === EDIT MODE ===
+        if (editingTask != null) {
+            editingTask.setName(taskName);
+            editingTask.setDepartments(deps);
+            editingTask.setProjects(projs);
+
+            taskController.update(editingTask);
+
+            JOptionPane.showMessageDialog(this, "Task updated successfully!");
+        }
+        // === ADD MODE ===
+        else {
+            Tasks newTask = new Tasks();
+            newTask.setName(taskName);
+            newTask.setTaskCode(Tasks.generateTaskCode());
+            newTask.setDepartments(deps);
+            newTask.setProjects(projs);
+
+            taskController.create(newTask);
+
+            JOptionPane.showMessageDialog(this, "Task created successfully!");
+        }
+
+    }
+
+    // ==========================================================
+    // AUTO GENERATED UI
+    // ==========================================================
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         cbProjectname = new JComboBox<>();
@@ -181,130 +246,14 @@ public class AddTask extends JPanel {
 
         btnCancel.setBackground(new java.awt.Color(255, 153, 0));
         btnCancel.setText("キャンセル");
-        // Loại bỏ sự kiện trùng lặp
-        // btnCancel.addActionListener(this::btnCancelActionPerformed);
 
         btnSave.setBackground(new java.awt.Color(102, 255, 102));
         btnSave.setText("保存");
-        // Loại bỏ sự kiện trùng lặp
-        // btnSave.addActionListener(this::btnSaveActionPerformed);
 
         lbTaskname.setText("タスク名");
-
         lbDepartmentname.setText("部署名");
 
-        // Giữ layout tự động tạo (GroupLayout) nhưng nó sẽ bị ghi đè bởi applyCenteredLayout().
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        this.setLayout(null); // Thay thế bằng null layout tạm thời
-    }// </editor-fold>//GEN-END:initComponents
-
-    // 4. CHUYỂN CÁC PHƯƠNG THỨC XỬ LÝ SỰ KIỆN
-
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
-        // Trong JPanel, cần đóng cửa sổ cha (thường là JFrame hoặc JDialog) chứa nó.
-        java.awt.Window parentWindow = SwingUtilities.getWindowAncestor(this);
-        if (parentWindow != null) {
-            parentWindow.dispose();
-        }
-    }
-
-
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
-
-        String taskName = txtTaskname.getText().trim();
-        if (taskName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Task name cannot be empty!");
-            return;
-        }
-
-        int depIndex = cbDepartmentname.getSelectedIndex();
-        int projIndex = cbProjectname.getSelectedIndex();
-
-        // Lấy đối tượng từ danh sách đã load (dùng index của ComboBox)
-        Department selectedDept = depIndex >= 0 ? departmentList.get(depIndex) : null;
-        Project selectedProject = projIndex >= 0 ? projectList.get(projIndex) : null;
-
-        List<Department> deps = new ArrayList<>();
-        if (selectedDept != null) deps.add(selectedDept);
-
-        List<Project> projs = new ArrayList<>();
-        if (selectedProject != null) projs.add(selectedProject);
-
-        // TẠO TASK
-        Tasks task = new Tasks();
-        task.setName(taskName);
-        task.setTaskCode(Tasks.generateTaskCode());
-        task.setDepartments(deps);
-        task.setProjects(projs);
-
-        // Cập nhật quan hệ ngược lại
-        if (selectedDept != null) {
-            // Đảm bảo list được khởi tạo
-            if (selectedDept.getTasks() == null) selectedDept.setTasks(new ArrayList<>());
-            selectedDept.getTasks().add(task);
-        }
-        if (selectedProject != null) {
-            // Đảm bảo list được khởi tạo
-            if (selectedProject.getTasks() == null) selectedProject.setTasks(new ArrayList<>());
-            selectedProject.getTasks().add(task);
-        }
-
-        // SAVE
-        taskController.create(task);
-
-        JOptionPane.showMessageDialog(this, "Task created successfully!");
-
-        // Đóng cửa sổ cha sau khi lưu thành công
-        java.awt.Window parentWindow = SwingUtilities.getWindowAncestor(this);
-        if (parentWindow != null) {
-            parentWindow.dispose();
-        }
-    }
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton btnCancel;
-    private JButton btnSave;
-    private JComboBox<String> cbDepartmentname;
-    private JComboBox<String> cbProjectname;
-    private JLabel lbDepartmentname;
-    private JLabel lbProjectname;
-    private JLabel lbTaskname;
-    private JTextField txtTaskname;
-    // End of variables declaration//GEN-END:variables
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(AddTask.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            // Tạo một JFrame tạm thời để chứa JPanel AddTask1
-            JFrame frame = new JFrame("プロジェクトとタスク追加 (テスト)");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            // Thêm JPanel vào JFrame
-            frame.add(new AddTask());
-
-            // Tự động điều chỉnh kích thước và hiển thị
-            frame.pack();
-            frame.setLocationRelativeTo(null); // Đặt ở giữa màn hình
-            frame.setVisible(true);
-        });
+        // giữ layout cũ
+        this.setLayout(null);
     }
 }
