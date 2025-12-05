@@ -1,23 +1,17 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package com.ra.View.attendance;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
 /**
  *
- * @author admin
+ * @author thuyhoang
  */
-// THAY ĐỔI: Chuyển từ extends JFrame sang extends JPanel
 public class AttendanceMonth extends javax.swing.JPanel {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AttendanceMonth.class.getName());
-
     /**
-     * Creates new form AttendanceDate
+     * Creates new form AttendanceMonth
      */
     public AttendanceMonth() {
         initComponents();
@@ -32,195 +26,87 @@ public class AttendanceMonth extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlAttendanceDate = new javax.swing.JPanel();
-        btnAttendanceDate = new javax.swing.JPanel();
-        cbYear = new javax.swing.JComboBox<>();
-        btnSearch = new javax.swing.JButton();
-        txtAttendanceDate = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAttendanceDate = new javax.swing.JTable();
+        txtAttendanceDate = new javax.swing.JTextField();
+        btnSearch = new javax.swing.JButton();
         btnView = new javax.swing.JButton();
-        spPage = new javax.swing.JSpinner();
-        cbMonth = new javax.swing.JComboBox<>();
-        lbYear = new javax.swing.JLabel();
-        lbMonth = new javax.swing.JLabel();
-        btnFilter = new javax.swing.JButton();
-
-        // LOẠI BỎ: setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        cbYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2024", "2025", "2026", "2027" }));
-        cbYear.addActionListener(this::cbYearActionPerformed);
-
-        btnSearch.setText("検索");
+        jMonthChooser1 = new com.toedter.calendar.JMonthChooser();
+        btnSearch1 = new javax.swing.JButton();
 
         tblAttendanceDate.setModel(new javax.swing.table.DefaultTableModel(
-                new Object [][] {
-                        {null, null, null, null, null, null},
-                        {null, null, null, null, null, null},
-                        {null, null, null, null, null, null},
-                        {null, null, null, null, null, null}
-                },
-                new String [] {
-                        "社員名", "開始時間", "終了時間", "休憩時間", "残業時間", "状態"
-                }
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "社員名", "開始時間", "終了時間", "休憩時間", "残業時間", "状態"
+            }
         ));
         jScrollPane1.setViewportView(tblAttendanceDate);
+
+        btnSearch.setText("検索");
 
         btnView.setBackground(new java.awt.Color(204, 204, 255));
         btnView.setText("詳細");
         btnView.addActionListener(this::btnViewActionPerformed);
 
-        cbMonth.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
-        cbMonth.addActionListener(this::cbMonthActionPerformed);
+        btnSearch1.setText("検索");
 
-        lbYear.setText("年");
-
-        lbMonth.setText("月");
-
-        btnFilter.setText("フィルター");
-
-        javax.swing.GroupLayout btnAttendanceDateLayout = new javax.swing.GroupLayout(btnAttendanceDate);
-        btnAttendanceDate.setLayout(btnAttendanceDateLayout);
-        btnAttendanceDateLayout.setHorizontalGroup(
-                btnAttendanceDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(btnAttendanceDateLayout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addComponent(cbYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbYear)
-                                .addGap(18, 18, 18)
-                                .addComponent(cbMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbMonth)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnFilter)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                                .addComponent(txtAttendanceDate, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnSearch)
-                                .addContainerGap())
-                        .addGroup(btnAttendanceDateLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1)
-                                .addContainerGap())
-                        .addGroup(btnAttendanceDateLayout.createSequentialGroup()
-                                .addGap(31, 31, 31)
-                                .addComponent(spPage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnView)
-                                .addGap(46, 46, 46))
-        );
-        btnAttendanceDateLayout.setVerticalGroup(
-                btnAttendanceDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(btnAttendanceDateLayout.createSequentialGroup()
-                                .addGroup(btnAttendanceDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(btnAttendanceDateLayout.createSequentialGroup()
-                                                .addGap(46, 46, 46)
-                                                .addGroup(btnAttendanceDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(cbYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(cbMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(lbMonth)
-                                                        .addComponent(lbYear)
-                                                        .addComponent(btnFilter))
-                                                .addGap(19, 19, 19))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnAttendanceDateLayout.createSequentialGroup()
-                                                .addContainerGap()
-                                                .addGroup(btnAttendanceDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(btnSearch)
-                                                        .addComponent(txtAttendanceDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
-                                .addGap(14, 14, 14)
-                                .addGroup(btnAttendanceDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(spPage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btnView))
-                                .addGap(10, 10, 10))
-        );
-
-        javax.swing.GroupLayout pnlAttendanceDateLayout = new javax.swing.GroupLayout(pnlAttendanceDate);
-        pnlAttendanceDate.setLayout(pnlAttendanceDateLayout);
-        pnlAttendanceDateLayout.setHorizontalGroup(
-                pnlAttendanceDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(btnAttendanceDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        pnlAttendanceDateLayout.setVerticalGroup(
-                pnlAttendanceDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlAttendanceDateLayout.createSequentialGroup()
-                                .addComponent(btnAttendanceDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this); // THAY ĐỔI: Dùng 'this' thay vì getContentPane()
-        this.setLayout(layout); // THAY ĐỔI: Dùng 'this' thay vì getContentPane()
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(pnlAttendanceDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(jMonthChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSearch1)
+                        .addGap(306, 306, 306)
+                        .addComponent(txtAttendanceDate, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnSearch))
+                    .addComponent(jScrollPane1))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnView)
+                .addGap(44, 44, 44))
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(pnlAttendanceDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap())
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(44, 44, 44)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnSearch)
+                        .addComponent(txtAttendanceDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSearch1))
+                    .addComponent(jMonthChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(89, 89, 89)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+                .addGap(44, 44, 44)
+                .addComponent(btnView)
+                .addGap(30, 30, 30))
         );
-
-        // LOẠI BỎ: pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnViewActionPerformed
 
-    private void cbMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbMonthActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbMonthActionPerformed
 
-    private void cbYearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbYearActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbYearActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        // THAY ĐỔI: Main method tạo JFrame để chứa JPanel mới
-        java.awt.EventQueue.invokeLater(() -> {
-            JFrame frame = new JFrame("AttendanceMonth Panel Wrapper");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.add(new AttendanceMonth());
-            frame.setSize(600, 450); // Cài đặt kích thước cho Frame chứa Panel
-            frame.setVisible(true);
-        });
-    }
-
-    // Variables declaration - do modify//GEN-BEGIN:variables
-    private javax.swing.JPanel btnAttendanceDate;
-    private javax.swing.JButton btnFilter;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSearch;
+    private javax.swing.JButton btnSearch1;
     private javax.swing.JButton btnView;
-    private javax.swing.JComboBox<String> cbMonth;
-    private javax.swing.JComboBox<String> cbYear;
+    private com.toedter.calendar.JMonthChooser jMonthChooser1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lbMonth;
-    private javax.swing.JLabel lbYear;
-    private javax.swing.JPanel pnlAttendanceDate;
-    private javax.swing.JSpinner spPage;
     private javax.swing.JTable tblAttendanceDate;
     private javax.swing.JTextField txtAttendanceDate;
     // End of variables declaration//GEN-END:variables

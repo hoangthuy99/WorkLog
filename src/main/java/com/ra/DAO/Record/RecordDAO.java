@@ -136,4 +136,22 @@ public class RecordDAO implements IRecordDAO {
             return List.of();
         }
     }
+
+    @Override
+    public Long sumBreakWorkByAttendanceId(int id) {
+        //TODO:Tính tổng thời gian nghỉ theo Attendance ID
+        Transaction transaction = null;
+        try{
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            String hql = "SELECT SUM(wr.breakTime) FROM WorkRecord wr WHERE wr.attendance.id = :attendanceId";
+            Long sumBreakTime = session.createQuery(hql, Long.class)
+                    .setParameter("attendanceId", id)
+                    .uniqueResult();
+            return sumBreakTime != null ? sumBreakTime : 0L;
+        }catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+            return 0L;
+        }
+    }
 }

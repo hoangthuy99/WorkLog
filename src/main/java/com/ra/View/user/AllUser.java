@@ -161,8 +161,7 @@ public class AllUser extends JPanel {
 
     // SỬA: Đổi từ private sang public để EditUser có thể gọi phương thức này để refresh bảng
     public void loadUserTable() {
-//        String keyword = txtSearch.getText().trim();
-//        List<Users> list = userController.findAll(keyword, currentPage, pageSize);
+
         List<Users> list = userController.findAll();
 
         userIds = new java.util.ArrayList<>();
