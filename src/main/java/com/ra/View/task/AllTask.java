@@ -157,7 +157,10 @@ public class AllTask extends JPanel {
     private void deleteTask() {
         int row = tblAddtask.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "削除するタスクを選択してください。");
+            JOptionPane.showMessageDialog(this,
+                    "削除するタスクを選択してください。",
+                    "エラー",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -169,16 +172,42 @@ public class AllTask extends JPanel {
             return;
         }
 
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "このタスクを削除しますか？",
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "このタスクを削除しますか？\n（※データはDBに残り、画面上のみ非表示になります）",
                 "確認",
-                JOptionPane.YES_NO_OPTION);
+                JOptionPane.YES_NO_OPTION
+        );
 
         if (confirm == JOptionPane.YES_OPTION) {
-            taskController.delete(t.getId());
-            loadTable(taskController.findAll());
+            try {
+                taskController.delete(t.getId());
+                loadTable(taskController.findAll());
+
+                JOptionPane.showMessageDialog(this,
+                        "タスクを削除しました。",
+                        "完了",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+            } catch (Exception ex) {
+                String msg = ex.getMessage();
+
+                if (msg != null && msg.contains("使用されている")) {
+                    JOptionPane.showMessageDialog(this,
+                            "このタスクは勤務記録で使用されているため、削除できません。",
+                            "削除エラー",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "削除中にエラーが発生しました。\n" + msg,
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
         }
     }
+
+
 
     private void loadTable(List<Tasks> list) {
         DefaultTableModel model = new DefaultTableModel(

@@ -18,7 +18,6 @@ public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private String name;
 
     @Column(name = "departmentCode", length = 10, unique = true, nullable = false)

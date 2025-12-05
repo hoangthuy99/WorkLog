@@ -57,21 +57,56 @@ public class AllProject extends JPanel {
 
             int confirm = JOptionPane.showConfirmDialog(
                     this,
-                    "本当に削除しますか？",
+                    "このプロジェクトを削除しますか？\n（※削除は画面上のみで、データはDBに残ります）",
                     "確認",
                     JOptionPane.YES_NO_OPTION
             );
 
-            if (confirm == JOptionPane.YES_OPTION) {
+            if (confirm != JOptionPane.YES_OPTION) return;
+
+            try {
                 boolean success = projectController.delete(projectId);
+
                 if (success) {
-                    JOptionPane.showMessageDialog(this, "削除しました");
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "プロジェクトを削除しました。",
+                            "完了",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                     loadTable(projectController.findAll());
                 } else {
-                    JOptionPane.showMessageDialog(this, "削除に失敗しました");
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "削除に失敗しました。",
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+
+            } catch (Exception ex) {
+
+                String msg = ex.getMessage();
+
+                // Nếu lỗi do đang dùng trong WorkRecord
+                if (msg != null && msg.contains("使用されている")) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "このプロジェクトは勤務記録で使用されているため、削除できません。",
+                            "削除エラー",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                } else {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "削除中に予期しないエラーが発生しました。\n" + msg,
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         });
+
     }
 
     private void openProjectForm(Integer projectId) {
@@ -235,7 +270,7 @@ public class AllProject extends JPanel {
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
-        txtProject = new JTextField("キーワード入力");
+        txtProject = new JTextField();
         btnSearch = new JButton("検索");
         btnAll = new JButton("全て");
         btnCreateDepartment = new JButton("プロジェクト作成");

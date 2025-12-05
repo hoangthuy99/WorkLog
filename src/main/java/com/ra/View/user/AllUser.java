@@ -186,7 +186,7 @@ public class AllUser extends JPanel {
 
         tbAllUser.setModel(new javax.swing.table.DefaultTableModel(
                 data,
-                new String[]{"STT", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール","タスク"}
+                new String[]{"No.", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール","タスク"}
         ));
         // Gọi lại setColumnWidths để đảm bảo bảng luôn có kích thước đúng sau khi load dữ liệu
         setColumnWidths();

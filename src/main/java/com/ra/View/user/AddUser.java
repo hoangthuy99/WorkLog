@@ -12,6 +12,7 @@ import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Roles;
 import com.ra.Model.Entity.Tasks;
 import com.ra.Model.Entity.Users;
+import com.ra.View.dashboard.MainDashboard;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -129,7 +130,6 @@ public class AddUser extends JPanel {
         contentPanel.add(lbRole);
         contentPanel.add(cbRole);
         contentPanel.add(lbMail);
-        contentPanel.add(btnCancel);
         contentPanel.add(txtMail);
         contentPanel.add(btnSave);
         contentPanel.add(lbUsername);
@@ -183,7 +183,6 @@ public class AddUser extends JPanel {
                                 .addGap(0, LEFT_RIGHT_MARGIN, Short.MAX_VALUE)) // Lề phải
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(250, 250, 250)
-                                .addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
                                 .addGap(40, 40, 40)
                                 .addComponent(btnSave)
                                 .addGap(20, 20, 20))
@@ -235,7 +234,6 @@ public class AddUser extends JPanel {
 
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE) // Giữ khoảng cách nút
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(btnCancel)
                                         .addComponent(btnSave))
                                 .addGap(74, 74, 74))
         );
@@ -434,7 +432,6 @@ public class AddUser extends JPanel {
         lbRole = new JLabel();
         cbRole = new JComboBox<>();
         lbMail = new JLabel();
-        btnCancel = new JButton();
         txtMail = new JTextField();
         btnSave = new JButton();
         lbUsername = new JLabel();
@@ -464,9 +461,6 @@ public class AddUser extends JPanel {
         lbMail.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
         lbMail.setText("メール");
 
-        btnCancel.setBackground(new java.awt.Color(255, 204, 153));
-        btnCancel.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
-        btnCancel.setText("キャンセル");
 
         txtMail.addActionListener(this::txtMailActionPerformed);
 
@@ -584,9 +578,7 @@ public class AddUser extends JPanel {
         // Bỏ trống
     }//GEN-LAST:event_txtEmployeenameActionPerformed
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton btnCancel;
     private JButton btnSave;
     private JComboBox<String> cbDepartment;
     private JComboBox<String> cbRole;

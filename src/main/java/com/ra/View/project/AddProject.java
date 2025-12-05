@@ -41,8 +41,7 @@ public class AddProject extends JPanel {
 
     // Phương thức gán sự kiện thủ công (vì initComponents() của JPanel thường không gán sẵn)
     private void setupEventHandlers() {
-        // Sự kiện cho nút Hủy
-        btnCancel.addActionListener(this::btnCancelActionPerformed);
+
         // Sự kiện cho nút Lưu/Cập nhật
         btnCreate.addActionListener(this::btnCreateActionPerformed);
 
@@ -98,7 +97,6 @@ public class AddProject extends JPanel {
         // Giữ nguyên khai báo của IDE
         cbDepartment = new JComboBox<>();
         cbTask = new JComboBox<>();
-        btnCancel = new JButton();
         btnCreate = new JButton();
 
         // ------------------------- ĐỔI MÀU NỀN CHO PANEL CHÍNH (this) -------------------------
@@ -116,8 +114,6 @@ public class AddProject extends JPanel {
 
         txtAddProject.setText("プロジェクト名");
 
-        btnCancel.setBackground(new java.awt.Color(255, 204, 204));
-        btnCancel.setText("キャンセル");
 
         btnCreate.setBackground(new java.awt.Color(204, 204, 255));
         btnCreate.setText("保存");
@@ -147,9 +143,7 @@ public class AddProject extends JPanel {
                                                         .addComponent(cbDepartment, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addComponent(cbTask, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                         .addGroup(pnlAddProjectLayout.createSequentialGroup()
-                                                // Nhóm nút Cancel/Create (căn giữa)
                                                 .addGap(120, 120, 120) // Điều chỉnh khoảng cách để căn giữa nhóm nút
-                                                .addComponent(btnCancel)
                                                 .addGap(89, 89, 89)
                                                 .addComponent(btnCreate)))
                                 // Thêm khoảng trống co giãn ở cuối (phải) để căn giữa
@@ -177,7 +171,6 @@ public class AddProject extends JPanel {
                                         .addComponent(cbTask, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                 .addGap(32, 32, 32)
                                 .addGroup(pnlAddProjectLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(btnCreate, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE))
                                 // Thêm khoảng trống co giãn ở dưới
                                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -210,14 +203,7 @@ public class AddProject extends JPanel {
     }
 
     /** Xử lý sự kiện cho nút Hủy */
-    private void btnCancelActionPerformed(ActionEvent e) {
-        // Trong File 1 (JFrame), logic là dispose().
-        // Trong File 2 (JPanel), cần đóng cửa sổ cha chứa nó.
-        java.awt.Window parentWindow = SwingUtilities.getWindowAncestor(this);
-        if (parentWindow != null) {
-            parentWindow.dispose();
-        }
-    }
+
 
 
     /** Save or update (TỪ FILE GỐC) */
@@ -225,40 +211,67 @@ public class AddProject extends JPanel {
 
         String name = txtAddProject.getText().trim();
         if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "プロジェクト名を入力してください");
+            JOptionPane.showMessageDialog(this,
+                    "プロジェクト名を入力してください。",
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Ép kiểu các item từ JComboBox về kiểu dữ liệu gốc (vì JComboBox mặc định dùng String)
         Department dept = (Department) cbDepartment.getSelectedItem();
         Tasks task = (Tasks) cbTask.getSelectedItem();
 
-        if (editingProjectId == null) {
-            // Logic CREATE
-            Project newProject = projectController.create(
-                    name,
-                    List.of(dept),
-                    List.of(task)
-            );
+        try {
 
-            JOptionPane.showMessageDialog(this, "作成完了");
+            // ================================
+            // CREATE MODE
+            // ================================
+            if (editingProjectId == null) {
 
-        } else {
-            // Logic UPDATE
-            editingProject.setName(name);
-            editingProject.setDepartments(List.of(dept));
-            editingProject.setTasks(List.of(task));
+                projectController.create(
+                        name,
+                        List.of(dept),
+                        List.of(task)
+                );
 
-            projectController.update(editingProject);
+                JOptionPane.showMessageDialog(this,
+                        "プロジェクトを作成しました。",
+                        "成功",
+                        JOptionPane.INFORMATION_MESSAGE);
 
-            JOptionPane.showMessageDialog(this, "更新完了");
+            }
+            // ================================
+            // UPDATE MODE
+            // ================================
+            else {
+
+                editingProject.setName(name);
+                editingProject.setDepartments(List.of(dept));
+                editingProject.setTasks(List.of(task));
+
+                projectController.update(editingProject);
+
+                JOptionPane.showMessageDialog(this,
+                        "プロジェクトを更新しました。",
+                        "成功",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        } catch (Exception ex) {
+
+            // 🔥🔥 HIỂN THỊ LỖI DUPLICATE TỪ DAO
+            JOptionPane.showMessageDialog(this,
+                    ex.getMessage(),        // DAO ném: "プロジェクト名は既に存在しています"
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE);
+
+            // ❗ Không return gì cả → form vẫn mở để nhập lại
         }
-
     }
 
 
+
     // 4. KHAI BÁO BIẾN (Chỉnh sửa để dùng kiểu đối tượng, mặc dù IDE có thể khai báo là <String>)
-    private JButton btnCancel;
     private JButton btnCreate;
     // Để giữ IDE Generated Code không bị lỗi, ta giữ kiểu generic không xác định hoặc String,
     // và ép kiểu khi sử dụng trong logic (như đã làm trong loadComboBoxes và saveProject).

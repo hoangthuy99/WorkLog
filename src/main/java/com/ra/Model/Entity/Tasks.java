@@ -21,7 +21,6 @@ public class Tasks {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private String name;
 
     @Column(name = "taskCode", length = 10, unique = true, nullable = false)
@@ -50,8 +49,6 @@ public class Tasks {
     // Task - User (n - n)
     @ManyToMany(mappedBy = "tasks")
     private List<Users> users;
-
-
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
