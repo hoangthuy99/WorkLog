@@ -163,7 +163,15 @@ public class AllUser extends JPanel {
     public void loadUserTable() {
 //        String keyword = txtSearch.getText().trim();
 //        List<Users> list = userController.findAll(keyword, currentPage, pageSize);
-        List<Users> list = userController.findAll();
+        String keyword = txtSearch.getText().trim();  // lấy từ khóa người dùng nhập
+
+        List<Users> list;
+
+        if (keyword.isEmpty()) {
+            list = userController.findAll();          // không có keyword → load tất cả
+        } else {
+            list = userController.findAll(keyword, currentPage, pageSize);  // có keyword → search
+        }
 
         userIds = new java.util.ArrayList<>();
 
