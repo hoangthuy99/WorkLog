@@ -48,13 +48,13 @@ public class AddHoliday extends JPanel {
         btnSave = new JButton();
 
         jLabel4.setFont(new java.awt.Font("Kannada MN", 1, 24)); // NOI18N
-        jLabel4.setText("List Holiday");
+        jLabel4.setText("休日追加");
 
-        jLabel1.setText("Choose Date: ");
+        jLabel1.setText("日付を選択: ");
 
-        jLabel2.setText("Name:");
+        jLabel2.setText("名前:");
 
-        jLabel3.setText("Description: ");
+        jLabel3.setText("説明: ");
 
         btnSave.setBackground(new java.awt.Color(102, 255, 255));
         btnSave.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
