@@ -121,11 +121,11 @@ public class AddHoliday extends JPanel {
 
             // Validate
             if (name.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Name is required!");
+                JOptionPane.showMessageDialog(this, "休日名は必須です！");
                 return;
             }
             if (selectedDate == null) {
-                JOptionPane.showMessageDialog(this, "Please choose a date!");
+                JOptionPane.showMessageDialog(this, "日付を選択してください！");
                 return;
             }
 
@@ -142,7 +142,7 @@ public class AddHoliday extends JPanel {
             // Gọi controller để lưu DB
             holidayController.createHoliday(holiday);
 
-            JOptionPane.showMessageDialog(this, "Holiday added successfully!");
+            JOptionPane.showMessageDialog(this, "休日を追加しました！");
 
             // Reset form
             txtName.setText("");

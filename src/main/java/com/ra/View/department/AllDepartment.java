@@ -123,7 +123,7 @@ public class AllDepartment extends JPanel implements DepartmentListener {
                                                                 .addGap(18, 18, 18)
                                                                 .addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
                                                                 .addGap(18, 18, 18)
-                                                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
                                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                                 .addComponent(btnAddDepartment, GroupLayout.PREFERRED_SIZE, 106, GroupLayout.PREFERRED_SIZE))))
                                         .addGroup(contentLayout.createSequentialGroup()
@@ -247,42 +247,62 @@ public class AllDepartment extends JPanel implements DepartmentListener {
     }
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {
+
         int selectedRow = tblAddDepartment.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "削除する部署を選択してください。", "注意", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        Object idValue = tblAddDepartment.getModel().getValueAt(selectedRow, 0);
-        int id;
+        int id = Integer.parseInt(tblAddDepartment.getValueAt(selectedRow, 0).toString());
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "この部署を削除しますか？\n（※削除は画面上のみで、データはDBに残ります）",
+                "削除確認",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm != JOptionPane.YES_OPTION) return;
+
         try {
-            if (idValue instanceof Integer) {
-                id = (Integer) idValue;
-            } else if (idValue instanceof String) {
-                id = Integer.parseInt((String) idValue);
+
+            departmentController.delete(id);
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "部署を削除しました。",
+                    "完了",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            loadTable(departmentController.findAll());
+
+        } catch (Exception ex) {
+
+            String msg = ex.getMessage();
+
+            if (msg != null && msg.contains("使用されている")) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        msg,
+                        "削除エラー",
+                        JOptionPane.ERROR_MESSAGE
+                );
+
             } else {
-                throw new ClassCastException();
-            }
-        } catch (ClassCastException | NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "IDデータの形式エラー。", "エラー", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
-
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "この部署を削除してもよろしいですか？", "削除確認", JOptionPane.YES_NO_OPTION);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                departmentController.delete(id);
-                JOptionPane.showMessageDialog(this, "部署が削除されました。");
-                loadTable(departmentController.findAll());
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "削除中にエラーが発生しました: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
-                logger.severe("Delete error: " + e.getMessage());
+                JOptionPane.showMessageDialog(
+                        this,
+                        "削除中にエラーが発生しました。\n" + msg,
+                        "エラー",
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
         }
     }
+
 
 
     // 6. PHƯƠNG THỨC LOAD TABLE

@@ -28,10 +28,6 @@ public class UserServiceIMPL implements UserService {
 
     }
 
-    @Override
-    public List<Users> findAll(String keyword, int page, int size) {
-        return List.of();
-    }
 
     @Override
     public List<Users> findAll() {
@@ -50,9 +46,15 @@ public class UserServiceIMPL implements UserService {
     }
 
     @Override
-    public long countAll(String keyword) {
-        return 0;
+    public List<Users> findAll(String keyword, int page, int size) {
+        return userDAO.findAll(keyword, page, size);
     }
+
+    @Override
+    public long countAll(String keyword) {
+        return userDAO.countAll(keyword);
+    }
+
 
     @Override
     public Optional<Users> findByUsername(String username) {
