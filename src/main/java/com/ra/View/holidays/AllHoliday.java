@@ -109,7 +109,7 @@ public class AllHoliday extends JPanel {
         btnSearch = new JButton();
 
         jLabel4.setFont(new Font("Kannada MN", 1, 24)); // NOI18N
-        jLabel4.setText("List Holiday");
+        jLabel4.setText("休日一覧");
 
         btnSearch.setBackground(new Color(102, 255, 255));
         btnSearch.setFont(new Font("Helvetica Neue", 1, 13)); // NOI18N
