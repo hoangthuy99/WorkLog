@@ -66,15 +66,20 @@ public class AddTask extends JPanel {
         txtTaskname.setText(editingTask.getName());
 
         if (editingTask.getDepartments() != null && !editingTask.getDepartments().isEmpty()) {
-            cbDepartmentname.setSelectedItem(editingTask.getDepartments().get(0).getName());
+            cbDepartmentname.setSelectedItem(editingTask.getDepartments().get(0)); // ✅ set object
+        } else {
+            cbDepartmentname.setSelectedItem(null); // ✅ cho phép "không chọn"
         }
 
         if (editingTask.getProjects() != null && !editingTask.getProjects().isEmpty()) {
-            cbProjectname.setSelectedItem(editingTask.getProjects().get(0).getName());
+            cbProjectname.setSelectedItem(editingTask.getProjects().get(0)); // ✅ set object
+        } else {
+            cbProjectname.setSelectedItem(null);
         }
 
-        btnSave.setText("更新");  // đổi từ 保存 → 更新
+        btnSave.setText("更新");
     }
+
 
     // ==========================================================
     // LAYOUT — GIỮ NGUYÊN 100% CODE UI CŨ CỦA BẠN
@@ -161,15 +166,59 @@ public class AddTask extends JPanel {
     private void loadDepartments() {
         departmentList = departmentController.findAll();
         cbDepartmentname.removeAllItems();
-        for (Department d : departmentList) cbDepartmentname.addItem(d);
+        cbDepartmentname.addItem(null);
 
+        for (Department d : departmentList) {
+            cbDepartmentname.addItem(d);
+        }
+
+        cbDepartmentname.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("未選択");   // "chưa chọn"
+                } else {
+                    setText(((Department) value).getName());
+                }
+                return this;
+            }
+        });
     }
+
 
     private void loadProjects() {
         projectList = projectController.findAll();
         cbProjectname.removeAllItems();
-        for (Project p : projectList) cbProjectname.addItem(p);
+
+        // ✅ Cho phép "không chọn"
+        cbProjectname.addItem(null);
+
+        for (Project p : projectList) {
+            cbProjectname.addItem(p);
+        }
+
+        // ✅ Renderer hiển thị khi null
+        cbProjectname.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("未選択");
+                } else {
+                    setText(((Project) value).getName());
+                }
+                return this;
+            }
+        });
     }
+
 
     // ==========================================================
     // BUTTON HANDLERS
@@ -188,10 +237,15 @@ public class AddTask extends JPanel {
         Project selectedProj = (Project) cbProjectname.getSelectedItem();
 
         List<Department> deps = new ArrayList<>();
-        deps.add(selectedDept);
+        if (selectedDept != null) {
+            deps.add(selectedDept);
+        }
 
         List<Project> projs = new ArrayList<>();
-        projs.add(selectedProj);
+        if (selectedProj != null) {
+            projs.add(selectedProj);
+        }
+
 
         try {
 

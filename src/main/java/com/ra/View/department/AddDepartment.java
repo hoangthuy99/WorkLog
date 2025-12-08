@@ -86,34 +86,76 @@ public class AddDepartment extends JPanel {
 
         txtDepartmentname.setText(editingDepartment.getName());
 
-        if (!editingDepartment.getProjects().isEmpty()) {
+        if (editingDepartment.getProjects() != null && !editingDepartment.getProjects().isEmpty()) {
             cbbProjectname.setSelectedItem(editingDepartment.getProjects().get(0));
+        } else {
+            cbbProjectname.setSelectedItem(null);
         }
 
-        if (!editingDepartment.getTasks().isEmpty()) {
+        if (editingDepartment.getTasks() != null && !editingDepartment.getTasks().isEmpty()) {
             cbbTaskname.setSelectedItem(editingDepartment.getTasks().get(0));
+        } else {
+            cbbTaskname.setSelectedItem(null);
         }
     }
+
 
     // -------------------- LOAD PROJECT COMBO --------------------
     private void loadProjects() {
         projectList = projectController.findAll();
         cbbProjectname.removeAllItems();
 
+        cbbProjectname.addItem(null);
+
         for (Project p : projectList) {
-            cbbProjectname.addItem(p);   // ADD PROJECT OBJECT (NOT STRING)
+            cbbProjectname.addItem(p);
         }
+
+        cbbProjectname.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                                                          int index, boolean isSelected,
+                                                          boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("未選択"); // hoặc "プロジェクト未選択"
+                } else {
+                    setText(((Project) value).getName());
+                }
+                return this;
+            }
+        });
     }
+
 
     // -------------------- LOAD TASK COMBO --------------------
     private void loadTasks() {
         taskList = taskController.findAll();
         cbbTaskname.removeAllItems();
 
+
+        cbbTaskname.addItem(null);
+
         for (Tasks t : taskList) {
-            cbbTaskname.addItem(t);  // ADD TASK OBJECT
+            cbbTaskname.addItem(t);
         }
+
+        cbbTaskname.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                                                          int index, boolean isSelected,
+                                                          boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("未選択"); // hoặc "タスク未選択"
+                } else {
+                    setText(((Tasks) value).getName());
+                }
+                return this;
+            }
+        });
     }
+
 
     // -------------------- SAVE ACTION --------------------
     private void saveDepartment() {

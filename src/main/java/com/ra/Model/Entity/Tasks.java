@@ -34,7 +34,7 @@ public class Tasks {
             joinColumns = @JoinColumn(name = "taskId"),
             inverseJoinColumns = @JoinColumn(name = "projectId")
     )
-    private List<Project> projects;
+    private List<Project> projects = new java.util.ArrayList<>();
 
     // Task - Department (n - n)
     @ManyToMany
@@ -43,7 +43,7 @@ public class Tasks {
             joinColumns = @JoinColumn(name = "taskId"),
             inverseJoinColumns = @JoinColumn(name = "departmentId")
     )
-    private List<Department> departments;
+    private List<Department> departments = new java.util.ArrayList<>();
 
 
     // Task - User (n - n)

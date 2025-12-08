@@ -405,7 +405,7 @@ public class EditUser extends JFrame {
         // TODO add your handling code here:
         try {
             if (currentUser == null) {
-                JOptionPane.showMessageDialog(this, "User dose not exist!");
+                JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
                 return;
             }
 
@@ -458,7 +458,7 @@ public class EditUser extends JFrame {
             // Gọi Controller để update
             userController.updateUser(currentUser);
 
-            JOptionPane.showMessageDialog(this, "User updated successfully!");
+            JOptionPane.showMessageDialog(this, "ユーザーが正常に更新されました！");
 
             // GỌI PHƯƠNG THỨC REFRESH BẢNG TRONG ALLUSER
             if (parentPanel != null) {

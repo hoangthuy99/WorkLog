@@ -102,7 +102,7 @@ public class AllTask extends JPanel {
 
         tblAddtask.setModel(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"タスク名", "プロジェクト名", "部署名"}
+                new String[]{"No.","タスク名", "プロジェクト名", "部署名"}
         ));
         scrAddtask.setViewportView(tblAddtask);
 
@@ -135,7 +135,7 @@ public class AllTask extends JPanel {
             return;
         }
 
-        String taskName = tblAddtask.getValueAt(row, 0).toString();
+        String taskName = tblAddtask.getValueAt(row, 1).toString();
         Tasks task = taskController.findByName(taskName);
 
         if (task == null) {
@@ -164,7 +164,7 @@ public class AllTask extends JPanel {
             return;
         }
 
-        String taskName = tblAddtask.getValueAt(row, 0).toString();
+        String taskName = tblAddtask.getValueAt(row, 1).toString();
         Tasks t = taskController.findByName(taskName);
 
         if (t == null) {
@@ -174,7 +174,7 @@ public class AllTask extends JPanel {
 
         int confirm = JOptionPane.showConfirmDialog(
                 this,
-                "このタスクを削除しますか？\n（※データはDBに残り、画面上のみ非表示になります）",
+                "このタスクを削除しますか？\n",
                 "確認",
                 JOptionPane.YES_NO_OPTION
         );
@@ -210,9 +210,12 @@ public class AllTask extends JPanel {
 
 
     private void loadTable(List<Tasks> list) {
+        // ✅ Thêm cột "No." vào đầu
         DefaultTableModel model = new DefaultTableModel(
-                new String[]{"タスク名", "プロジェクト名", "部署名"}, 0
+                new String[]{"No.", "タスク名", "プロジェクト名", "部署名"}, 0
         );
+
+        int no = 1;
 
         for (Tasks t : list) {
 
@@ -223,11 +226,15 @@ public class AllTask extends JPanel {
                     String.join(", ", t.getDepartments().stream().map(Department::getName).toList());
 
             model.addRow(new Object[]{
-                    t.getName(), projects, deps
+                    no++,
+                    t.getName(),
+                    projects,
+                    deps
             });
         }
 
         tblAddtask.setModel(model);
     }
+
 
 }

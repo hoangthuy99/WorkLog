@@ -53,20 +53,57 @@ public class AddProject extends JPanel {
 
     /** Load department/task */
     private void loadComboBoxes() {
-        // LƯU Ý: Nếu không dùng kiểu generic đúng, cần ép kiểu khi gọi removeAllItems()
         ((JComboBox<Department>) cbDepartment).removeAllItems();
         ((JComboBox<Tasks>) cbTask).removeAllItems();
 
-        // Sử dụng projectController.getAllDepartments() để lấy danh sách
-        for (Department d : projectController.getAllDepartments())
-            // Thêm đối tượng Department vào JComboBox
-            // LƯU Ý: JComboBox hiển thị đối tượng bằng cách gọi phương thức toString() của đối tượng đó.
-            ((JComboBox<Department>) cbDepartment).addItem(d);
+        // ✅ 1. THÊM OPTION "KHÔNG CHỌN"
+        ((JComboBox<Department>) cbDepartment).addItem(null);
+        ((JComboBox<Tasks>) cbTask).addItem(null);
 
-        for (Tasks t : projectController.getAllTasks())
-            // Thêm đối tượng Tasks vào JComboBox
+        // ✅ 2. LOAD DATA NHƯ CŨ
+        for (Department d : projectController.getAllDepartments()) {
+            ((JComboBox<Department>) cbDepartment).addItem(d);
+        }
+
+        for (Tasks t : projectController.getAllTasks()) {
             ((JComboBox<Tasks>) cbTask).addItem(t);
+        }
+
+        // ✅ 3. RENDERER DEPARTMENT
+        ((JComboBox<Department>) cbDepartment).setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("未選択"); // chưa chọn
+                } else {
+                    setText(((Department) value).getName());
+                }
+                return this;
+            }
+        });
+
+        // ✅ 4. RENDERER TASKS
+        ((JComboBox<Tasks>) cbTask).setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("未選択");
+                } else {
+                    setText(((Tasks) value).getName());
+                }
+                return this;
+            }
+        });
     }
+
 
     /** Load data lên form */
     private void loadProjectData() {
@@ -75,14 +112,21 @@ public class AddProject extends JPanel {
 
         txtAddProject.setText(editingProject.getName());
 
-        // Chọn Department
-        if (!editingProject.getDepartments().isEmpty())
+        // Department
+        if (editingProject.getDepartments() != null && !editingProject.getDepartments().isEmpty()) {
             ((JComboBox<Department>) cbDepartment).setSelectedItem(editingProject.getDepartments().get(0));
+        } else {
+            ((JComboBox<Department>) cbDepartment).setSelectedItem(null); // ✅ hiển thị "未選択"
+        }
 
-        // Chọn Tasks
-        if (!editingProject.getTasks().isEmpty())
+        // Tasks
+        if (editingProject.getTasks() != null && !editingProject.getTasks().isEmpty()) {
             ((JComboBox<Tasks>) cbTask).setSelectedItem(editingProject.getTasks().get(0));
+        } else {
+            ((JComboBox<Tasks>) cbTask).setSelectedItem(null); // ✅ hiển thị "未選択"
+        }
     }
+
 
 
     @SuppressWarnings("unchecked")
@@ -190,7 +234,6 @@ public class AddProject extends JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    // Loại bỏ các phương thức ActionPerformed không cần thiết
     private void txtAddProjectActionPerformed(ActionEvent evt) {}
     private void cbDepartmentActionPerformed(ActionEvent evt) {}
 
@@ -217,21 +260,18 @@ public class AddProject extends JPanel {
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         Department dept = (Department) cbDepartment.getSelectedItem();
         Tasks task = (Tasks) cbTask.getSelectedItem();
-
+        List<Department> departments = (dept != null) ? List.of(dept) : List.of();
+        List<Tasks> tasks = (task != null) ? List.of(task) : List.of();
         try {
 
-            // ================================
-            // CREATE MODE
-            // ================================
             if (editingProjectId == null) {
 
                 projectController.create(
                         name,
-                        List.of(dept),
-                        List.of(task)
+                        departments,
+                        tasks
                 );
 
                 JOptionPane.showMessageDialog(this,
@@ -239,15 +279,11 @@ public class AddProject extends JPanel {
                         "成功",
                         JOptionPane.INFORMATION_MESSAGE);
 
-            }
-            // ================================
-            // UPDATE MODE
-            // ================================
-            else {
+            } else {
 
                 editingProject.setName(name);
-                editingProject.setDepartments(List.of(dept));
-                editingProject.setTasks(List.of(task));
+                editingProject.setDepartments(departments);
+                editingProject.setTasks(tasks);
 
                 projectController.update(editingProject);
 
@@ -259,22 +295,14 @@ public class AddProject extends JPanel {
 
         } catch (Exception ex) {
 
-            // 🔥🔥 HIỂN THỊ LỖI DUPLICATE TỪ DAO
             JOptionPane.showMessageDialog(this,
-                    ex.getMessage(),        // DAO ném: "プロジェクト名は既に存在しています"
+                    ex.getMessage(),
                     "エラー",
                     JOptionPane.ERROR_MESSAGE);
-
-            // ❗ Không return gì cả → form vẫn mở để nhập lại
         }
+
     }
-
-
-
-    // 4. KHAI BÁO BIẾN (Chỉnh sửa để dùng kiểu đối tượng, mặc dù IDE có thể khai báo là <String>)
     private JButton btnCreate;
-    // Để giữ IDE Generated Code không bị lỗi, ta giữ kiểu generic không xác định hoặc String,
-    // và ép kiểu khi sử dụng trong logic (như đã làm trong loadComboBoxes và saveProject).
     private JComboBox cbDepartment;
     private JComboBox cbTask;
     private JLabel jLabel2;
@@ -282,5 +310,4 @@ public class AddProject extends JPanel {
     private JLabel lbAddProjectName;
     private JPanel pnlAddProject;
     private JTextField txtAddProject;
-    // End of variables declaration//GEN-END:variables
 }
