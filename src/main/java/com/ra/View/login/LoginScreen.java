@@ -43,8 +43,6 @@ public class LoginScreen extends javax.swing.JFrame {
         txtPassword = new javax.swing.JPasswordField();
         btnLogin = new javax.swing.JButton();
         chkShowPassword = new javax.swing.JCheckBox();
-        getRootPane().setDefaultButton(btnLogin);
-
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("LOGINSCREEN");
@@ -132,6 +130,7 @@ public class LoginScreen extends javax.swing.JFrame {
         }
     }
 
+    // ======================== LOGIN LOGIC ======================== //
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {
 
@@ -195,7 +194,10 @@ public class LoginScreen extends javax.swing.JFrame {
         // Lưu role của user
         SessionLocal.set("USER_ROLE", user.getRole().getName());
 
+
+
     }
+
 
 
     public static void main(String args[]) {
