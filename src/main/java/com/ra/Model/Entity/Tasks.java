@@ -21,7 +21,6 @@ public class Tasks {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private String name;
 
     @Column(name = "taskCode", length = 10, unique = true, nullable = false)
@@ -35,7 +34,7 @@ public class Tasks {
             joinColumns = @JoinColumn(name = "taskId"),
             inverseJoinColumns = @JoinColumn(name = "projectId")
     )
-    private List<Project> projects;
+    private List<Project> projects = new java.util.ArrayList<>();
 
     // Task - Department (n - n)
     @ManyToMany
@@ -44,14 +43,12 @@ public class Tasks {
             joinColumns = @JoinColumn(name = "taskId"),
             inverseJoinColumns = @JoinColumn(name = "departmentId")
     )
-    private List<Department> departments;
+    private List<Department> departments = new java.util.ArrayList<>();
 
 
     // Task - User (n - n)
     @ManyToMany(mappedBy = "tasks")
     private List<Users> users;
-
-
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

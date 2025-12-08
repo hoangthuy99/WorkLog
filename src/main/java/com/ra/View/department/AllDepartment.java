@@ -39,39 +39,20 @@ public class AllDepartment extends JPanel implements DepartmentListener {
         gbc.weightx = 1.0; gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
-
-        // Thêm contentPanel vào JPanel chính (this)
         add(contentPanel, gbc);
-
-        // GẮN SỰ KIỆN CHO CÁC NÚT KHÔNG TỰ SINH
         btnEdit.addActionListener(this::btnEditActionPerformed);
         btnDelete.addActionListener(this::btnDeleteActionPerformed);
         btnAddDepartment.addActionListener(this::btnAddDepartmentActionPerformed);
-
-        // GỌI HÀM TẢI DỮ LIỆU KHI KHỞI TẠO
         loadTable(departmentController.findAll());
     }
 
-    // ==========================================================
-    // LOGIC POP-UP DIALOG CHO EDIT
-    // ==========================================================
-
     private void showAddEditDialog(Integer id) {
-        try {
-            // Lấy cửa sổ cha của AllDepartment (JFrame chứa nó)
-            Frame owner = JOptionPane.getFrameForComponent(this);
-
-            // Tạo JDialog (Pop-up Window)
+        try {Frame owner = JOptionPane.getFrameForComponent(this);
             JDialog dialog = new JDialog(owner, (id == null ? "新部署作成" : "部署編集"), true);
-
-            // Tạo Panel AddDepartment, truyền JDialog làm parentWindow, và truyền chính AllDepartment (this) làm Listener
             AddDepartment form = new AddDepartment(dialog, this, id);
-
             dialog.setContentPane(form);
             dialog.pack();
             dialog.setLocationRelativeTo(owner);
-
-            // Bắt sự kiện đóng cửa sổ (ví dụ: nhấn nút X) để refresh bảng
             dialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
@@ -86,22 +67,16 @@ public class AllDepartment extends JPanel implements DepartmentListener {
         }
     }
 
-    // IMPLEMENTATION CỦA INTERFACE LISTENER
+
     @Override
     public void onDepartmentOperationComplete() {
         loadTable(departmentController.findAll());
     }
-
-    // ==========================================================
-    // PHƯƠNG THỨC TẠO PANEL VIEW
-    // ==========================================================
     private JPanel createTableViewPanel() {
         JPanel viewPanel = new JPanel();
         viewPanel.setBackground(new Color(255, 255, 255));
-
         GroupLayout contentLayout = new GroupLayout(viewPanel);
         viewPanel.setLayout(contentLayout);
-
         viewPanel.add(lbKeyword);
         viewPanel.add(btnSearch);
         viewPanel.add(btnAddDepartment);
@@ -123,7 +98,7 @@ public class AllDepartment extends JPanel implements DepartmentListener {
                                                                 .addGap(18, 18, 18)
                                                                 .addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
                                                                 .addGap(18, 18, 18)
-                                                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
                                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                                 .addComponent(btnAddDepartment, GroupLayout.PREFERRED_SIZE, 106, GroupLayout.PREFERRED_SIZE))))
                                         .addGroup(contentLayout.createSequentialGroup()
@@ -202,8 +177,6 @@ public class AllDepartment extends JPanel implements DepartmentListener {
         GroupLayout layout = new GroupLayout(this);
     }// </editor-fold>//GEN-END:initComponents
 
-    // 5. CHUYỂN CÁC PHƯƠNG THỨC XỬ LÝ SỰ KIỆN (HANDLER)
-
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {
         String keyword = txtSearch.getText().trim();
         List<Department> list = departmentController.search(keyword);
@@ -222,7 +195,7 @@ public class AllDepartment extends JPanel implements DepartmentListener {
             return;
         }
 
-        Object idValue = tblAddDepartment.getModel().getValueAt(selectedRow, 0);
+        Object idValue = tblAddDepartment.getModel().getValueAt(selectedRow, 1);
         int id = -1;
 
         try {
@@ -247,53 +220,67 @@ public class AllDepartment extends JPanel implements DepartmentListener {
     }
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {
+
         int selectedRow = tblAddDepartment.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "削除する部署を選択してください。", "注意", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        Object idValue = tblAddDepartment.getModel().getValueAt(selectedRow, 0);
-        int id;
+        int id = Integer.parseInt(tblAddDepartment.getValueAt(selectedRow, 1).toString());
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "この部署を削除しますか？\n",
+                "削除確認",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm != JOptionPane.YES_OPTION) return;
+
         try {
-            if (idValue instanceof Integer) {
-                id = (Integer) idValue;
-            } else if (idValue instanceof String) {
-                id = Integer.parseInt((String) idValue);
+
+            departmentController.delete(id);
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "部署を削除しました。",
+                    "完了",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            loadTable(departmentController.findAll());
+
+        } catch (Exception ex) {
+
+            String msg = ex.getMessage();
+
+            if (msg != null && msg.contains("使用されている")) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        msg,
+                        "削除エラー",
+                        JOptionPane.ERROR_MESSAGE
+                );
+
             } else {
-                throw new ClassCastException();
-            }
-        } catch (ClassCastException | NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "IDデータの形式エラー。", "エラー", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
-
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "この部署を削除してもよろしいですか？", "削除確認", JOptionPane.YES_NO_OPTION);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                departmentController.delete(id);
-                JOptionPane.showMessageDialog(this, "部署が削除されました。");
-                loadTable(departmentController.findAll());
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "削除中にエラーが発生しました: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
-                logger.severe("Delete error: " + e.getMessage());
+                JOptionPane.showMessageDialog(
+                        this,
+                        "削除中にエラーが発生しました。\n" + msg,
+                        "エラー",
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
         }
     }
 
-
-    // 6. PHƯƠNG THỨC LOAD TABLE
-
     private void loadTable(List<Department> list) {
-
-        String[] columns = {"ID", "部署名", "プロジェクト名", "タスク名"};
+        String[] columns = {"No.", "ID", "部署名", "プロジェクト名", "タスク名"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
-
+        int no = 1;
         for (Department d : list) {
-
             String projectNames = (d.getProjects() == null) ? "" :
                     d.getProjects().stream()
                             .map(Project::getName)
@@ -305,6 +292,7 @@ public class AllDepartment extends JPanel implements DepartmentListener {
                             .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
 
             model.addRow(new Object[]{
+                    no++,
                     d.getId(),
                     d.getName(),
                     projectNames,
@@ -313,16 +301,13 @@ public class AllDepartment extends JPanel implements DepartmentListener {
         }
 
         tblAddDepartment.setModel(model);
-
-        // Ẩn cột ID (cột 0)
-        if (tblAddDepartment.getColumnModel().getColumnCount() > 0) {
-            tblAddDepartment.getColumnModel().getColumn(0).setMinWidth(0);
-            tblAddDepartment.getColumnModel().getColumn(0).setMaxWidth(0);
-            tblAddDepartment.getColumnModel().getColumn(0).setPreferredWidth(0);
+        if (tblAddDepartment.getColumnModel().getColumnCount() > 1) {
+            tblAddDepartment.getColumnModel().getColumn(1).setMinWidth(0);
+            tblAddDepartment.getColumnModel().getColumn(1).setMaxWidth(0);
+            tblAddDepartment.getColumnModel().getColumn(1).setPreferredWidth(0);
         }
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnAddDepartment;
     private JButton btnDelete;
     private JButton btnEdit;
@@ -331,5 +316,5 @@ public class AllDepartment extends JPanel implements DepartmentListener {
     private JScrollPane scrAdddepartment;
     private JTable tblAddDepartment;
     private JTextField txtSearch;
-    // End of variables declaration//GEN-END:variables
+
 }

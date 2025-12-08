@@ -15,35 +15,38 @@ public class TaskController {
      * Tạo mới task
      */
     public void create(Tasks task) {
-        try {
-            taskDAO.create(task);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        taskDAO.create(task);
     }
+
 
     /**
      * Cập nhật task
      */
     public void update(Tasks task) {
-        try {
-            taskDAO.update(task);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        taskDAO.update(task);
     }
+
 
     /**
      * Xóa task theo ID
      */
-    public boolean delete(int id) {
+    public void delete(int id) {
         try {
-            return taskDAO.deleteFindById(id);
+            boolean success = taskDAO.deleteFindById(id);
+
+            if (!success) {
+                throw new RuntimeException("タスク削除に失敗しました。");
+            }
+
+        } catch (RuntimeException e) {
+            // Ném lại lỗi nghiệp vụ từ DAO
+            throw e;
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            // Lỗi khác
+            throw new RuntimeException("削除中にエラーが発生しました。", e);
         }
     }
+
 
     /**
      * Tìm task theo ID

@@ -12,6 +12,7 @@ import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Roles;
 import com.ra.Model.Entity.Tasks;
 import com.ra.Model.Entity.Users;
+import com.ra.View.dashboard.MainDashboard;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -27,25 +28,17 @@ import java.util.Optional;
 public class AddUser extends JPanel {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AddUser.class.getName());
-
-    // KHAI BÁO BIẾN CHO LOGIC XỬ LÝ
     private final UserController userController = new UserController();
     private DefaultListModel<String> taskModel = new DefaultListModel<>();
     private AllUser parentPanel;
-
-    // KHAI BÁO PANEL PHỤ ĐỂ CHỨA NỘI DUNG (Content Panel)
     private JPanel contentPanel;
-
 
     /**
      * Creates new form AddUser1
      */
     public AddUser(AllUser parentPanel) {
-        // Khởi tạo các thành phần UI (các label, textfield, button)
         initComponents();
-
         this.parentPanel = parentPanel;
-
         listTask.setModel(taskModel);
         listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         listTask.addMouseListener(new MouseAdapter() {
@@ -60,76 +53,36 @@ public class AddUser extends JPanel {
                 }
             }
         });
-
-
-        // --- BƯỚC SỬA LỖI CĂN GIỮA ---
         applyCenteredLayout();
-
         loadData();
     }
-
-    // CONSTRUCTOR MẶC ĐỊNH
     public AddUser() {
         this(null);
     }
-
-
-    // ========================================================
-    // PHƯƠNG THỨC CĂN GIỮA (THAY THẾ CHO LAYOUT TỰ ĐỘNG)
-    // ========================================================
     private void applyCenteredLayout() {
-        // 1. Lưu trữ Layout tự động (Group Layout) của initComponents() vào ContentPanel
-        // Vì initComponents đã sử dụng layout để sắp xếp các thành phần con,
-        // chúng ta sẽ tái sử dụng Layout đã tạo trong initComponents() cho contentPanel.
-
-        // 2. Thiết lập GridBagLayout cho JPanel chính (this)
         this.setLayout(new GridBagLayout());
-
-        // Tạo một ContentPanel mới (Nếu initComponents chưa tạo ra JPanel cha bọc sẵn)
-        // Nếu không có panel bọc, chúng ta cần tạo một JPanel mới và chuyển tất cả các thành phần
-        // đã được tạo trong initComponents() vào panel này.
-
-        // GIẢ ĐỊNH: Chúng ta sẽ bọc tất cả các components đã được tạo bởi initComponents
-        // vào một contentPanel và sử dụng GridBagLayout để căn giữa contentPanel này.
-        // Tuy nhiên, việc này phức tạp vì components đã được gán Layout cho `this`.
-
-        // CÁCH ĐƠN GIẢN HƠN: Thiết lập lại bố cục của JPanel chính
-        // Bắt đầu bằng cách tạo một JPanel phụ chứa TẤT CẢ các thành phần đã tạo
         contentPanel = new JPanel();
-        // Giữ nguyên layout cũ (Group Layout) cho contentPanel
         GroupLayout contentLayout = new GroupLayout(contentPanel);
         contentPanel.setLayout(contentLayout);
         contentPanel.setBackground(new java.awt.Color(255, 255, 255)); // Đảm bảo màu nền khớp
-
-        // DI CHUYỂN TẤT CẢ COMPONENTS VÀ KÍCH THƯỚC/BỐ CỤC CŨ VÀO contentPanel
-        // Tái tạo lại GroupLayout đã được tạo trong initComponents (xem phần sau)
         setupContentPanelLayout(contentLayout);
-
-        // 3. Áp dụng GridBagLayout cho JPanel chính (this) để căn giữa contentPanel
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 1.0; // Cho phép co giãn theo chiều ngang
-        gbc.weighty = 1.0; // Cho phép co giãn theo chiều dọc
-        gbc.fill = GridBagConstraints.NONE; // KHÔNG cho contentPanel lấp đầy toàn bộ không gian
-        gbc.anchor = GridBagConstraints.CENTER; // CĂN GIỮA
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
 
         this.add(contentPanel, gbc);
     }
-
-    // Phương thức này tái tạo lại bố cục của initComponents() vào contentPanel
     private void setupContentPanelLayout(GroupLayout layout) {
-
-        // XÓA TẤT CẢ CÁC THÀNH PHẦN KHỎI JPanel CHÍNH (this)
         this.removeAll();
-
-        // THÊM TẤT CẢ CÁC THÀNH PHẦN VÀO contentPanel
         contentPanel.add(lbDepartment);
         contentPanel.add(lbTask);
         contentPanel.add(lbRole);
         contentPanel.add(cbRole);
         contentPanel.add(lbMail);
-        contentPanel.add(btnCancel);
         contentPanel.add(txtMail);
         contentPanel.add(btnSave);
         contentPanel.add(lbUsername);
@@ -141,8 +94,6 @@ public class AddUser extends JPanel {
         contentPanel.add(txtPassWord);
         contentPanel.add(txtEmployeename);
 
-        // TÁI TẠO LẠI BỐ CỤC CŨ (HORIZONTAL GROUP)
-        // Thiết lập chiều rộng đồng nhất 200px cho các trường nhập/chọn
         final int FIELD_WIDTH = 200;
         final int HORIZONTAL_GAP = 70;
         final int LEFT_RIGHT_MARGIN = 80;
@@ -183,17 +134,13 @@ public class AddUser extends JPanel {
                                 .addGap(0, LEFT_RIGHT_MARGIN, Short.MAX_VALUE)) // Lề phải
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(250, 250, 250)
-                                .addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
                                 .addGap(40, 40, 40)
                                 .addComponent(btnSave)
                                 .addGap(20, 20, 20))
         );
-
-        // TÁI TẠO LẠI BỐ CỤC CŨ (VERTICAL GROUP)
         final int FIELD_HEIGHT = 30;
         final int VERTICAL_GAP = 35;
         final int SCROLL_PANE_HEIGHT = 85;
-        // 🌟 ĐIỀU CHỈNH LẠI KHOẢNG CÁCH: ROLE_GAP = 8 (khoảng 35 - (85-30)/2)
         final int ROLE_GAP = 8;
 
         layout.setVerticalGroup(
@@ -235,19 +182,13 @@ public class AddUser extends JPanel {
 
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE) // Giữ khoảng cách nút
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(btnCancel)
                                         .addComponent(btnSave))
                                 .addGap(74, 74, 74))
         );
-
-        // Cập nhật lại giao diện
         contentPanel.revalidate();
         contentPanel.repaint();
     }
 
-    // ========================================================
-    // LOGIC TẢI DỮ LIỆU
-    // ========================================================
     private void loadData() {
         loadDepartments();
         loadTasks();
@@ -259,16 +200,11 @@ public class AddUser extends JPanel {
         try {
             DepartmentDAO departmentDAO = new DepartmentDAO();
             List<Department> departments = departmentDAO.findAll();
-
             cbDepartment.removeAllItems();
-            // THÊM DÒNG HƯỚNG DẪN
-            cbDepartment.addItem("--- 選択してください ---");
-
+            cbDepartment.addItem("未選択");
             for (Department d : departments) {
                 cbDepartment.addItem(d.getName());
             }
-
-            // Đặt mục hướng dẫn là mục được chọn mặc định
             cbDepartment.setSelectedIndex(0);
 
         } catch (Exception e) {
@@ -281,12 +217,9 @@ public class AddUser extends JPanel {
         try {
             TaskDAO taskDAO = new TaskDAO();
             List<Tasks> tasks = taskDAO.findAll();
-
-            // lấy model hiện tại của listTask
             DefaultListModel<String> model = (DefaultListModel<String>) listTask.getModel();
             model.clear(); // xoá toàn bộ item cũ
 
-            // add dữ liệu vào list
             for (Tasks t : tasks) {
                 model.addElement(t.getName());
             }
@@ -296,22 +229,15 @@ public class AddUser extends JPanel {
             logger.log(java.util.logging.Level.SEVERE, "Lỗi tải Tasks", e);
         }
     }
-
-    // 🌟 Đã bao gồm dòng hướng dẫn và logic load dữ liệu
     private void loadRoles() {
         try{
             AuthDAO authDAO = new AuthDAO();
             List<Roles> roles = authDAO.findAllRoles();
-
             cbRole.removeAllItems();
-            // THÊM DÒNG HƯỚNG DẪN
-            cbRole.addItem("--- 選択してください ---");
-
+            cbRole.addItem("未選択");
             for (Roles r : roles) {
                 cbRole.addItem(r.getName());
             }
-
-            // Đặt mục hướng dẫn là mục được chọn mặc định
             cbRole.setSelectedIndex(0);
 
         }catch (Exception e){
@@ -416,8 +342,6 @@ public class AddUser extends JPanel {
 
         return true;
     }
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -434,7 +358,6 @@ public class AddUser extends JPanel {
         lbRole = new JLabel();
         cbRole = new JComboBox<>();
         lbMail = new JLabel();
-        btnCancel = new JButton();
         txtMail = new JTextField();
         btnSave = new JButton();
         lbUsername = new JLabel();
@@ -464,9 +387,6 @@ public class AddUser extends JPanel {
         lbMail.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
         lbMail.setText("メール");
 
-        btnCancel.setBackground(new java.awt.Color(255, 204, 153));
-        btnCancel.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
-        btnCancel.setText("キャンセル");
 
         txtMail.addActionListener(this::txtMailActionPerformed);
 
@@ -495,21 +415,16 @@ public class AddUser extends JPanel {
         this.setLayout(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    // ========================================================
-    // EVENT HANDLERS
-    // ========================================================
 
     private void cbRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbRoleActionPerformed
-        // Bỏ trống
     }//GEN-LAST:event_cbRoleActionPerformed
 
     private void txtMailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMailActionPerformed
-        // Bỏ trống
     }//GEN-LAST:event_txtMailActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (!validateForm()) {
-            return; // dừng lại, không tạo User
+            return;
         }
 
         String userName = txtUsername.getText();
@@ -523,33 +438,24 @@ public class AddUser extends JPanel {
         try {
             Users user = new Users();
             user.setUserName(userName);
-
-            // Mã hóa mật khẩu
             user.setPassword(password);
-
             user.setFullName(fullName);
             user.setUserCode(Users.generateUserCode());
             user.setEmail(email);
-            // user.getCreatedAt(); (Tạo trong logic DAO hoặc Model)
-
-            // Lấy Department theo tên
             DepartmentDAO departmentDAO = new DepartmentDAO();
             Department dept = departmentDAO.findFindByName(departmentName).orElse(null);
             if (dept != null) {
                 user.setDepartment(dept);
             }
-
-            // Role
             AuthDAO roleDAO = new AuthDAO();
-            Optional<Roles> roleOpt = roleDAO.findByName(roleName); // tìm Role theo tên
+            Optional<Roles> roleOpt = roleDAO.findByName(roleName);
             if (roleOpt.isPresent()) {
-                user.setRole(roleOpt.get()); // gán Role vào User
+                user.setRole(roleOpt.get());
             } else {
                 JOptionPane.showMessageDialog(this, "Role không tồn tại!");
-                return; // dừng nếu role không có trong DB
+                return;
             }
 
-            // Tasks
             TaskDAO taskDAO = new TaskDAO();
             List<String> selectedTasks = listTask.getSelectedValuesList();
             List<Tasks> newTasks = new ArrayList<>();
@@ -558,35 +464,25 @@ public class AddUser extends JPanel {
                 taskDAO.findByName(name).ifPresent(newTasks::add);
             }
             user.setTasks(newTasks);
-
-            // Gọi Controller để lưu vào DB
             userController.createUser(user);
 
             JOptionPane.showMessageDialog(this, "ユーザーが正常に作成されました！");
-
-            // THAY ĐỔI 3: Gọi loadUserTable() từ parentPanel và đóng cửa sổ hiện tại
             if (parentPanel != null) {
-                // Giả định AllUser có phương thức loadUserTable()
-                // parentPanel.loadUserTable();
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btnSaveActionPerformed
+    }
 
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
-        // Bỏ trống
     }//GEN-LAST:event_txtUsernameActionPerformed
 
     private void txtEmployeenameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmployeenameActionPerformed
         // Bỏ trống
     }//GEN-LAST:event_txtEmployeenameActionPerformed
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton btnCancel;
     private JButton btnSave;
     private JComboBox<String> cbDepartment;
     private JComboBox<String> cbRole;

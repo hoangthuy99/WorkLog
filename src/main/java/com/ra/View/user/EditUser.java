@@ -60,7 +60,6 @@ public class EditUser extends JFrame {
         loadData();
         loadUserData();
 
-        // ❌ ĐÃ KIỂM TRA: KHÔNG CÓ setVisible(true) TRONG CONSTRUCTOR ❌
 
     }
 
@@ -183,7 +182,6 @@ public class EditUser extends JFrame {
         lbTask = new JLabel();
         lbRole = new JLabel();
         cbRole = new JComboBox<>();
-        btnCancel = new JButton();
         btnSave = new JButton();
         cbDepartment = new JComboBox<>();
         jOptionPane1 = new JOptionPane();
@@ -250,10 +248,6 @@ public class EditUser extends JFrame {
         cbRole.setModel(new DefaultComboBoxModel<>(new String[] { "Employee", "Manager", "Admin" }));
         cbRole.addActionListener(this::cbRoleActionPerformed);
 
-        btnCancel.setBackground(new java.awt.Color(255, 204, 153));
-        btnCancel.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
-        btnCancel.setText("キャンセル");
-        btnCancel.addActionListener(this::btnCancelActionPerformed);
 
         btnSave.setBackground(new java.awt.Color(189, 231, 189));
         btnSave.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
@@ -311,7 +305,6 @@ public class EditUser extends JFrame {
                                                                         .addComponent(cbDepartment, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                                         .addGroup(pnlAdduserLayout.createSequentialGroup()
                                                 .addGap(188, 188, 188)
-                                                .addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
                                                 .addGap(36, 36, 36)
                                                 .addComponent(btnSave)))
                                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -361,7 +354,6 @@ public class EditUser extends JFrame {
                                                 .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
                                                 .addGap(63, 63, 63)))
                                 .addGroup(pnlAdduserLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(btnCancel)
                                         .addComponent(btnSave))
                                 .addGap(74, 74, 74))
         );
@@ -408,16 +400,12 @@ public class EditUser extends JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cbRoleActionPerformed
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        // TODO add your handling code here:
-        this.dispose(); // Đóng form
-    }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         // TODO add your handling code here:
         try {
             if (currentUser == null) {
-                JOptionPane.showMessageDialog(this, "User dose not exist!");
+                JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
                 return;
             }
 
@@ -470,7 +458,7 @@ public class EditUser extends JFrame {
             // Gọi Controller để update
             userController.updateUser(currentUser);
 
-            JOptionPane.showMessageDialog(this, "User updated successfully!");
+            JOptionPane.showMessageDialog(this, "ユーザーが正常に更新されました！");
 
             // GỌI PHƯƠNG THỨC REFRESH BẢNG TRONG ALLUSER
             if (parentPanel != null) {
@@ -513,7 +501,6 @@ public class EditUser extends JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton btnCancel;
     private JButton btnSave;
     private JComboBox<String> cbDepartment;
     private JComboBox<String> cbRole;

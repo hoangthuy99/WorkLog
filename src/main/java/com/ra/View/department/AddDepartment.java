@@ -6,30 +6,24 @@ import com.ra.Controller.TaskController;
 import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Project;
 import com.ra.Model.Entity.Tasks;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
 public class AddDepartment extends JPanel {
 
     public interface DepartmentListener {
         void onDepartmentOperationComplete();
     }
-
     private DepartmentListener listener;
     private Integer editingDepartmentId;
     private Department editingDepartment;
     private Window parentWindow;
-
     private DepartmentController departmentController = new DepartmentController();
     private ProjectController projectController = new ProjectController();
     private TaskController taskController = new TaskController();
-
     private List<Project> projectList = new ArrayList<>();
     private List<Tasks> taskList = new ArrayList<>();
-
     private JPanel contentPanel;
 
     // COMPONENTS
@@ -39,7 +33,6 @@ public class AddDepartment extends JPanel {
     private JTextField txtDepartmentname;
     private JComboBox<Project> cbbProjectname;
     private JComboBox<Tasks> cbbTaskname;
-    private JButton btnCancel;
     private JButton btnSave;
 
     // -------------------- CONSTRUCTOR - ADD MODE --------------------
@@ -73,7 +66,7 @@ public class AddDepartment extends JPanel {
             btnSave.setText("保存");
         }
 
-        btnCancel.addActionListener(e -> closeAndNotify());
+
         btnSave.addActionListener(e -> saveDepartment());
     }
 
@@ -84,41 +77,83 @@ public class AddDepartment extends JPanel {
 
         txtDepartmentname.setText(editingDepartment.getName());
 
-        if (!editingDepartment.getProjects().isEmpty()) {
+        if (editingDepartment.getProjects() != null && !editingDepartment.getProjects().isEmpty()) {
             cbbProjectname.setSelectedItem(editingDepartment.getProjects().get(0));
+        } else {
+            cbbProjectname.setSelectedItem(null);
         }
 
-        if (!editingDepartment.getTasks().isEmpty()) {
+        if (editingDepartment.getTasks() != null && !editingDepartment.getTasks().isEmpty()) {
             cbbTaskname.setSelectedItem(editingDepartment.getTasks().get(0));
+        } else {
+            cbbTaskname.setSelectedItem(null);
         }
     }
+
 
     // -------------------- LOAD PROJECT COMBO --------------------
     private void loadProjects() {
         projectList = projectController.findAll();
         cbbProjectname.removeAllItems();
 
+        cbbProjectname.addItem(null);
+
         for (Project p : projectList) {
-            cbbProjectname.addItem(p);   // ADD PROJECT OBJECT (NOT STRING)
+            cbbProjectname.addItem(p);
         }
+
+        cbbProjectname.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                                                          int index, boolean isSelected,
+                                                          boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("未選択"); // hoặc "プロジェクト未選択"
+                } else {
+                    setText(((Project) value).getName());
+                }
+                return this;
+            }
+        });
     }
+
 
     // -------------------- LOAD TASK COMBO --------------------
     private void loadTasks() {
         taskList = taskController.findAll();
         cbbTaskname.removeAllItems();
 
+
+        cbbTaskname.addItem(null);
+
         for (Tasks t : taskList) {
-            cbbTaskname.addItem(t);  // ADD TASK OBJECT
+            cbbTaskname.addItem(t);
         }
+
+        cbbTaskname.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                                                          int index, boolean isSelected,
+                                                          boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("未選択"); // hoặc "タスク未選択"
+                } else {
+                    setText(((Tasks) value).getName());
+                }
+                return this;
+            }
+        });
     }
+
 
     // -------------------- SAVE ACTION --------------------
     private void saveDepartment() {
         String depName = txtDepartmentname.getText().trim();
 
         if (depName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "部署名は空にできません！", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "部署名は空にできません！", "エラー", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -128,29 +163,50 @@ public class AddDepartment extends JPanel {
         List<Project> projects = selectedProject != null ? List.of(selectedProject) : new ArrayList<>();
         List<Tasks> tasks = selectedTask != null ? List.of(selectedTask) : new ArrayList<>();
 
-        if (editingDepartmentId == null) {
-            // CREATE
-            Department d = new Department();
-            d.setName(depName);
-            d.setDepartmentCode(Department.generateDepartmentCode());
-            d.setProjects(projects);
-            d.setTasks(tasks);
+        try {
 
-            departmentController.create(d);
-            JOptionPane.showMessageDialog(this, "部署が正常に作成されました！");
+            if (editingDepartmentId == null) {
+                // CREATE
+                Department d = new Department();
+                d.setName(depName);
+                d.setDepartmentCode(Department.generateDepartmentCode());
+                d.setProjects(projects);
+                d.setTasks(tasks);
 
-        } else {
-            // UPDATE
-            editingDepartment.setName(depName);
-            editingDepartment.setProjects(projects);
-            editingDepartment.setTasks(tasks);
+                departmentController.create(d);
+                JOptionPane.showMessageDialog(this, "部署が作成されました！");
 
-            departmentController.update(editingDepartment);
-            JOptionPane.showMessageDialog(this, "部署が正常に更新されました！");
+            } else {
+                // UPDATE
+                editingDepartment.setName(depName);
+                editingDepartment.setProjects(projects);
+                editingDepartment.setTasks(tasks);
+
+                departmentController.update(editingDepartment);
+                JOptionPane.showMessageDialog(this, "部署が更新されました！");
+            }
+
+            closeAndNotify();
+
+        } catch (Exception ex) {
+
+            String msg = ex.getMessage();
+
+            if (msg.contains("既に存在")) {
+                // Duplicate name/code
+                JOptionPane.showMessageDialog(this,
+                        msg,
+                        "重複エラー",
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "エラーが発生しました: " + msg,
+                        "エラー",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
-
-        closeAndNotify();
     }
+
 
     private void closeAndNotify() {
         if (listener != null) {
@@ -161,7 +217,6 @@ public class AddDepartment extends JPanel {
         }
     }
 
-    // -------------------- UI LAYOUT --------------------
     private void applyCenteredLayout() {
         contentPanel = new JPanel();
         contentPanel.setBackground(Color.WHITE);
@@ -176,7 +231,6 @@ public class AddDepartment extends JPanel {
         contentPanel.add(lbTaskname);
         contentPanel.add(cbbTaskname);
         contentPanel.add(btnSave);
-        contentPanel.add(btnCancel);
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -193,7 +247,6 @@ public class AddDepartment extends JPanel {
                                         .addComponent(cbbTaskname, 200, 200, 200)))
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(150)
-                                .addComponent(btnCancel)
                                 .addGap(40)
                                 .addComponent(btnSave))
         );
@@ -214,7 +267,6 @@ public class AddDepartment extends JPanel {
                                 .addComponent(cbbTaskname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                         .addGap(40)
                         .addGroup(layout.createParallelGroup()
-                                .addComponent(btnCancel)
                                 .addComponent(btnSave))
         );
 
@@ -225,7 +277,6 @@ public class AddDepartment extends JPanel {
         this.add(contentPanel, gbc);
     }
 
-    // -------------------- INIT COMPONENTS --------------------
     private void initComponents() {
         lbDepartmentname = new JLabel("部署名");
         lbProjectname = new JLabel("プロジェクト名");
@@ -236,7 +287,6 @@ public class AddDepartment extends JPanel {
         cbbProjectname = new JComboBox<>();
         cbbTaskname = new JComboBox<>();
 
-        btnCancel = new JButton("キャンセル");
         btnSave = new JButton("保存");
 
         setBackground(Color.WHITE);

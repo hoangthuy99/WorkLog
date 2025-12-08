@@ -5,6 +5,7 @@ import com.ra.Utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,12 +46,22 @@ public class UserDAO implements IUserDAO {
     @Override
     public long countAll(String keyword) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT COUNT(u) FROM Users u WHERE u.fullName LIKE :kw OR u.userName LIKE :kw";
-            return (long) session.createQuery(hql)
+
+            String hql = "SELECT COUNT(u) FROM Users u " +
+                    "WHERE (u.userName LIKE :kw " +
+                    "OR u.fullName LIKE :kw " +
+                    "OR u.userCode LIKE :kw " +
+                    "OR u.email LIKE :kw) " +
+                    "AND u.deletedAt IS NULL";
+
+            return session.createQuery(hql, Long.class)
                     .setParameter("kw", "%" + keyword + "%")
                     .uniqueResult();
         }
     }
+
+
+
 
 
     @Override
@@ -61,8 +72,10 @@ public class UserDAO implements IUserDAO {
 
             Users user = session.get(Users.class, id);
             if (user != null) {
-                session.delete(user);
+                user.setDeletedAt(LocalDateTime.now());  // 🔹 Đánh dấu xóa mềm
+                session.update(user);                    // 🔹 Cập nhật thay vì delete
                 transaction.commit();
+                System.out.println("User soft-deleted (deletedAt set)!");
                 return true;
             }
             return false;
@@ -75,24 +88,35 @@ public class UserDAO implements IUserDAO {
 
 
 
+
     @Override
     public List<Users> findAll(String keyword, int page, int size) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT DISTINCT u FROM Users u " +
-                    "LEFT JOIN FETCH u.tasks " +
-                    "LEFT JOIN FETCH u.department " +
-                    "LEFT JOIN FETCH u.role " +
-                    "WHERE u.userName LIKE :keyword OR u.email LIKE :keyword";
+
+            String hql =
+                    "SELECT DISTINCT u FROM Users u " +
+                            "LEFT JOIN FETCH u.department d " +
+                            "LEFT JOIN FETCH u.role r " +
+                            "LEFT JOIN FETCH u.tasks t " +
+                            "WHERE (u.userName LIKE :kw " +
+                            "OR u.fullName LIKE :kw " +
+                            "OR u.userCode LIKE :kw " +
+                            "OR u.email LIKE :kw) " +
+                            "AND u.deletedAt IS NULL";
+
             return session.createQuery(hql, Users.class)
-                    .setParameter("keyword", "%" + keyword + "%")
+                    .setParameter("kw", "%" + keyword + "%")
                     .setFirstResult((page - 1) * size)
                     .setMaxResults(size)
                     .getResultList();
+
         } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
     }
+
+
     @Override
     public List<Users> findAll() {
         logger.info("Finding all users");
@@ -100,7 +124,8 @@ public class UserDAO implements IUserDAO {
             String hql = "SELECT DISTINCT u FROM Users u " +
                     "LEFT JOIN FETCH u.tasks " +
                     "LEFT JOIN FETCH u.department " +
-                    "LEFT JOIN FETCH u.role ";
+                    "LEFT JOIN FETCH u.role " +
+                    "WHERE u.deletedAt IS NULL";
             return session.createQuery(hql, Users.class)
                     .getResultList();
         } catch (Exception e) {
@@ -108,6 +133,7 @@ public class UserDAO implements IUserDAO {
             return List.of();
         }
     }
+
 
     @Override
     public Users findById(int id) {

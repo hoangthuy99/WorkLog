@@ -33,6 +33,10 @@ public class ProjectController {
         projectDAO.create(project);
         return project;
     }
+    public void create(Project project) {
+        projectDAO.create(project); // DAO sẽ throw exception
+    }
+
 
 
     public List<Project> findAll() {

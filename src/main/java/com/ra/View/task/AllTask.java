@@ -103,7 +103,7 @@ public class AllTask extends JPanel {
 
         tblAddtask.setModel(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"タスク名", "プロジェクト名", "部署名"}
+                new String[]{"No.","タスク名", "プロジェクト名", "部署名"}
         ));
         scrAddtask.setViewportView(tblAddtask);
 
@@ -136,8 +136,10 @@ public class AllTask extends JPanel {
             return;
         }
 
+
         String taskName = tblAddtask.getValueAt(row, 0).toString();
         Optional<Tasks> task = taskController.findByName(taskName);
+
 
         if (task == null) {
             JOptionPane.showMessageDialog(this, "タスクが見つかりません。");
@@ -158,34 +160,72 @@ public class AllTask extends JPanel {
     private void deleteTask() {
         int row = tblAddtask.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "削除するタスクを選択してください。");
+            JOptionPane.showMessageDialog(this,
+                    "削除するタスクを選択してください。",
+                    "エラー",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         String taskName = tblAddtask.getValueAt(row, 0).toString();
         Optional<Tasks> t = taskController.findByName(taskName);
 
+
         if (t == null) {
             JOptionPane.showMessageDialog(this, "タスクが見つかりません。");
             return;
         }
 
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "このタスクを削除しますか？",
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "このタスクを削除しますか？\n",
                 "確認",
-                JOptionPane.YES_NO_OPTION);
+                JOptionPane.YES_NO_OPTION
+        );
 
         if (confirm == JOptionPane.YES_OPTION) {
+
             taskController.delete(t.get().getId());
             JOptionPane.showMessageDialog(this, "タスクが削除されました。");
             loadTable(taskController.findAll());
+
+            try {
+                taskController.delete(t.get().getId());
+                loadTable(taskController.findAll());
+
+                JOptionPane.showMessageDialog(this,
+                        "タスクを削除しました。",
+                        "完了",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+            } catch (Exception ex) {
+                String msg = ex.getMessage();
+
+                if (msg != null && msg.contains("使用されている")) {
+                    JOptionPane.showMessageDialog(this,
+                            "このタスクは勤務記録で使用されているため、削除できません。",
+                            "削除エラー",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "削除中にエラーが発生しました。\n" + msg,
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
         }
     }
 
+
+
     private void loadTable(List<Tasks> list) {
+        // ✅ Thêm cột "No." vào đầu
         DefaultTableModel model = new DefaultTableModel(
-                new String[]{"タスク名", "プロジェクト名", "部署名"}, 0
+                new String[]{"No.", "タスク名", "プロジェクト名", "部署名"}, 0
         );
+
+        int no = 1;
 
         for (Tasks t : list) {
 
@@ -196,11 +236,15 @@ public class AllTask extends JPanel {
                     String.join(", ", t.getDepartments().stream().map(Department::getName).toList());
 
             model.addRow(new Object[]{
-                    t.getName(), projects, deps
+                    no++,
+                    t.getName(),
+                    projects,
+                    deps
             });
         }
 
         tblAddtask.setModel(model);
     }
+
 
 }
