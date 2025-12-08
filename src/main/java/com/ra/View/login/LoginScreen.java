@@ -21,15 +21,13 @@ public class LoginScreen extends javax.swing.JFrame {
 
     public LoginScreen(JFrame jFrame, boolean par) {
         initComponents();
-        setLocationRelativeTo(null); // căn giữa màn hình
+        setLocationRelativeTo(null);
     }
 
     public LoginScreen() {
         initComponents();
         setLocationRelativeTo(null);
     }
-
-
 
 
     @SuppressWarnings("unchecked")
@@ -132,18 +130,13 @@ public class LoginScreen extends javax.swing.JFrame {
         }
     }
 
-    // ======================== LOGIN LOGIC ======================== //
-
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {
-
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword()).trim();
-
         if (username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "ユーザー名とパスワードを入力してください。");
             return;
         }
-
         Optional<Users> userOpt = userController.findByUsername(username);
         logger.info("login with username " + username);
         if (userOpt.isEmpty()) {
@@ -151,9 +144,7 @@ public class LoginScreen extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "ユーザーが存在しません。");
             return;
         }
-
         Users user = userOpt.get();
-
         // Debug BCrypt
         System.out.println("Input password = " + password);
         System.out.println("DB hash        = " + user.getPassword());
@@ -171,15 +162,10 @@ public class LoginScreen extends javax.swing.JFrame {
         System.out.println("Username: " + user.getUserName());
         System.out.println("Password: " + user.getPassword());
         System.out.println("RoleId: " + user.getRole().getId());
-
         System.out.println("Role object: " + user.getRole());
         if (user.getRole() != null)
             System.out.println("Role name: " + user.getRole().getName());
-
-// Lưu role của user
         SessionLocal.set("USER_ROLE", user.getRole().getName());
-
-// Lưu danh sách permission của role này
         if (user.getRole().getPermissions() != null) {
             List<String> permCodes = user.getRole()
                     .getPermissions()
@@ -190,24 +176,18 @@ public class LoginScreen extends javax.swing.JFrame {
             SessionLocal.set("USER_PERMISSIONS", permCodes);
         }
         PermissionUtil.setUser(user);
-
         new MainDashboard(user).setVisible(true);
         this.dispose();
         // Lưu role của user
         SessionLocal.set("USER_ROLE", user.getRole().getName());
 
-
-
     }
-
-
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
             LoginScreen Jframe = new LoginScreen(new javax.swing.JFrame(), true);
             Jframe.setVisible(true);
         });
     }
-
     private javax.swing.JButton btnLogin;
     private javax.swing.JCheckBox chkShowPassword;
     private javax.swing.JLabel lbPassword;
