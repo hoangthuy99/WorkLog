@@ -5,6 +5,7 @@ import com.ra.DAO.Task.TaskDAO;
 import com.ra.Model.Entity.Tasks;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TaskController {
 
@@ -51,13 +52,9 @@ public class TaskController {
         return taskDAO.findFindById(id).orElse(null);
     }
 
-    /**
-     * Tìm task theo tên (dùng cho Edit)
-     */
-    public Tasks findByName(String name) {
-        return taskDAO.findByName(name).orElse(null);
+    public Optional<Tasks> findByName(String name) {
+        return taskDAO.findByName(name);
     }
-
     /**
      * Tìm tất cả task
      */

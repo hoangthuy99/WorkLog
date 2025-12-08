@@ -4,9 +4,16 @@
  */
 package com.ra.View.attendance;
 
-import com.ra.Controller.AttendanceController;
+import com.ra.Controller.*;
 import com.ra.Model.Entity.Attendance;
+import com.ra.Model.Entity.Users;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,11 +23,27 @@ import java.util.List;
 public class AttendanceDate extends javax.swing.JPanel {
 
     /**
-     * Creates new form AttendenceDate
+     * Creates new form AttendanceDate
      */
-    private AttendanceController attendanceController = new AttendanceController();
-    public AttendanceDate() {
+    private AttendanceController attendanceController;
+    private RecordController recordController;
+    private TaskController taskController;
+    private ProjectController projectController;
+    private Users loggedInUser;
+    private UserController userController;
+
+
+    public AttendanceDate(Users user) {
         initComponents();
+        this.loggedInUser = user;
+        this.userController = new UserController();
+        this.attendanceController = new AttendanceController();
+        this.recordController = new RecordController();
+        this.taskController = new TaskController();
+        this.projectController = new ProjectController();
+        centerTableColumns(tblDate);
+        initStatusComboBox();
+
     }
 
     /**
@@ -32,39 +55,49 @@ public class AttendanceDate extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btnSearchDate = new javax.swing.JButton();
+        txtAttendanceDate = new javax.swing.JTextField();
+        btnSearchField = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        btnFilter = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        cbStatus = new javax.swing.JComboBox<>();
+        tblDate = new javax.swing.JTable();
+        btnView = new javax.swing.JButton();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        cbStatus = new javax.swing.JComboBox<>();
         btnStatus = new javax.swing.JButton();
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        btnSearchDate.setText("検索");
+        btnSearchDate.addActionListener(this::btnSearchDateActionPerformed);
+
+        btnSearchField.setText("検索");
+        btnSearchField.addActionListener(this::btnSearchFieldActionPerformed);
+
+        tblDate.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "日付", "開始時間", "終了時間", "勤務時間", "残業時間", "状態"
+                "No", "社員名", "開始時間", "終了時間", "休憩時間", "残業時間", "状態"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, true, true, true, true, true, true
+            };
 
-        btnFilter.setText("フィルター");
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tblDate);
 
-        jTextField1.addActionListener(this::jTextField1ActionPerformed);
+        btnView.setBackground(new java.awt.Color(204, 204, 255));
+        btnView.setText("詳細");
+        btnView.addActionListener(this::btnViewActionPerformed);
 
-        jButton1.setText("検索");
-
-        jButton2.setBackground(new java.awt.Color(204, 204, 255));
-        jButton2.setText("詳細");
-
-        btnStatus.setText("Status");
+        btnStatus.setText("状態変更");
+        btnStatus.addActionListener(this::btnStatusActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -72,72 +105,355 @@ public class AttendanceDate extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addGap(40, 40, 40))
+                .addComponent(btnView)
+                .addGap(134, 134, 134))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnFilter)
-                .addGap(39, 39, 39)
-                .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnStatus)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(11, 11, 11))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 643, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(56, 56, 56)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnSearchDate)
+                                .addGap(193, 193, 193)
+                                .addComponent(txtAttendanceDate, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                            .addComponent(btnSearchField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(63, 63, 63))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1)
-                            .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnFilter)
-                            .addComponent(btnStatus)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(44, 44, 44)
-                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(56, 56, 56)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addGap(27, 27, 27))
+                .addGap(44, 44, 44)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnSearchDate)
+                        .addComponent(txtAttendanceDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSearchField)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnStatus)
+                    .addComponent(cbStatus))
+                .addGap(26, 26, 26)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(btnView)
+                .addGap(18, 18, 18))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    public void  loadTableAttendanceDate() {
-        // Code to load attendance data into jTable1
-        List<Attendance> attendanceList = attendanceController.findAll();
+    private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
+        int row = tblDate.getSelectedRow();
 
-        String[] columnNames = {"日付", "開始時間", "終了時間", "勤務時間", "残業時間", "状態"};
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "レコードを選択してください。");
+            return;
+        }
 
+        try {
+            // 1. Lấy attendance ID từ bảng
+            String idStr = tblDate.getValueAt(row, 0).toString();
+            int attendanceId = Integer.parseInt(idStr);
+
+            // 2. Lấy Attendance từ database
+            Attendance attendance = attendanceController.findById(attendanceId);
+
+            if (attendance == null) {
+                JOptionPane.showMessageDialog(this, "データが存在しません。");
+                return;
+            }
+
+            // 3. Tạo list chứa attendance này
+            List<Attendance> list = new ArrayList<>();
+            list.add(attendance);
+
+            // 4. Mở form AddAttendance để CHỈNH SỬA
+            // QUAN TRỌNG: Truyền loggedInUser (quản lý) thay vì attendance.getUser()
+            AddAttendance form = new AddAttendance(loggedInUser, list);
+            form.setVisible(true);
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "IDは数値でなければなりません。");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "エラー: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnViewActionPerformed
+    private String formatMinutesToHours(int minutes) {
+        int h = minutes / 60;
+        int m = minutes % 60;
+        return String.format("%d時間%d分", h, m);
     }
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private String formatTimeWithExtraDay(LocalTime time, int extraDay) {
+        int hour = time.getHour() + extraDay * 24;
+        return String.format("%02d:%02d", hour, time.getMinute());
+    }
+
+    private String getStatusJapanese(int status) {
+        return switch (status) {
+            case 0 -> "未確認"; // Pending
+            case 1 -> "確認済み";   // Approved
+            case 2 -> "拒否済み";   // Rejected
+            default -> "不明";
+        };
+    }
+
+    private void centerTableColumns(JTable table) {
+        DefaultTableCellRenderer center = new DefaultTableCellRenderer();
+        center.setHorizontalAlignment(SwingConstants.CENTER);
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(center);
+        }
+    }
+
+
+    private void btnSearchDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchDateActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+        try {
+            java.util.Date selectedDate = jDateChooser1.getDate();
+
+            if (selectedDate == null) {
+                JOptionPane.showMessageDialog(this, "日付を選択してください。");
+                return;
+            }
+
+            LocalDate localDate = new java.sql.Date(selectedDate.getTime()).toLocalDate();
+
+            List<Attendance> list =
+                    attendanceController.findByUserAndDate(loggedInUser.getId(), localDate);
+
+            if (list == null || list.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "該当するデータがありません。");
+                return;
+            }
+
+            // ===== TẠO TABLE MODEL =====
+            String[] cols = {
+                    "ID","No", "日付", "社員名", "開始時間", "終了時間",
+                    "勤務時間", "休憩時間", "残業時間", "状態"
+            };
+
+
+            DefaultTableModel model = new DefaultTableModel(cols, 0) {
+                @Override
+                public boolean isCellEditable(int r, int c) { return false; }
+            };
+
+
+            for (int i = 0; i < list.size(); i++) {
+                Attendance a = list.get(i);
+
+                model.addRow(new Object[]{
+                        a.getId(),
+                        i + 1,
+                        a.getWorkDate(),
+                        a.getUser().getUserName(),
+                        a.getCheckInTime(),
+                        a.getCheckOutTime(),
+                        formatMinutesToHours(a.getTotalMinutes()),
+                        a.getBreakMinutes() + "分",
+                        a.getOvertimeMinutes() + "分",
+                        getStatusJapanese(a.getStatus())
+                });
+            }
+            this.tblDate.setModel(model);
+            this.tblDate.getColumnModel().getColumn(0).setMinWidth(0);
+            this.tblDate.getColumnModel().getColumn(0).setMaxWidth(0);
+            this.tblDate.getColumnModel().getColumn(0).setWidth(0);
+
+            centerTableColumns(tblDate);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "検索エラー: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnSearchDateActionPerformed
+    private void initStatusComboBox() {
+        cbStatus.removeAllItems();
+        cbStatus.addItem("未確認");   // Status 0
+        cbStatus.addItem("確認済み"); // Status 1
+        cbStatus.addItem("拒否済み"); // Status 2
+    }
+
+    private void btnStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStatusActionPerformed
+            try {
+                // 1. Lấy trạng thái được chọn
+                String selectedStatus = cbStatus.getSelectedItem().toString();
+
+                int dbStatus = switch (selectedStatus) {
+                    case "未確認" -> 0;
+                    case "確認済み" -> 1;
+                    case "拒否済み" -> 2;
+                    default -> -1;
+                };
+
+                if (dbStatus == -1) {
+                    JOptionPane.showMessageDialog(this, "無効な状態です。");
+                    return;
+                }
+
+                // 2. Kiểm tra xem có dòng nào được chọn trong bảng không
+                int selectedRow = tblDate.getSelectedRow();
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(this, "更新する行を選択してください。");
+                    return;
+                }
+
+                // 3. Lấy ID của bản ghi attendance từ dòng được chọn
+                DefaultTableModel model = (DefaultTableModel) tblDate.getModel();
+                int attendanceId = (int) model.getValueAt(selectedRow, 0); // Lấy ID từ cột đầu tiên
+
+                // 4. Tìm và cập nhật attendance
+                Attendance attendance = attendanceController.findById(attendanceId);
+                if (attendance == null) {
+                    JOptionPane.showMessageDialog(this, "勤怠データが見つかりません。");
+                    return;
+                }
+
+                // 5. Cập nhật trạng thái
+                attendance.setStatus(dbStatus);
+                Attendance updatedAttendance = attendanceController.updateStatus(attendance);
+
+                if (updatedAttendance != null) {
+                    // 6. Cập nhật lại bảng
+                    // CHỈNH SỬA: Cần truyền tham số đúng
+                    // Lấy userID từ attendance đã cập nhật
+                    int userId = updatedAttendance.getUser().getId();
+                    refreshAttendanceTableByStatus(userId, dbStatus);
+
+                    JOptionPane.showMessageDialog(this, "ステータスが更新されました。");
+                } else {
+                    JOptionPane.showMessageDialog(this, "更新に失敗しました。");
+                }
+                // XÓA DÒNG NÀY: attendance.setStatus(dbStatus); // DÒNG THỪA
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "エラー: " + e.getMessage());
+            }
+        }
+
+      // Phương thức cập nhật bảng
+        private void refreshAttendanceTableByStatus(int userId, int status) {
+            try {
+                // Lấy danh sách attendance theo user và status
+                List<Attendance> list = attendanceController.findByUserAndStatus(userId, status);
+
+                String[] columns = {
+                        "ID", "日付", "社員名", "開始時間", "終了時間",
+                        "勤務時間", "休憩時間", "残業時間", "状態"
+                };
+
+                DefaultTableModel model = new DefaultTableModel(columns, 0) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    }
+                };
+
+                if (list != null) {
+                    for (Attendance a : list) {
+                        model.addRow(new Object[]{
+                                a.getId(),
+                                a.getWorkDate(),
+                                a.getUser().getUserName(),
+                                a.getCheckInTime(),
+                                formatTimeWithExtraDay(a.getCheckOutTime(), a.getExtraDay()),
+                                formatMinutesToHours(a.getTotalMinutes()),
+                                a.getBreakMinutes() + "分",
+                                a.getOvertimeMinutes() + "分",
+                                getStatusJapanese(a.getStatus())
+
+                        });
+                    }
+                }
+
+                tblDate.setModel(model);
+                // Ẩn cột ID và UserID
+                tblDate.getColumnModel().getColumn(0).setMinWidth(0);
+                tblDate.getColumnModel().getColumn(0).setMaxWidth(0);
+                centerTableColumns(tblDate);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+       }//GEN-LAST:event_btnStatusActionPerformed
+
+    private void btnSearchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchFieldActionPerformed
+        // TODO add your handling code here:
+        String username = txtAttendanceDate.getText().trim();
+
+        if (username.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "社員名を入力してください。");
+            return;
+        }
+
+        try {
+            // Gọi controller
+            List<Attendance> list = attendanceController.findByUsername(username);
+
+            if (list.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "該当するデータがありません。");
+                return;
+            }
+
+            // Tạo bảng
+            String[] cols = {
+                    "No", "日付", "社員名", "開始時間", "終了時間",
+                    "勤務時間", "休憩時間", "残業時間", "状態"
+            };
+
+            DefaultTableModel model = new DefaultTableModel(cols, 0) {
+                @Override
+                public boolean isCellEditable(int r, int c) { return false; }
+            };
+
+            for (int i = 0; i < list.size(); i++) {
+                Attendance a = list.get(i);
+
+                model.addRow(new Object[]{
+                        i + 1,
+                        a.getWorkDate(),
+                        a.getUser().getUserName(),
+                        a.getCheckInTime(),
+                        a.getCheckOutTime(),
+                        formatMinutesToHours(a.getTotalMinutes()),
+                        a.getBreakMinutes() + "分",
+                        a.getOvertimeMinutes() + "分",
+                        getStatusJapanese(a.getStatus())
+                });
+            }
+
+            tblDate.setModel(model);
+            centerTableColumns(tblDate);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "検索エラー: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnSearchFieldActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnFilter;
+    private javax.swing.JButton btnSearchDate;
+    private javax.swing.JButton btnSearchField;
     private javax.swing.JButton btnStatus;
+    private javax.swing.JButton btnView;
     private javax.swing.JComboBox<String> cbStatus;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable tblDate;
+    private javax.swing.JTextField txtAttendanceDate;
     // End of variables declaration//GEN-END:variables
 }

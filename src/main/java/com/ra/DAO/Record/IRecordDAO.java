@@ -13,6 +13,6 @@ public interface IRecordDAO {
     List<WorkRecord> search(String keyword, int page, int size);
     List<WorkRecord> findById(int id);
     List<WorkRecord> findByAttendanceId(int attendanceId);
-    Long sumBreakWorkByAttendanceId(int id);
+    Integer sumBreakWorkByAttendanceId(int id);
 
 }

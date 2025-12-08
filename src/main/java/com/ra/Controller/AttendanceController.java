@@ -52,16 +52,26 @@ public class AttendanceController {
     }
 
     // Find by ID
-    public List<Attendance> findById(int id) {
+    public Attendance findById(int id) {
         return attendanceDAO.findFindById(id);
     }
 
+    public Attendance updateStatus(Attendance attendance) {
+        return attendanceDAO.updateStatus(attendance);
+    }
+
     // Find by username
-    public Attendance findByUsername(String username) {
+    public List<Attendance> findByUsername(String username) {
         return attendanceDAO.findByUsername(username);
     }
 
     public List<Attendance> findByUserAndDate(int userId, java.time.LocalDate date) {
         return attendanceDAO.findByUserAndDate(userId, date);
+    }
+    public List<Attendance> findByAttendanceMonth(int userId, int month, int year) {
+        return attendanceDAO.findByAttendanceMonth(userId, month, year);
+    }
+    public List<Attendance> findByUserAndStatus(int userId, int status) {
+        return attendanceDAO.findByUserAndStatus(userId, status);
     }
 }

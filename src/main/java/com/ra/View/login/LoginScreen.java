@@ -174,15 +174,15 @@ public class LoginScreen extends javax.swing.JFrame {
         if (user.getRole() != null)
             System.out.println("Role name: " + user.getRole().getName());
 
-// Lưu role của user
+     // Lưu role của user
         SessionLocal.set("USER_ROLE", user.getRole().getName());
 
-// Lưu danh sách permission của role này
+     // Lưu danh sách permission của role này
         if (user.getRole().getPermissions() != null) {
             List<String> permCodes = user.getRole()
                     .getPermissions()
                     .stream()
-                    .map(p -> p.getCode())   // lấy code: USER_MANAGE, TASK_MANAGE ...
+                    .map(p -> p.getCode())   // lấys code: USER_MANAGE, TASK_MANAGE ...
                     .toList();
 
             SessionLocal.set("USER_PERMISSIONS", permCodes);
@@ -193,8 +193,6 @@ public class LoginScreen extends javax.swing.JFrame {
         this.dispose();
         // Lưu role của user
         SessionLocal.set("USER_ROLE", user.getRole().getName());
-
-
 
     }
 

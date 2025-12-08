@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import java.awt.*;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class AllTask extends JPanel {
@@ -136,7 +137,7 @@ public class AllTask extends JPanel {
         }
 
         String taskName = tblAddtask.getValueAt(row, 0).toString();
-        Tasks task = taskController.findByName(taskName);
+        Optional<Tasks> task = taskController.findByName(taskName);
 
         if (task == null) {
             JOptionPane.showMessageDialog(this, "タスクが見つかりません。");
@@ -146,7 +147,7 @@ public class AllTask extends JPanel {
         JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog(parent, "タスク編集", true);
 
-        dialog.setContentPane(new AddTask(task)); // ← chế độ EDIT
+        dialog.setContentPane(new AddTask()); // ← chế độ EDIT
         dialog.pack();
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
@@ -162,7 +163,7 @@ public class AllTask extends JPanel {
         }
 
         String taskName = tblAddtask.getValueAt(row, 0).toString();
-        Tasks t = taskController.findByName(taskName);
+        Optional<Tasks> t = taskController.findByName(taskName);
 
         if (t == null) {
             JOptionPane.showMessageDialog(this, "タスクが見つかりません。");
@@ -175,7 +176,8 @@ public class AllTask extends JPanel {
                 JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            taskController.delete(t.getId());
+            taskController.delete(t.get().getId());
+            JOptionPane.showMessageDialog(this, "タスクが削除されました。");
             loadTable(taskController.findAll());
         }
     }
