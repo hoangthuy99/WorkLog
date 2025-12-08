@@ -4,8 +4,5 @@ import com.ra.Model.Entity.Attendance;
 
 public interface WorkRecordService  {
     Attendance getAttendanceWithTotals(int attendanceId);
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> a6f86596c1a64d3646c97c616c4b79b3c4a7e17c
+
