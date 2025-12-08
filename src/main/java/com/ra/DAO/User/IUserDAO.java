@@ -1,6 +1,6 @@
 package com.ra.DAO.User;
 
-import com.ra.DTO.request.UserRequest;
+
 import com.ra.Model.Entity.Users;
 
 import java.util.List;
@@ -16,5 +16,6 @@ public interface IUserDAO {
     Users findById(int id);
     long countAll(String keyword);
     Optional<Users> findByUsername(String username);
+    List<Users> findUserByDepartmentId(int departmentId);
 
 }

@@ -43,7 +43,7 @@ import java.awt.event.ActionListener;
 
 public class MainDashboard extends javax.swing.JFrame {
 
-    private Users currentUser;
+    public Users currentUser;
 
     AttendanceController attendanceController;
 
@@ -95,7 +95,7 @@ public class MainDashboard extends javax.swing.JFrame {
 
 
     // ---------- Thêm phương thức showPanel -----------------
-    private void showPanel(javax.swing.JPanel panel) {
+    public void showPanel(javax.swing.JPanel panel) {
 
         // 1. Xóa tất cả các component hiện có trong Working Area
         pnlWorkingArea.removeAll();
@@ -1149,7 +1149,7 @@ public class MainDashboard extends javax.swing.JFrame {
 
     private void btnViewAttendanceMonthActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnViewAttendanceMonthActionPerformed
         // Gọi phương thức showPanel và truyền vào JPanel
-        showPanel(new AttendanceMonth());
+        showPanel(new AttendanceMonth(currentUser) );
     }//GEN-LAST:event_btnViewAttendanceMonthActionPerformed
 
     private void btnViewAttendanceDayActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnViewAttendanceDayActionPerformed

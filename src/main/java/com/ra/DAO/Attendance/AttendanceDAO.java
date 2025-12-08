@@ -3,20 +3,21 @@ package com.ra.DAO.Attendance;
 
 import com.ra.DAO.Record.RecordDAO;
 import com.ra.Model.Entity.Attendance;
+import com.ra.Model.Entity.Users;
 import com.ra.Model.Entity.WorkRecord;
-import com.ra.Service.WorkRecord.WorkRecordIMPL;
 import com.ra.Utils.HibernateUtil;
 import jakarta.persistence.EntityManager;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class AttendanceDAO implements IAttendanceDAO {
     private RecordDAO recordDAO;
-    private WorkRecordIMPL workRecordIMPL;
 
     @Override
     public List<Attendance> findByUsername(String username) {
@@ -39,7 +40,7 @@ public class AttendanceDAO implements IAttendanceDAO {
         // TODO:Tạo mới dữ liệu điểm danh
         Transaction transaction = null;
         //TODO: try-with-resources để tự động đóng session
-        try{
+        try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
             // Thêm attendenceRequest vào DB
@@ -47,8 +48,8 @@ public class AttendanceDAO implements IAttendanceDAO {
             // Commit transaction
             transaction.commit();
             System.out.println("Attendence created successfully!");
-        }catch (Exception e){
-            if (transaction != null){
+        } catch (Exception e) {
+            if (transaction != null) {
                 transaction.rollback(); // rollback nếu lỗi
             }
             e.printStackTrace();
@@ -59,13 +60,13 @@ public class AttendanceDAO implements IAttendanceDAO {
     public void update(Attendance attendance) {
         //ToDO:Cập nhật dữ liệu điểm danh
         Transaction transaction = null;
-        try{
+        try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
             session.merge(attendance);
             transaction.commit();
             System.out.println("Attendence updated successfully!");
-        }catch (Exception e){
+        } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
@@ -75,13 +76,13 @@ public class AttendanceDAO implements IAttendanceDAO {
     public Attendance updateStatus(Attendance attendance) {
         //TODO:Cập nhật trạng thái dữ liệu điểm danh
         Transaction transaction = null;
-        try{
+        try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
             session.merge(attendance);
             transaction.commit();
             System.out.println("Attendence status updated successfully!");
-        }catch (Exception e) {
+        } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
@@ -182,7 +183,7 @@ public class AttendanceDAO implements IAttendanceDAO {
                     .setParameter("workDate", today)
                     .list();
             return attendances;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
@@ -190,13 +191,126 @@ public class AttendanceDAO implements IAttendanceDAO {
 
     @Override
     public List<Attendance> findByAttendanceMonth(int userId, int month, int year) {
-        return List.of();
+        //TODO:Tìm kiếm dữ liệu điểm danh theo userId, month và year
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "FROM Attendance a " +
+                    "LEFT JOIN FETCH a.user u " +
+                    "LEFT JOIN FETCH u.department d " +
+                    "LEFT JOIN FETCH u.role " +
+                    "WHERE a.user.id = :userId " +
+                    "AND MONTH(a.workDate) = :month " +
+                    "AND YEAR(a.workDate) = :year " +
+                    "ORDER BY a.workDate";
+
+            List<Attendance> attendances = session.createQuery(hql, Attendance.class)
+                    .setParameter("userId", userId)
+                    .setParameter("month", month)
+                    .setParameter("year", year)
+                    .list();
+
+            return attendances != null ? attendances : new ArrayList<>();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+    @Override
+    public List<Attendance> findByDepartmentAndMonth(String departmentName, int month, int year) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // Lấy tất cả users trong department
+            String userHql = "SELECT u.id FROM Users u " +
+                    "LEFT JOIN u.department d " +
+                    "WHERE d.name = :deptName AND u.deletedAt IS NULL";
+
+            List<Integer> userIds = session.createQuery(userHql, Integer.class)
+                    .setParameter("deptName", departmentName)
+                    .list();
+
+            if (userIds.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            // Lấy attendance của tất cả users trong department
+            String attendanceHql = "FROM Attendance a " +
+                    "LEFT JOIN FETCH a.user u " +
+                    "LEFT JOIN FETCH u.department d " +
+                    "LEFT JOIN FETCH u.role " +
+                    "WHERE a.user.id IN :userIds " +
+                    "AND MONTH(a.workDate) = :month " +
+                    "AND YEAR(a.workDate) = :year " +
+                    "ORDER BY u.userName, a.workDate";
+
+            List<Attendance> attendances = session.createQuery(attendanceHql, Attendance.class)
+                    .setParameter("userIds", userIds)
+                    .setParameter("month", month)
+                    .setParameter("year", year)
+                    .list();
+
+            return attendances != null ? attendances : new ArrayList<>();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+    @Override
+    public List<Attendance> findByUsernameAndMonth(String username, int month, int year) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // Tìm userId từ username
+            String userHql = "SELECT u.id FROM Users u WHERE u.userName = :username";
+
+            Integer userId = session.createQuery(userHql, Integer.class)
+                    .setParameter("username", username)
+                    .uniqueResult();
+
+            if (userId == null) {
+                return new ArrayList<>();
+            }
+
+            // Sử dụng hàm có sẵn
+            return findByAttendanceMonth(userId, month, year);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+    @Override
+    public List<Attendance> findByUsersAndMonth(List<Users> users, int month, int year) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            if (users == null || users.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            // Lấy danh sách userIds
+            List<Integer> userIds = users.stream()
+                    .map(Users::getId)
+                    .collect(Collectors.toList());
+
+            String hql = "FROM Attendance a " +
+                    "LEFT JOIN FETCH a.user u " +
+                    "LEFT JOIN FETCH u.department d " +
+                    "LEFT JOIN FETCH u.role " +
+                    "WHERE a.user.id IN :userIds " +
+                    "AND MONTH(a.workDate) = :month " +
+                    "AND YEAR(a.workDate) = :year " +
+                    "ORDER BY u.userName, a.workDate";
+
+            List<Attendance> attendances = session.createQuery(hql, Attendance.class)
+                    .setParameter("userIds", userIds)
+                    .setParameter("month", month)
+                    .setParameter("year", year)
+                    .list();
+
+            return attendances != null ? attendances : new ArrayList<>();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
     @Override
     public List<Attendance> findByUserAndStatus(int userId, int status) {
         //TODO:Tìm kiếm dữ liệu điểm danh theo userId và status
-        try{
+        try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             String hql = "FROM Attendance a WHERE a.user.id = :userId AND a.status = :status";
             List<Attendance> attendances = session.createQuery(hql, Attendance.class)
@@ -204,14 +318,10 @@ public class AttendanceDAO implements IAttendanceDAO {
                     .setParameter("status", status)
                     .list();
             return attendances;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
     }
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> a6f86596c1a64d3646c97c616c4b79b3c4a7e17c

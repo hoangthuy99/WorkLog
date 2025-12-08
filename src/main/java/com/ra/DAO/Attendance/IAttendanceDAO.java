@@ -1,6 +1,7 @@
 package com.ra.DAO.Attendance;
 
 import com.ra.Model.Entity.Attendance;
+import com.ra.Model.Entity.Users;
 import com.ra.Model.Entity.WorkRecord;
 
 import java.time.LocalDate;
@@ -20,6 +21,9 @@ public interface IAttendanceDAO {
     List<Attendance> findByUserAndDate(int userId, LocalDate today);
     List<Attendance> findByAttendanceMonth(int userId, int month, int year);
     List<Attendance> findByUserAndStatus(int userId, int status);
+    List<Attendance> findByUsersAndMonth(List<Users> users, int month, int year);
+    List<Attendance> findByUsernameAndMonth(String username, int month, int year);
+    List<Attendance> findByDepartmentAndMonth(String departmentName, int month, int year);
 
 
 

@@ -40,18 +40,84 @@ public class AddAttendance extends javax.swing.JPanel {
     private ProjectController projectController;
     private HolidayController holidayController;
     private  List<Attendance> a;  // Danh sách attendance của chính nhân viên đó
+    private boolean viewMode = false;
+    private Attendance currentAttendance;
 
-    public AddAttendance(Users user, List<Attendance> a) {
+    public AddAttendance(Users user, List<Attendance> a, boolean viewMode) {
         initComponents();
         this.loggedInUser = user;
         this.a = a;
+        this.viewMode = viewMode;
+        // Lấy attendance đầu tiên từ list
+        if (a != null && !a.isEmpty()) {
+            this.currentAttendance = a.get(0);
+        }
         loadUserInfo();
         loadProjects();
         loadTasks();
         initStatusComboBox();
         initDateChooserListener();
         initializeControllers();
+
+        // Load dữ liệu attendance
+        if (currentAttendance != null) {
+            loadAttendanceData(currentAttendance);
+        }
+
+        // Thiết lập chế độ xem/chỉnh sửa
+        if (viewMode) {
+            setupViewMode();
+        }
     }
+
+    private void loadAttendanceData(Attendance att) {
+        if (att == null) return;
+
+        try {
+            //  Ngày làm việc
+            if (att.getWorkDate() != null) {
+                java.sql.Date sqlDate = java.sql.Date.valueOf(att.getWorkDate());
+                java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
+                csDate.setDate(utilDate);
+            }
+            //  Ngày nghỉ
+            rbHoliday.setSelected(att.isHoliday());
+
+
+            // Thời gian
+            if (att.getCheckInTime() != null) {
+                fmCheckIn.setText(att.getCheckInTime().toString());
+            }
+
+            if (att.getCheckOutTime() != null) {
+                fmCheckOut.setText(att.getCheckOutTime().toString());
+            }
+
+            //  Load work record table
+            loadWorkRecordTable(att.getId());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "データの読み込み中にエラーが発生しました。",
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public AddAttendance(Users user, List<Attendance> a) {
+        this(user, a, false); // Gọi constructor mới với viewMode = false
+    }
+    // Thêm phương thức để refresh dữ liệu
+    public void refreshData(List<Attendance> newList) {
+        this.a = newList;
+        if (newList != null && !newList.isEmpty()) {
+            this.currentAttendance = newList.get(0);
+            loadAttendanceData(currentAttendance);
+        }
+    }
+
+
     private void initializeControllers() {
         this.attendanceController = new AttendanceController();
         this.recordController = new RecordController();
@@ -59,6 +125,26 @@ public class AddAttendance extends javax.swing.JPanel {
         this.projectController = new ProjectController();
         this.holidayController = new HolidayController(new HolidayDAO());
     }
+    private void setupViewMode() {
+        // Disable toàn bộ input
+        cbProject.setEnabled(false);
+        cbTask.setEnabled(false);
+        cbStatus.setEnabled(false);
+        txtRemark.setEnabled(false);
+        csDate.setEnabled(false);
+        fmStart.setEnabled(false);
+        fmCheckIn.setEnabled(false);
+        fmCheckOut.setEnabled(false);
+        txtBreak.setEnabled(false);
+
+        // Button thêm/sửa ẩn đi
+        btnAddAttend.setVisible(false);
+        btnAddRecord.setVisible(false);
+
+        // Thay đổi tiêu đề nếu cần
+        // lblTitle.setText("勤怠詳細 - 閲覧モード");
+    }
+
 
     private List<Attendance> getCurrentAttendance(int userId, LocalDate date) {
         return attendanceController.findByUserAndDate(userId, date);

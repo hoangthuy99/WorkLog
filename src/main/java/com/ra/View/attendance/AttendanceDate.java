@@ -7,10 +7,12 @@ package com.ra.View.attendance;
 import com.ra.Controller.*;
 import com.ra.Model.Entity.Attendance;
 import com.ra.Model.Entity.Users;
+import com.ra.View.dashboard.MainDashboard;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -31,6 +33,16 @@ public class AttendanceDate extends javax.swing.JPanel {
     private ProjectController projectController;
     private Users loggedInUser;
     private UserController userController;
+    private OnViewListener viewListener;  // Callback khi view attendance
+
+    // Interface để MainFrame lắng nghe
+    public interface OnViewListener {
+        void onViewAttendance(List<Attendance> attendanceList);
+    }
+
+    public void setOnViewListener(OnViewListener listener) {
+        this.viewListener = listener;
+    }
 
 
     public AttendanceDate(Users user) {
@@ -175,10 +187,24 @@ public class AttendanceDate extends javax.swing.JPanel {
             List<Attendance> list = new ArrayList<>();
             list.add(attendance);
 
-            // 4. Mở form AddAttendance để CHỈNH SỬA
-            // QUAN TRỌNG: Truyền loggedInUser (quản lý) thay vì attendance.getUser()
-            AddAttendance form = new AddAttendance(loggedInUser, list);
-            form.setVisible(true);
+            // 4. Lấy MainDashboard từ parent
+            MainDashboard mainDashboard = findParentMainDashboard(this);
+
+            if (mainDashboard != null) {
+                // 5. Tạo AddAttendance panel với chế độ xem (viewMode = true)
+                AddAttendance addAttendancePanel = new AddAttendance(mainDashboard.currentUser, list, true);
+
+                // 6. Gọi showPanel() để hiển thị
+                mainDashboard.showPanel(addAttendancePanel);
+
+                // 7. (Tùy chọn) Có thể thêm thông báo
+                JOptionPane.showMessageDialog(this,
+                        "勤怠詳細を表示します。\n閲覧モード: 編集不可",
+                        "情報",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "メイン画面が見つかりません。");
+            }
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "IDは数値でなければなりません。");
@@ -187,6 +213,17 @@ public class AttendanceDate extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "エラー: " + e.getMessage());
         }
     }//GEN-LAST:event_btnViewActionPerformed
+    // Phương thức helper để tìm MainDashboard parent
+    private MainDashboard findParentMainDashboard(Component component) {
+        Container parent = component.getParent();
+        while (parent != null) {
+            if (parent instanceof MainDashboard) {
+                return (MainDashboard) parent;
+            }
+            parent = parent.getParent();
+        }
+        return null;
+    }
     private String formatMinutesToHours(int minutes) {
         int h = minutes / 60;
         int m = minutes % 60;

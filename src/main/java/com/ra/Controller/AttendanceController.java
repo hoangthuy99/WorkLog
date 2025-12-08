@@ -74,4 +74,14 @@ public class AttendanceController {
     public List<Attendance> findByUserAndStatus(int userId, int status) {
         return attendanceDAO.findByUserAndStatus(userId, status);
     }
+    public List<Attendance> findByUsersAndMonth(List<com.ra.Model.Entity.Users> users, int month, int year) {
+        return attendanceDAO.findByUsersAndMonth(users, month, year);
+    }
+    public List<Attendance> findByUsernameAndMonth(String username, int month, int year) {
+        return attendanceDAO.findByUsernameAndMonth(username, month, year);
+    }
+    public List<Attendance> findByDepartmentAndMonth(String departmentName, int month, int year) {
+        return attendanceDAO.findByDepartmentAndMonth(departmentName, month, year);
+    }
+
 }

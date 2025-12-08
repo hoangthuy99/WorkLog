@@ -23,10 +23,10 @@ public class AddHoliday extends JPanel {
      */
 
     private HolidayController holidayController = new HolidayController(new HolidayDAO());
+
     public AddHoliday() {
         initComponents();
     }
-
 
 
     /**
@@ -157,9 +157,6 @@ public class AddHoliday extends JPanel {
     }//GEN-LAST:event_btnSaveActionPerformed
 
 
-
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnSave;
     private com.toedter.calendar.JDateChooser dcDate;
@@ -169,9 +166,4 @@ public class AddHoliday extends JPanel {
     private JLabel jLabel4;
     private JTextField txtDescription;
     private JTextField txtName;
-    // End of variables declaration//GEN-END:variables
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> a6f86596c1a64d3646c97c616c4b79b3c4a7e17c
