@@ -283,7 +283,7 @@ public class AllUser extends JPanel {
 
         btnDelete.setBackground(UIManager.getColor("Button.background"));
         btnDelete.setText("削除");
-        btnDelete.addActionListener(this::btnDeleteActionPerformed);
+        //btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
