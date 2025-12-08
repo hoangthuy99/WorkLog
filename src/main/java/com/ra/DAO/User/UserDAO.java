@@ -5,10 +5,13 @@ import com.ra.Utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+
 public class UserDAO implements IUserDAO {
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UserDAO.class.getName());
 
     @Override
     public Users create(Users user) {
@@ -43,12 +46,22 @@ public class UserDAO implements IUserDAO {
     @Override
     public long countAll(String keyword) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT COUNT(u) FROM Users u WHERE u.fullName LIKE :kw OR u.userName LIKE :kw";
-            return (long) session.createQuery(hql)
+
+            String hql = "SELECT COUNT(u) FROM Users u " +
+                    "WHERE (u.userName LIKE :kw " +
+                    "OR u.fullName LIKE :kw " +
+                    "OR u.userCode LIKE :kw " +
+                    "OR u.email LIKE :kw) " +
+                    "AND u.deletedAt IS NULL";
+
+            return session.createQuery(hql, Long.class)
                     .setParameter("kw", "%" + keyword + "%")
                     .uniqueResult();
         }
     }
+
+
+
 
 
     @Override
@@ -59,8 +72,10 @@ public class UserDAO implements IUserDAO {
 
             Users user = session.get(Users.class, id);
             if (user != null) {
-                session.delete(user);
+                user.setDeletedAt(LocalDateTime.now());  // 🔹 Đánh dấu xóa mềm
+                session.update(user);                    // 🔹 Cập nhật thay vì delete
                 transaction.commit();
+                System.out.println("User soft-deleted (deletedAt set)!");
                 return true;
             }
             return false;
@@ -73,18 +88,45 @@ public class UserDAO implements IUserDAO {
 
 
 
+
     @Override
     public List<Users> findAll(String keyword, int page, int size) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            String hql =
+                    "SELECT DISTINCT u FROM Users u " +
+                            "LEFT JOIN FETCH u.department d " +
+                            "LEFT JOIN FETCH u.role r " +
+                            "LEFT JOIN FETCH u.tasks t " +
+                            "WHERE (u.userName LIKE :kw " +
+                            "OR u.fullName LIKE :kw " +
+                            "OR u.userCode LIKE :kw " +
+                            "OR u.email LIKE :kw) " +
+                            "AND u.deletedAt IS NULL";
+
+            return session.createQuery(hql, Users.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .setFirstResult((page - 1) * size)
+                    .setMaxResults(size)
+                    .getResultList();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+
+
+    @Override
+    public List<Users> findAll() {
+        logger.info("Finding all users");
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             String hql = "SELECT DISTINCT u FROM Users u " +
                     "LEFT JOIN FETCH u.tasks " +
                     "LEFT JOIN FETCH u.department " +
                     "LEFT JOIN FETCH u.role " +
-                    "WHERE u.userName LIKE :keyword OR u.email LIKE :keyword";
+                    "WHERE u.deletedAt IS NULL";
             return session.createQuery(hql, Users.class)
-                    .setParameter("keyword", "%" + keyword + "%")
-                    .setFirstResult((page - 1) * size)
-                    .setMaxResults(size)
                     .getResultList();
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,43 +134,40 @@ public class UserDAO implements IUserDAO {
         }
     }
 
+
     @Override
-    public Optional<Users> findById(int id) {
+    public Users findById(int id) {
         //TODO: Tìm kiếm theo ID
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT u FROM Users u " +
-                    "LEFT JOIN FETCH u.tasks " + // load tasks
-                    "LEFT JOIN FETCH u.department " + // load department nếu muốn
-                    "LEFT JOIN FETCH u.role " +       // load role
-                    "WHERE u.id = :id";
-            Users user = session.createQuery(hql, Users.class)
-                    .setParameter("id", id)
-                    .uniqueResult();
-            return Optional.ofNullable(user);
+       try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Users user = session.get(Users.class, id);
+            return user;
         } catch (Exception e) {
             e.printStackTrace();
-            return Optional.empty();
+            return null;
         }
     }
+    @Override
     public Optional<Users> findByUsername(String username) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            Users user = session.createQuery(
-                            "FROM Users u WHERE u.userName = :username AND u.deletedAt IS NULL",
-                            Users.class
-                    )
+            String hql =
+                    "SELECT DISTINCT u FROM Users u " +
+                            "LEFT JOIN FETCH u.role r " +
+                            "LEFT JOIN FETCH r.permissions " +
+                            "LEFT JOIN FETCH u.department " +
+                            "WHERE u.userName = :username AND u.deletedAt IS NULL";
+
+            Users user = session.createQuery(hql, Users.class)
                     .setParameter("username", username)
                     .uniqueResult();
 
             return Optional.ofNullable(user);
+
         } catch (Exception e) {
             e.printStackTrace();
             return Optional.empty();
         }
     }
-
-
-
 
 
 

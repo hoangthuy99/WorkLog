@@ -8,174 +8,243 @@ import com.ra.Model.Entity.Tasks;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
+import java.awt.*;
+import java.util.Optional;
+import java.util.logging.Logger;
 
-public class AllTask extends javax.swing.JDialog {
+public class AllTask extends JPanel {
 
     private final TaskController taskController = new TaskController();
+    private static final Logger logger = Logger.getLogger(AllTask.class.getName());
 
-    private static final java.util.logging.Logger logger =
-            java.util.logging.Logger.getLogger(AllTask.class.getName());
+    private JScrollPane scrAddtask;
+    private JTable tblAddtask;
+    private JButton btnSearch, btnAddTask, btnAll, btnEdit, btnDelete;
+    private JLabel lbKeywork;
+    private JTextField txtSearch;
 
-    public AllTask(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public AllTask() {
         initComponents();
-        loadTable(taskController.findAll());   // tải tất cả task
-    }
-
-    @SuppressWarnings("unchecked")
-    private void initComponents() {
-
-        scrAddtask = new javax.swing.JScrollPane();
-        tblAddtask = new javax.swing.JTable();
-        btnSearch = new javax.swing.JButton();
-        btnAddTask = new javax.swing.JButton();
-        lbKeywork = new javax.swing.JLabel();
-        txtSearch = new javax.swing.JTextField();
-        btnAll = new javax.swing.JButton();
-        btnEdit = new javax.swing.JButton();
-        btnDelete = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        tblAddtask.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                        "タスク名", "プロジェクト名", "部署名"
-                }
-        ));
-        scrAddtask.setViewportView(tblAddtask);
-
-        btnSearch.setText("検索");
-        btnSearch.addActionListener(this::btnSearchActionPerformed);
-
-        btnAddTask.setText("タスク作成");
-        btnAddTask.addActionListener(this::btnAddTaskActionPerformed);
-
-        lbKeywork.setText("キーワード");
-
-        btnAll.setText("全て");
-        btnAll.addActionListener(this::btnAllActionPerformed);
-
-        btnEdit.setText("編集");
-        btnDelete.setText("削除");
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(25)
-                                .addComponent(lbKeywork)
-                                .addGap(18)
-                                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18)
-                                .addComponent(btnSearch)
-                                .addGap(18)
-                                .addComponent(btnAll)
-                                .addGap(18)
-                                .addComponent(btnAddTask, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(40, Short.MAX_VALUE))
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(25)
-                                .addComponent(scrAddtask, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(25)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(25))
-        );
-
-        layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(26)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(btnAddTask)
-                                        .addComponent(lbKeywork)
-                                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btnSearch)
-                                        .addComponent(btnAll))
-                                .addGap(26)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(scrAddtask, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(btnEdit)
-                                                .addGap(20)
-                                                .addComponent(btnDelete)))
-                                .addGap(26))
-        );
-
-        pack();
-    }
-
-    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {
-        String kw = txtSearch.getText().trim();
-        loadTable(taskController.search(kw));
-    }
-
-    private void btnAddTaskActionPerformed(java.awt.event.ActionEvent evt) {
-        AddTask dialog = new AddTask(null, true);
-        dialog.setVisible(true);
-
-        loadTable(taskController.findAll()); // reload
-    }
-
-    private void btnAllActionPerformed(java.awt.event.ActionEvent evt) {
+        applyCenteredLayout();
         loadTable(taskController.findAll());
     }
 
-    private void loadTable(List<Tasks> list) {
+    private void applyCenteredLayout() {
 
-        String[] cols = {"タスク名", "プロジェクト名", "部署名"};
-        DefaultTableModel model = new DefaultTableModel(cols, 0);
+        JPanel contentPanel = new JPanel();
+        contentPanel.setBackground(Color.WHITE);
+
+        GroupLayout layout = new GroupLayout(contentPanel);
+        contentPanel.setLayout(layout);
+
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addComponent(lbKeywork)
+                                        .addComponent(txtSearch, 120, 120, 120)
+                                        .addComponent(btnSearch)
+                                        .addComponent(btnAll)
+                                        .addGap(40)
+                                        .addComponent(btnAddTask, 120, 120, 120)
+                        )
+                        .addComponent(scrAddtask, 550, 550, 550)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addGap(250)
+                                        .addComponent(btnEdit, 80, 80, 80)
+                                        .addComponent(btnDelete, 80, 80, 80)
+                        )
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(lbKeywork)
+                                        .addComponent(txtSearch)
+                                        .addComponent(btnSearch)
+                                        .addComponent(btnAll)
+                                        .addComponent(btnAddTask)
+                        )
+                        .addGap(20)
+                        .addComponent(scrAddtask, 300, 300, 300)
+                        .addGap(20)
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(btnEdit)
+                                        .addComponent(btnDelete)
+                        )
+        );
+
+        this.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        this.add(contentPanel, gbc);
+    }
+
+    private void initComponents() {
+
+        scrAddtask = new JScrollPane();
+        tblAddtask = new JTable();
+        btnSearch = new JButton("検索");
+        btnAddTask = new JButton("タスク作成");
+        lbKeywork = new JLabel("キーワード");
+        txtSearch = new JTextField();
+        btnAll = new JButton("全て");
+        btnEdit = new JButton("編集");
+        btnDelete = new JButton("削除");
+
+        setBackground(Color.WHITE);
+
+        tblAddtask.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{"No.","タスク名", "プロジェクト名", "部署名"}
+        ));
+        scrAddtask.setViewportView(tblAddtask);
+
+        btnSearch.addActionListener(e -> loadTable(taskController.search(txtSearch.getText().trim())));
+        btnAll.addActionListener(e -> loadTable(taskController.findAll()));
+
+        txtSearch.addActionListener(e -> btnSearch.doClick());
+
+        btnAddTask.addActionListener(e -> openAddForm());
+        btnEdit.addActionListener(e -> openEditForm());
+        btnDelete.addActionListener(e -> deleteTask());
+    }
+
+    private void openAddForm() {
+        JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(this);
+
+        JDialog dialog = new JDialog(parent, "タスク作成", true);
+        dialog.setContentPane(new AddTask());
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+
+        loadTable(taskController.findAll());
+    }
+
+    private void openEditForm() {
+        int row = tblAddtask.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "編集するタスクを選択してください。");
+            return;
+        }
+
+
+        String taskName = tblAddtask.getValueAt(row, 0).toString();
+        Optional<Tasks> task = taskController.findByName(taskName);
+
+
+        if (task == null) {
+            JOptionPane.showMessageDialog(this, "タスクが見つかりません。");
+            return;
+        }
+
+        JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(this);
+        JDialog dialog = new JDialog(parent, "タスク編集", true);
+
+        dialog.setContentPane(new AddTask()); // ← chế độ EDIT
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+
+        loadTable(taskController.findAll());
+    }
+
+    private void deleteTask() {
+        int row = tblAddtask.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "削除するタスクを選択してください。",
+                    "エラー",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String taskName = tblAddtask.getValueAt(row, 0).toString();
+        Optional<Tasks> t = taskController.findByName(taskName);
+
+
+        if (t == null) {
+            JOptionPane.showMessageDialog(this, "タスクが見つかりません。");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "このタスクを削除しますか？\n",
+                "確認",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+
+            taskController.delete(t.get().getId());
+            JOptionPane.showMessageDialog(this, "タスクが削除されました。");
+            loadTable(taskController.findAll());
+
+            try {
+                taskController.delete(t.get().getId());
+                loadTable(taskController.findAll());
+
+                JOptionPane.showMessageDialog(this,
+                        "タスクを削除しました。",
+                        "完了",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+            } catch (Exception ex) {
+                String msg = ex.getMessage();
+
+                if (msg != null && msg.contains("使用されている")) {
+                    JOptionPane.showMessageDialog(this,
+                            "このタスクは勤務記録で使用されているため、削除できません。",
+                            "削除エラー",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "削除中にエラーが発生しました。\n" + msg,
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+        }
+    }
+
+
+
+    private void loadTable(List<Tasks> list) {
+        // ✅ Thêm cột "No." vào đầu
+        DefaultTableModel model = new DefaultTableModel(
+                new String[]{"No.", "タスク名", "プロジェクト名", "部署名"}, 0
+        );
+
+        int no = 1;
 
         for (Tasks t : list) {
 
-            // Nhiều projects
-            String projectNames = "";
-            if (t.getProjects() != null) {
-                projectNames = t.getProjects()
-                        .stream()
-                        .map(Project::getName)
-                        .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
-            }
+            String projects = t.getProjects() == null ? "" :
+                    String.join(", ", t.getProjects().stream().map(Project::getName).toList());
 
-            // Nhiều departments
-            String departmentNames = "";
-            if (t.getDepartments() != null) {
-                departmentNames = t.getDepartments()
-                        .stream()
-                        .map(Department::getName)
-                        .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
-            }
+            String deps = t.getDepartments() == null ? "" :
+                    String.join(", ", t.getDepartments().stream().map(Department::getName).toList());
 
             model.addRow(new Object[]{
+                    no++,
                     t.getName(),
-                    projectNames,
-                    departmentNames,
-                    "編集",
-                    "削除"
+                    projects,
+                    deps
             });
         }
 
         tblAddtask.setModel(model);
     }
 
-    public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(() -> {
-            AllTask dialog = new AllTask(new javax.swing.JFrame(), true);
-            dialog.setVisible(true);
-        });
-    }
 
-    private javax.swing.JButton btnAddTask;
-    private javax.swing.JButton btnAll;
-    private javax.swing.JButton btnDelete;
-    private javax.swing.JButton btnEdit;
-    private javax.swing.JButton btnSearch;
-    private javax.swing.JLabel lbKeywork;
-    private javax.swing.JScrollPane scrAddtask;
-    private javax.swing.JTable tblAddtask;
-    private javax.swing.JTextField txtSearch;
 }

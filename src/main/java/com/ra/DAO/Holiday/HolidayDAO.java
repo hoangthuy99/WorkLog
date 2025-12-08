@@ -8,7 +8,7 @@ import org.hibernate.Transaction;
 import java.util.List;
 import java.util.Optional;
 
-public class HolidayDAO implements IHolidayDAO{
+public class HolidayDAO implements IHolidayDAO {
     @Override
     public Holidays create(Holidays holiday) {
         //TODO : tao moi holiday
@@ -68,7 +68,7 @@ public class HolidayDAO implements IHolidayDAO{
 
     @Override
     public Optional<Holidays> findById(int id) {
-       //TODO : tim holiday bang id
+        //TODO : tim holiday bang id
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Holidays holiday = session.get(Holidays.class, id);
             return Optional.ofNullable(holiday);

@@ -88,7 +88,7 @@ public class RecordDAO implements IRecordDAO {
         Transaction transaction = null;
         try{
             Session session = HibernateUtil.getSessionFactory().openSession();
-            String hql = "FROM WorkRecord wr WHERE wr.user.userName LIKE :keyword OR wr.remarks LIKE :keyword";
+            String hql = "FROM WorkRecord wr WHERE wr.attendance.user.userName  LIKE :keyword";
             return session.createQuery(hql, WorkRecord.class)
                     .setParameter("keyword", "%" + keyword + "%")
                     .setFirstResult((page - 1) * size)
@@ -134,6 +134,44 @@ public class RecordDAO implements IRecordDAO {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
             return List.of();
+        }
+    }
+
+    @Override
+    public Integer sumBreakWorkByAttendanceId(int id) {
+        //TODO:Tính tổng thời gian nghỉ theo Attendance ID
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+
+            String hql = "SELECT COALESCE(SUM(wr.breakWork), 0) FROM WorkRecord wr WHERE wr.attendance.id = :id";
+            Long result = session.createQuery(hql, Long.class)
+                    .setParameter("id", id)
+                    .uniqueResult();
+
+            transaction.commit();
+            return Math.toIntExact(result != null ? result : 0);
+
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                try {
+                    transaction.rollback();
+                } catch (Exception rollbackEx) {
+                    System.err.println("Error rolling back transaction: " + rollbackEx.getMessage());
+                }
+            }
+            e.printStackTrace();
+            return 0;
+        } finally {
+            if (session != null && session.isOpen()) {
+                try {
+                    session.close();
+                } catch (Exception closeEx) {
+                    System.err.println("Error closing session: " + closeEx.getMessage());
+                }
+            }
         }
     }
 }

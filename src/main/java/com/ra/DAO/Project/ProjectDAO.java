@@ -7,34 +7,63 @@ import com.ra.Utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class ProjectDAO implements IProjectDAO {
 
     @Override
     public void create(Project project) {
         Transaction tx = null;
+
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            // 1️⃣ CHECK duplicate project name
+            Long countName = session.createQuery(
+                            "SELECT COUNT(p) FROM Project p WHERE p.name = :name AND p.deletedAt IS NULL",
+                            Long.class
+                    )
+                    .setParameter("name", project.getName())
+                    .uniqueResult();
+
+            if (countName != null && countName > 0) {
+                throw new RuntimeException("プロジェクト名が既に存在しています。");
+            }
+
+            // 2️⃣ CHECK duplicate projectCode
+            Long countCode = session.createQuery(
+                            "SELECT COUNT(p) FROM Project p WHERE p.projectCode = :code",
+                            Long.class
+                    )
+                    .setParameter("code", project.getProjectCode())
+                    .uniqueResult();
+
+            if (countCode != null && countCode > 0) {
+                throw new RuntimeException("プロジェクトコードが既に存在しています。");
+            }
+
+            // 3️⃣ INSERT nếu hợp lệ
             tx = session.beginTransaction();
             session.persist(project);
             tx.commit();
+
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
+            throw e; // 🚀 đẩy lỗi lên Controller để UI hiển thị
         }
     }
 
-    /**
-     * ❗❗ FIND ALL — KHÔNG FETCH 2 BAG
-     * --> chỉ lấy Project, sau đó loadRelations()
-     */
+
+
     @Override
     public List<Project> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                    "SELECT p FROM Project p ORDER BY p.id DESC",
+                    "SELECT p FROM Project p WHERE p.deletedAt IS NULL ORDER BY p.id DESC",
                     Project.class
             ).list();
+
         }
     }
 
@@ -45,7 +74,10 @@ public class ProjectDAO implements IProjectDAO {
     public List<Project> search(String keyword, int page, int size) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                            "SELECT p FROM Project p WHERE p.name LIKE :kw ORDER BY p.id DESC",
+                            "SELECT p FROM Project p \n" +
+                                    "WHERE p.deletedAt IS NULL \n" +
+                                    "AND p.name LIKE :kw \n" +
+                                    "ORDER BY p.id DESC\n",
                             Project.class
                     )
                     .setParameter("kw", "%" + keyword + "%")
@@ -62,6 +94,25 @@ public class ProjectDAO implements IProjectDAO {
     public Project findFindById(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.get(Project.class, id);
+        }
+    }
+
+    @Override
+    public Optional<Project> findByName(String name) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            Project project = session.createQuery(
+                            "FROM Project p WHERE p.name = :name",
+                            Project.class
+                    )
+                    .setParameter("name", name)
+                    .uniqueResult();
+
+            return Optional.ofNullable(project);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
         }
     }
 
@@ -120,13 +171,28 @@ public class ProjectDAO implements IProjectDAO {
         Transaction tx = null;
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            // 1️⃣ Check xem Project có đang được sử dụng trong WorkRecord không
+            Long count = session.createQuery(
+                    "SELECT COUNT(w) FROM WorkRecord w WHERE w.project.id = :pid",
+                    Long.class
+            ).setParameter("pid", id).uniqueResult();
+
+            if (count != null && count > 0) {
+                throw new RuntimeException("プロジェクトは勤務記録に使用されているため、削除できません。");
+            }
+
+            // 2️⃣ Lấy Project từ DB
             Project p = session.get(Project.class, id);
             if (p == null) return false;
 
             tx = session.beginTransaction();
-            session.remove(p);
-            tx.commit();
 
+            // 3️⃣ Soft delete → đánh dấu deletedAt thay vì xóa thật
+            p.setDeletedAt(LocalDateTime.now());
+            session.update(p);
+
+            tx.commit();
             return true;
 
         } catch (Exception e) {
@@ -135,6 +201,7 @@ public class ProjectDAO implements IProjectDAO {
             return false;
         }
     }
+
 
     /**
      * LOAD RELATIONS — đúng chuẩn ManyToMany

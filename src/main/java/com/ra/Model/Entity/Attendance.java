@@ -33,13 +33,14 @@ public class Attendance {
 
     private LocalTime checkInTime;
     private LocalTime checkOutTime;
-    private LocalTime breakTime;// thời gian nghỉ giải lao
     @Column(nullable = false)
     private LocalDate workDate;   // ngày làm việc
 
     private Integer totalMinutes; // tổng phút làm việc trong ngày
     private Integer overtimeMinutes; // tổng OT phút
     private Integer breakMinutes; // tổng phút nghỉ
+    private int extraDay; // làm thêm giờ chuyển qua ngày hôm sau
+
 
     private boolean isHoliday;
     private int status; // đã xác nhận - từ chối - chờ duyệt
@@ -48,23 +49,41 @@ public class Attendance {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     // WorkRecord (1) - (n) WorkRecord
-    @OneToMany(mappedBy = "attendance", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "attendance", fetch = FetchType.EAGER)
     private List<WorkRecord> workRecords;
 
+
+
     public void calculateTimes() {
-        // Break time
-        this.breakMinutes = 60;
+        // 1. Tính total breakWork từ WorkRecord
+        int totalBreak = 0;
 
-        // Tổng phút làm việc
-        this.totalMinutes = (int) Duration.between(checkInTime, checkOutTime).toMinutes() - breakMinutes;
 
-        // Overtime
-        if (totalMinutes > 480) { // 8 tiếng
-            this.overtimeMinutes = totalMinutes - 480;
-        } else {
-            this.overtimeMinutes = 0;
+        if (workRecords != null) {
+            totalBreak = workRecords.stream()
+                    .mapToInt(w -> w.getBreakWork() == null ? 0 : w.getBreakWork())
+                    .sum();
         }
+
+        this.breakMinutes = totalBreak; // GÁN TỰ ĐỘNG
+
+        // 2. Nếu có check-in và check-out mới tính totalMinutes
+        if (checkInTime == null || checkOutTime == null) {
+            totalMinutes = 0;
+            overtimeMinutes = 0;
+            return;
+        }
+
+        LocalDateTime inDT = LocalDateTime.of(workDate, checkInTime);
+        LocalDateTime outDT = LocalDateTime.of(workDate, checkOutTime)
+                .plusDays(extraDay);
+
+        int total = (int) Duration.between(inDT, outDT).toMinutes();
+
+        totalMinutes = total - (breakMinutes == null ? 0 : breakMinutes);
+        if (totalMinutes < 0) totalMinutes = 0;
+
+        overtimeMinutes = Math.max(0, totalMinutes - 480);
     }
 
 }
-

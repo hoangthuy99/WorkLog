@@ -11,8 +11,9 @@ public interface IUserDAO {
     Users update(Users user);
     boolean deleteFindById(int id);
     List<Users> findAll(String keyword, int page, int size);
+    List<Users> findAll();
 
-    Optional<Users> findById(int id);
+    Users findById(int id);
     long countAll(String keyword);
     Optional<Users> findByUsername(String username);
 

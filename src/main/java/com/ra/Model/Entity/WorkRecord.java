@@ -44,12 +44,23 @@ public class WorkRecord {
     private LocalTime endTime;     // giờ kết thúc block
 
     private Integer workMinutes; // tổng phút trong block
-    private Integer breakMinutes; // phút nghỉ trong block (nếu có)
+    private Integer breakWork; // phút nghỉ trong block (nếu có)
 
     private String remarks;
-    private String status;
+    private Integer status;
 
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    public String getWorkTimeFormatted() {
+        int totalSeconds = this.workMinutes * 60;
+
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+
 }

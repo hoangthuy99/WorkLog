@@ -1,250 +1,270 @@
 package com.ra.View.project;
 
 import com.ra.Controller.ProjectController;
+import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Project;
+import com.ra.Model.Entity.Tasks;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
-import java.util.logging.Logger;
 
-public class AllProject extends javax.swing.JFrame {
-
-    private static final Logger logger = Logger.getLogger(AllProject.class.getName());
+public class AllProject extends JPanel {
 
     private final ProjectController projectController = new ProjectController();
-    private DefaultTableModel model;
+
+    private JPanel contentPanel;
 
     public AllProject() {
         initComponents();
-        setupTable();
-        loadTable(projectController.findAll()); // load dự án ban đầu
+        applyCenteredLayout();
+
+        loadTable(projectController.findAll());
+        setupEvent();
     }
 
-    /** Setup bảng */
-    private void setupTable() {
-        model = new DefaultTableModel(
-                new Object[]{"STT", "ID", "プロジェクト名", "部署名", "タスク名"}, 0
-        );
-        tblAllDepartment.setModel(model);
+    private void setupEvent() {
 
-        // Ẩn cột ID
-        tblAllDepartment.getColumnModel().getColumn(1).setMinWidth(0);
-        tblAllDepartment.getColumnModel().getColumn(1).setMaxWidth(0);
-
-        // Căn giữa cột STT
-        tblAllDepartment.getColumnModel().getColumn(0).setPreferredWidth(50);
-    }
-
-
-    /** Load dữ liệu lên bảng */
-    private void loadTable(List<Project> list) {
-        model.setRowCount(0);
-
-        int stt = 1;
-
-        for (Project p : list) {
-
-            String deptNames = "";
-            if (p.getDepartments() != null) {
-                deptNames = p.getDepartments()
-                        .stream()
-                        .map(d -> d.getName())
-                        .reduce("", (a, b) -> a + " " + b);
-            }
-
-            String taskNames = "";
-            if (p.getTasks() != null) {
-                taskNames = p.getTasks()
-                        .stream()
-                        .map(t -> t.getName())
-                        .reduce("", (a, b) -> a + " " + b);
-            }
-
-            model.addRow(new Object[]{
-                    stt++,                  // <---- SỐ THỨ TỰ
-                    p.getId(),
-                    p.getName(),
-                    deptNames.trim(),
-                    taskNames.trim()
-            });
-        }
-    }
-
-
-
-    @SuppressWarnings("unchecked")
-    private void initComponents() {
-
-        pnlAllProject = new javax.swing.JPanel();
-        lbProjectName = new javax.swing.JLabel();
-        txtProject = new javax.swing.JTextField();
-        btnSearch = new javax.swing.JButton();
-        btnAll = new javax.swing.JButton();
-        btnCreateProject = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblAllDepartment = new javax.swing.JTable();
-        jSpinner1 = new javax.swing.JSpinner();
-        btnEdit = new javax.swing.JButton();
-        btnDelete = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        lbProjectName.setText("キーワード");
-
-        // ---------- SEARCH ----------
-        btnSearch.setText("検索");
         btnSearch.addActionListener(e -> {
             String keyword = txtProject.getText().trim();
-            List<Project> result = projectController.search(keyword);
-            loadTable(result);
+            loadTable(projectController.search(keyword));
         });
 
-        // ---------- LOAD ALL ----------
-        btnAll.setText("全て");
         btnAll.addActionListener(e -> loadTable(projectController.findAll()));
 
-        // ---------- CREATE ----------
-        btnCreateProject.setText("プロジェクト作成");
-        btnCreateProject.addActionListener(e -> new AddProject().setVisible(true));
+        btnCreateDepartment.addActionListener(e -> openProjectForm(null));
 
-        tblAllDepartment.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                        "Title 1", "Title 2", "Title 3", "Title 4"
-                }
-        ));
-        jScrollPane1.setViewportView(tblAllDepartment);
-
-        // ---------- EDIT ----------
-        btnEdit.setBackground(new java.awt.Color(204, 255, 255));
-        btnEdit.setText("編集");
         btnEdit.addActionListener(e -> {
-
-            int row = tblAllDepartment.getSelectedRow();
+            int row = tblAllProject.getSelectedRow();
             if (row == -1) {
-                JOptionPane.showMessageDialog(this, "行を選択してください");
+                JOptionPane.showMessageDialog(this, "編集するプロジェクトを選択してください。");
                 return;
             }
 
-            int id = (int) model.getValueAt(row, 1);
-
-            // mở AddProject ở chế độ EDIT
-            AddProject editForm = new AddProject(id);
-            editForm.setVisible(true);
+            int projectId = (int) tblAllProject.getValueAt(row, 4); // cột 3 = hidden id
+            openProjectForm(projectId);
         });
 
-        // ---------- DELETE ----------
-        btnDelete.setBackground(new java.awt.Color(255, 204, 204));
-        btnDelete.setText("削除");
         btnDelete.addActionListener(e -> {
-
-            int row = tblAllDepartment.getSelectedRow();
+            int row = tblAllProject.getSelectedRow();
             if (row == -1) {
-                JOptionPane.showMessageDialog(this, "行を選択してください");
+                JOptionPane.showMessageDialog(this, "削除するプロジェクトを選択してください。");
                 return;
             }
 
-            int id = (int) model.getValueAt(row, 0);
+            int projectId = (int) tblAllProject.getValueAt(row, 4);
 
             int confirm = JOptionPane.showConfirmDialog(
                     this,
-                    "削除しますか？",
+                    "このプロジェクトを削除しますか？\n",
                     "確認",
                     JOptionPane.YES_NO_OPTION
             );
 
-            if (confirm == JOptionPane.YES_OPTION) {
-                if (projectController.delete(id)) {
-                    JOptionPane.showMessageDialog(this, "削除完了");
+            if (confirm != JOptionPane.YES_OPTION) return;
+
+            try {
+                boolean success = projectController.delete(projectId);
+
+                if (success) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "プロジェクトを削除しました。",
+                            "完了",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                     loadTable(projectController.findAll());
                 } else {
-                    JOptionPane.showMessageDialog(this, "削除失敗");
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "削除に失敗しました。",
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+
+            } catch (Exception ex) {
+
+                String msg = ex.getMessage();
+
+                // Nếu lỗi do đang dùng trong WorkRecord
+                if (msg != null && msg.contains("使用されている")) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "このプロジェクトは勤務記録で使用されているため、削除できません。",
+                            "削除エラー",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                } else {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "削除中に予期しないエラーが発生しました。\n" + msg,
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         });
 
+    }
 
-        // ---------- GIỮ NGUYÊN LAYOUT CỦA BẠN ----------
-        javax.swing.GroupLayout pnlAllProjectLayout = new javax.swing.GroupLayout(pnlAllProject);
-        pnlAllProject.setLayout(pnlAllProjectLayout);
-        pnlAllProjectLayout.setHorizontalGroup(
-                pnlAllProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAllProjectLayout.createSequentialGroup()
-                                .addGap(32, 32, 32)
+    private void openProjectForm(Integer projectId) {
+        JFrame frame = new JFrame(projectId == null ? "プロジェクト作成" : "プロジェクト編集");
+        if (projectId == null) {
+            frame.add(new AddProject());
+        } else {
+            frame.add(new AddProject(projectId));
+        }
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                loadTable(projectController.findAll());
+            }
+
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                loadTable(projectController.findAll());
+            }
+        });
+    }
+    private void loadTable(List<Project> list) {
+        String[] columns = {"No.", "プロジェクト名", "部署名", "タスク名", "ID(hidden)"};
+        DefaultTableModel model = new DefaultTableModel(columns, 0);
+        int no = 1;
+        for (Project p : list) {
+
+            // Department names
+            String depNames = "";
+            if (p.getDepartments() != null) {
+                depNames = p.getDepartments()
+                        .stream()
+                        .map(Department::getName)
+                        .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
+            }
+            // Task names
+            String taskNames = "";
+            if (p.getTasks() != null) {
+                taskNames = p.getTasks()
+                        .stream()
+                        .map(Tasks::getName)
+                        .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
+            }
+
+            model.addRow(new Object[]{
+                    no++,
+                    p.getName(),
+                    depNames,
+                    taskNames,
+                    p.getId()
+            });
+        }
+
+        tblAllProject.setModel(model);
+        tblAllProject.getColumnModel().getColumn(4).setMinWidth(0);
+        tblAllProject.getColumnModel().getColumn(4).setMaxWidth(0);
+    }
+    private void applyCenteredLayout() {
+        contentPanel = new JPanel();
+        contentPanel.setBackground(new Color(255, 255, 255));
+        GroupLayout contentLayout = new GroupLayout(contentPanel);
+        contentPanel.setLayout(contentLayout);
+        this.removeAll();
+        contentPanel.add(txtProject);
+        contentPanel.add(btnSearch);
+        contentPanel.add(btnAll);
+        contentPanel.add(btnCreateDepartment);
+        contentPanel.add(jScrollPane1);
+        contentPanel.add(btnEdit);
+        contentPanel.add(btnDelete);
+        contentPanel.add(lbProjectName);
+
+        contentLayout.setHorizontalGroup(
+                contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(contentLayout.createSequentialGroup()
+                                .addGap(32)
                                 .addComponent(lbProjectName)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtProject, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnAll, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
-                                .addComponent(btnCreateProject, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(29, 29, 29))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAllProjectLayout.createSequentialGroup()
-                                .addGap(28, 28, 28)
-                                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(30, 30, 30)
-                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(10)
+                                .addComponent(txtProject, 130, 130, 130)
+                                .addGap(10)
+                                .addComponent(btnSearch)
+                                .addGap(10)
+                                .addComponent(btnAll)
+                                .addGap(20)
+                                .addComponent(btnCreateDepartment)
                                 .addContainerGap())
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAllProjectLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1)
+                        .addGroup(contentLayout.createSequentialGroup()
+                                .addGap(20)
+                                .addComponent(jScrollPane1, 560, 560, 560)
                                 .addContainerGap())
-        );
-        pnlAllProjectLayout.setVerticalGroup(
-                pnlAllProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlAllProjectLayout.createSequentialGroup()
-                                .addGap(65, 65, 65)
-                                .addGroup(pnlAllProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(lbProjectName)
-                                        .addComponent(txtProject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btnSearch)
-                                        .addComponent(btnAll)
-                                        .addComponent(btnCreateProject))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(27, 27, 27)
-                                .addGroup(pnlAllProjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(GroupLayout.Alignment.TRAILING,
+                                contentLayout.createSequentialGroup()
+                                        .addContainerGap(300, Short.MAX_VALUE)
                                         .addComponent(btnEdit)
-                                        .addComponent(btnDelete))
-                                .addGap(15, 15, 15))
+                                        .addGap(10)
+                                        .addComponent(btnDelete)
+                                        .addGap(30))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(pnlAllProject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(pnlAllProject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        contentLayout.setVerticalGroup(
+                contentLayout.createSequentialGroup()
+                        .addGap(40)
+                        .addGroup(contentLayout.createParallelGroup()
+                                .addComponent(lbProjectName)
+                                .addComponent(txtProject, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnSearch)
+                                .addComponent(btnAll)
+                                .addComponent(btnCreateDepartment))
+                        .addGap(20)
+                        .addComponent(jScrollPane1, 200, 200, 200)
+                        .addGap(20)
+                        .addGroup(contentLayout.createParallelGroup()
+                                .addComponent(btnEdit)
+                                .addComponent(btnDelete))
         );
 
-        pack();
+        this.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        this.add(contentPanel, gbc);
+        this.revalidate();
+        this.repaint();
     }
 
+    private JTextField txtProject;
+    private JButton btnSearch;
+    private JButton btnAll;
+    private JButton btnCreateDepartment;
+    private JScrollPane jScrollPane1;
+    private JTable tblAllProject = new JTable();
+    private JButton btnEdit;
+    private JButton btnDelete;
+    private JLabel lbProjectName;
 
-    public static void main(String args[]) {
-        EventQueue.invokeLater(() -> new AllProject().setVisible(true));
+    @SuppressWarnings("unchecked")
+    private void initComponents() {
+
+        txtProject = new JTextField();
+        btnSearch = new JButton("検索");
+        btnAll = new JButton("全て");
+        btnCreateDepartment = new JButton("プロジェクト作成");
+
+        jScrollPane1 = new JScrollPane();
+        tblAllProject = new JTable();
+        jScrollPane1.setViewportView(tblAllProject);
+
+        btnEdit = new JButton("編集");
+        btnDelete = new JButton("削除");
+
+        lbProjectName = new JLabel("キーワード");
+
+        this.setLayout(null);
     }
-
-    // Variables
-    private javax.swing.JButton btnAll;
-    private javax.swing.JButton btnCreateProject;
-    private javax.swing.JButton btnDelete;
-    private javax.swing.JButton btnEdit;
-    private javax.swing.JButton btnSearch;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JTable tblAllDepartment;
-    private javax.swing.JTextField txtProject;
-    private javax.swing.JPanel pnlAllProject;
-    private javax.swing.JLabel lbProjectName;
 }

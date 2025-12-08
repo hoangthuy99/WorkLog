@@ -17,7 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class AllHoliday extends javax.swing.JPanel {
+public class AllHoliday extends JPanel {
 
     private List<Holidays> holidayList;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -104,49 +104,49 @@ public class AllHoliday extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
-        jLabel4 = new javax.swing.JLabel();
-        jCalendar = new com.toedter.calendar.JCalendar();
-        btnSearch = new javax.swing.JButton();
+        jLabel4 = new JLabel();
+        jCalendar = new JCalendar();
+        btnSearch = new JButton();
 
-        jLabel4.setFont(new java.awt.Font("Kannada MN", 1, 24)); // NOI18N
-        jLabel4.setText("List Holiday");
+        jLabel4.setFont(new Font("Kannada MN", 1, 24)); // NOI18N
+        jLabel4.setText("休日一覧");
 
-        btnSearch.setBackground(new java.awt.Color(102, 255, 255));
-        btnSearch.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
+        btnSearch.setBackground(new Color(102, 255, 255));
+        btnSearch.setFont(new Font("Helvetica Neue", 1, 13)); // NOI18N
         btnSearch.setText("Search");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGap(249, 249, 249)
-                                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(jLabel4, GroupLayout.PREFERRED_SIZE, 170, GroupLayout.PREFERRED_SIZE))
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGap(21, 21, 21)
-                                                .addComponent(jCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, 649, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(jCalendar, GroupLayout.PREFERRED_SIZE, 649, GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap(14, Short.MAX_VALUE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)
                                 .addGap(128, 128, 128))
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(22, 22, 22)
                                 .addComponent(jLabel4)
                                 .addGap(18, 18, 18)
-                                .addComponent(jCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jCalendar, GroupLayout.PREFERRED_SIZE, 313, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(30, Short.MAX_VALUE))
         );
     }
 
-    private javax.swing.JButton btnSearch;
-    private com.toedter.calendar.JCalendar jCalendar;
-    private javax.swing.JLabel jLabel4;
+    private JButton btnSearch;
+    private JCalendar jCalendar;
+    private JLabel jLabel4;
 }

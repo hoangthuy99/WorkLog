@@ -3,11 +3,14 @@ package com.ra.View.login;
 import com.ra.Controller.UserController;
 import com.ra.Model.Entity.Users;
 import com.ra.Sercurity.PasswordHash;
-import com.ra.View.attendance.AddAttendance;
+import com.ra.Sercurity.PermissionUtil;
 import com.ra.View.dashboard.MainDashboard;
 
 import javax.swing.*;
+import java.util.List;
 import java.util.Optional;
+import com.ra.Sercurity.SessionLocal;
+
 
 public class LoginScreen extends javax.swing.JFrame {
 
@@ -21,6 +24,14 @@ public class LoginScreen extends javax.swing.JFrame {
         setLocationRelativeTo(null); // căn giữa màn hình
     }
 
+    public LoginScreen() {
+        initComponents();
+        setLocationRelativeTo(null);
+    }
+
+
+
+
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
@@ -32,6 +43,8 @@ public class LoginScreen extends javax.swing.JFrame {
         txtPassword = new javax.swing.JPasswordField();
         btnLogin = new javax.swing.JButton();
         chkShowPassword = new javax.swing.JCheckBox();
+        getRootPane().setDefaultButton(btnLogin);
+
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("LOGINSCREEN");
@@ -131,8 +144,9 @@ public class LoginScreen extends javax.swing.JFrame {
         }
 
         Optional<Users> userOpt = userController.findByUsername(username);
-
+        logger.info("login with username " + username);
         if (userOpt.isEmpty()) {
+            logger.info("Không tìm thấy username : " + username);
             JOptionPane.showMessageDialog(this, "ユーザーが存在しません。");
             return;
         }
@@ -144,25 +158,44 @@ public class LoginScreen extends javax.swing.JFrame {
         System.out.println("DB hash        = " + user.getPassword());
         System.out.println("Match?         = " +
                 PasswordHash.verifyPassword(password, user.getPassword()));
-
         // SO SÁNH DẠNG BCRYPT
         if (!PasswordHash.verifyPassword(password, user.getPassword())) {
             JOptionPane.showMessageDialog(this, "パスワードが間違っています。");
             return;
         }
-
         System.out.println("User found: " + user.getUserName());
         System.out.println("User role: " + user.getRole().getName());
+        System.out.println("---- DEBUG USER ENTITY ----");
+        System.out.println("ID: " + user.getId());
+        System.out.println("Username: " + user.getUserName());
+        System.out.println("Password: " + user.getPassword());
+        System.out.println("RoleId: " + user.getRole().getId());
 
-        if (user != null) {
-            AddAttendance attendance = new AddAttendance(user);
-            attendance.setVisible(true);
-            this.dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Sai tài khoản hoặc mật khẩu");
+        System.out.println("Role object: " + user.getRole());
+        if (user.getRole() != null)
+            System.out.println("Role name: " + user.getRole().getName());
+
+     // Lưu role của user
+        SessionLocal.set("USER_ROLE", user.getRole().getName());
+
+     // Lưu danh sách permission của role này
+        if (user.getRole().getPermissions() != null) {
+            List<String> permCodes = user.getRole()
+                    .getPermissions()
+                    .stream()
+                    .map(p -> p.getCode())   // lấys code: USER_MANAGE, TASK_MANAGE ...
+                    .toList();
+
+            SessionLocal.set("USER_PERMISSIONS", permCodes);
         }
-    }
+        PermissionUtil.setUser(user);
 
+        new MainDashboard(user).setVisible(true);
+        this.dispose();
+        // Lưu role của user
+        SessionLocal.set("USER_ROLE", user.getRole().getName());
+
+    }
 
 
     public static void main(String args[]) {

@@ -1,65 +1,192 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package com.ra.View.user;
 
 import com.ra.Controller.UserController;
-import com.ra.DAO.Department.DepartmentDAO;
-import com.ra.DAO.User.UserDAO;
-import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Tasks;
 import com.ra.Model.Entity.Users;
 
 import javax.swing.*;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.lang.reflect.Constructor;
+
 
 /**
  *
  * @author Admin
  */
+public class AllUser extends JPanel {
 
-public class AllUser extends javax.swing.JFrame {
-    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AllUser.class.getName());
 
+    // KHAI BÁO BIẾN CHO LOGIC XỬ LÝ
+    private int currentPage = 1;
+    private final int pageSize = Integer.MAX_VALUE;
+    // Biến này lưu trữ ID thật của các user đang hiển thị trên bảng
+    private List<Integer> userIds;
+    public UserController userController;
+
+
     /**
-     * Creates new form AllUser
+     * Creates new form AllUser1
      */
     public AllUser() {
-        userController = new UserController();  // <<--- BẮT BUỘC PHẢI CÓ
+        userController = new UserController(); // Khởi tạo Controller
         initComponents();
-
-
-        loadUserTable();
+        // Áp dụng bố cục căn giữa và cân đối
+        applyCenteredLayout();
+        loadUserTable(); // Tải dữ liệu lần đầu
+        // 🌟 THÊM: Thiết lập chiều rộng cột sau khi bảng được khởi tạo
+        setColumnWidths();
     }
 
-    private List<Integer> userIds;
+    // Phương thức mới để thiết lập chiều rộng cột cố định
+    private void setColumnWidths() {
+        if (tbAllUser.getColumnModel().getColumnCount() < 7) return;
 
-    private DefaultListModel<String> taskModel = new DefaultListModel<>();
+        TableColumnModel columnModel = tbAllUser.getColumnModel();
 
-    private void updatePaginationLabel() {
-        setTitle("ユーザーリスト - ページ " + currentPage + "/" + totalPages);
+        // 🌟 ĐIỀU CHỈNH: Giảm tổng chiều rộng cột từ 700 xuống 690 để tránh thanh cuộn ngang
+        // Tổng: 40 + 90 + 95 + 95 + 100 + 90 + 180 = 690
+
+        // Cột 0: STT
+        columnModel.getColumn(0).setPreferredWidth(40);
+        // Cột 1: ユーザーコード (User Code)
+        columnModel.getColumn(1).setPreferredWidth(120);
+        // Cột 2: 社員名 (Full Name)
+        columnModel.getColumn(2).setPreferredWidth(110);
+        // Cột 3: ユーザー名 (User Name)
+        columnModel.getColumn(3).setPreferredWidth(110);
+        // Cột 4: 部署 (Department)
+        columnModel.getColumn(4).setPreferredWidth(110);
+        // Cột 5: ロール (Role)
+        columnModel.getColumn(5).setPreferredWidth(90);
+        // Cột 6: タスク (Tasks) - Chiếm phần còn lại (tăng lên 180)
+        columnModel.getColumn(6).setPreferredWidth(110);
     }
 
-    public UserController userController = new UserController();
+    // Phương thức mới để áp dụng lại bố cục căn giữa và cân đối
+    private void applyCenteredLayout() {
 
-    private void loadUserTable() {
+        // 🌟 SỬA ĐỔI: CHỈ GIỮ LẠI CÁC SỰ KIỆN CHƯA GÁN HOẶC CẦN GÁN LẠI
+        btnSearch.addActionListener(this::btnSearchActionPerformed);
+        btnAlluser.addActionListener(this::btnAlluserActionPerformed);
+        // ❌ LOẠI BỎ DÒNG NÀY ĐỂ TRÁNH GỌI HAI LẦN SỰ KIỆN THÊM MỚI
+        // btnAdduser.addActionListener(this::btnAdduserActionPerformed);
 
-        String keyword = txtSearch.getText().trim();
-        List<Users> list = userController.findAll(keyword, currentPage, pageSize);
+        btnDelete.addActionListener(this::btnDeleteActionPerformed);
+        txtSearch.addActionListener(this::txtSearchActionPerformed);
 
-        userIds = new java.util.ArrayList<>(); // Khởi tạo 1 lần
+        // Bố cục căn giữa GroupLayout
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+
+        // 🌟 SỬA ĐỔI: Giảm chiều rộng bảng từ 750 xuống 700
+        int TABLE_WIDTH = 700;
+        int BUTTON_WIDTH = 75;
+        int BUTTON_GAP = 30; // Khoảng cách giữa Edit và Delete
+
+        // ====================================================================
+        // BỐ CỤC NGANG (HORIZONTAL GROUP)
+        // ====================================================================
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                // Khoảng trống co giãn bên trái để căn giữa
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false) // Thêm false để giữ kích thước cố định
+
+                                        // Hàng 1: Tìm kiếm và Thêm mới (Chiều rộng khớp với bảng)
+                                        .addGroup(GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                // Nhóm tìm kiếm bên trái
+                                                .addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btnAlluser)
+
+                                                // Khoảng trống co giãn
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+
+                                                // Nút thêm mới bên phải
+                                                .addComponent(btnAdduser, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE))
+
+                                        // Hàng 2: Bảng (rộng cố định)
+                                        .addComponent(scrollTable, GroupLayout.PREFERRED_SIZE, TABLE_WIDTH, GroupLayout.PREFERRED_SIZE)
+
+                                        // Hàng 3: Nút Edit/Delete (căn phải so với bảng)
+                                        .addGroup(layout.createSequentialGroup()
+                                                // Khoảng trống co giãn để đẩy nút sang phải
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE) // Dùng Short.MAX_VALUE để đẩy
+                                                .addComponent(btnEdit, GroupLayout.PREFERRED_SIZE, BUTTON_WIDTH, GroupLayout.PREFERRED_SIZE)
+                                                .addGap(BUTTON_GAP, BUTTON_GAP, BUTTON_GAP)
+                                                .addComponent(btnDelete, GroupLayout.PREFERRED_SIZE, BUTTON_WIDTH, GroupLayout.PREFERRED_SIZE)))
+                                // Khoảng trống co giãn bên phải để căn giữa
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        // ====================================================================
+        // BỐ CỤC DỌC (VERTICAL GROUP)
+        // ====================================================================
+        layout.setVerticalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                // THAY THẾ padding cố định bằng KHOẢNG TRỐNG CO GIÃN
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+
+                                // Hàng 1: Tìm kiếm/Tạo mới
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnSearch)
+                                        .addComponent(btnAlluser)
+                                        .addComponent(btnAdduser))
+                                .addGap(18, 18, 18)
+                                // Hàng 2: Bảng
+                                .addComponent(scrollTable, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE) // Chiều cao cố định
+                                .addGap(18, 18, 18)
+                                // Hàng 3: Hành động
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnEdit, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnDelete, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
+
+                                // Giữ khoảng trống co giãn ở dưới
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+    }
+
+    // SỬA: Đổi từ private sang public để EditUser có thể gọi phương thức này để refresh bảng
+    public void loadUserTable() {
+
+//        String keyword = txtSearch.getText().trim();
+//        List<Users> list = userController.findAll(keyword, currentPage, pageSize);
+        String keyword = txtSearch.getText().trim();  // lấy từ khóa người dùng nhập
+
+        List<Users> list;
+
+        if (keyword.isEmpty()) {
+            list = userController.findAll();          // không có keyword → load tất cả
+        } else {
+            list = userController.findAll(keyword, currentPage, pageSize);  // có keyword → search
+        }
+
+
+        userIds = new java.util.ArrayList<>();
 
         String[][] data = new String[list.size()][7];
 
         for (int i = 0; i < list.size(); i++) {
             Users u = list.get(i);
 
-            // STT tăng dần
+            // ✅ GÁN SỐ THỨ TỰ CHO CỘT "No."
+            // Nếu sau này có phân trang thật thì dùng công thức dưới,
+            // còn hiện tại pageSize = Integer.MAX_VALUE nên vẫn OK.
             data[i][0] = String.valueOf((currentPage - 1) * pageSize + i + 1);
+            // Hoặc đơn giản: data[i][0] = String.valueOf(i + 1);
 
             data[i][1] = u.getUserCode();
             data[i][2] = u.getFullName();
@@ -69,20 +196,17 @@ public class AllUser extends javax.swing.JFrame {
             data[i][6] = (u.getTasks() != null && !u.getTasks().isEmpty())
                     ? u.getTasks().stream().map(Tasks::getName).collect(Collectors.joining(", "))
                     : "";
-
-            // Lưu ID thật
             userIds.add(u.getId());
         }
 
+
         tbAllUser.setModel(new javax.swing.table.DefaultTableModel(
                 data,
-                new String[]{"STT", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール","タスク"}
+                new String[]{"No.", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール","タスク"}
         ));
+        // Gọi lại setColumnWidths để đảm bảo bảng luôn có kích thước đúng sau khi load dữ liệu
+        setColumnWidths();
     }
-
-
-
-
 
 
     /**
@@ -94,25 +218,16 @@ public class AllUser extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jRadioButton1 = new javax.swing.JRadioButton();
-        pnlAllUser = new javax.swing.JPanel();
-        txtSearch = new javax.swing.JTextField();
-        btnSearch = new javax.swing.JButton();
-        btnAlluser = new javax.swing.JButton();
-        btnAdduser = new javax.swing.JButton();
-        scrollTable = new javax.swing.JScrollPane();
-        tbAllUser = new javax.swing.JTable();
-        btnEdit = new javax.swing.JButton();
-        btnDelete = new javax.swing.JButton();
+        txtSearch = new JTextField();
+        btnSearch = new JButton();
+        btnAlluser = new JButton();
+        btnAdduser = new JButton();
+        scrollTable = new JScrollPane();
+        tbAllUser = new JTable();
+        btnEdit = new JButton();
+        btnDelete = new JButton();
 
-        jRadioButton1.setText("jRadioButton1");
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("ユーザーリスト");
-        setPreferredSize(new java.awt.Dimension(600, 400));
-
-        pnlAllUser.setBackground(new java.awt.Color(255, 255, 255));
-        pnlAllUser.setPreferredSize(new java.awt.Dimension(600, 400));
+        setBackground(new Color(255, 255, 255));
 
         txtSearch.setToolTipText("");
         txtSearch.addActionListener(this::txtSearchActionPerformed);
@@ -123,34 +238,35 @@ public class AllUser extends javax.swing.JFrame {
         btnAlluser.setText("すべて");
         btnAlluser.addActionListener(this::btnAlluserActionPerformed);
 
-        btnAdduser.setBackground(new java.awt.Color(201, 221, 201));
+        btnAdduser.setBackground(new Color(201, 221, 201));
         btnAdduser.setText("新ユーザー作成");
+        // LƯU Ý: Dòng này đã được giữ lại để đảm bảo sự kiện được gán
         btnAdduser.addActionListener(this::btnAdduserActionPerformed);
 
         tbAllUser.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "ID", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール", "タスク"
-            }
+                new Object [][] {
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null}
+                },
+                new String [] {
+                        "ID", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール", "タスク"
+                }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                    Integer.class, String.class, String.class, String.class, String.class, String.class, String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                    false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -161,152 +277,211 @@ public class AllUser extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        // 🌟 SỬA ĐỔI: Tắt Auto Resize để cho phép điều chỉnh chiều rộng cột
+        tbAllUser.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         scrollTable.setViewportView(tbAllUser);
-        if (tbAllUser.getColumnModel().getColumnCount() > 0) {
-            tbAllUser.getColumnModel().getColumn(5).setResizable(false);
-        }
+        // 🌟 SỬA ĐỔI: Giảm chiều rộng ưu tiên của scrollTable xuống 700
+        scrollTable.setPreferredSize(new Dimension(700, 300));
 
-        btnEdit.setBackground(new java.awt.Color(0, 255, 204));
-        btnEdit.setText("Edit");
+
+        btnEdit.setBackground(UIManager.getColor("Button.background"));
+        btnEdit.setText("編集");
+        // LƯU Ý: Dòng này vẫn còn và là lệnh gán sự kiện ĐẦU TIÊN
         btnEdit.addActionListener(this::btnEditActionPerformed);
 
-        btnDelete.setBackground(new java.awt.Color(255, 0, 51));
-        btnDelete.setText("Delete");
-        btnDelete.addActionListener(this::btnDeleteActionPerformed);
+        btnDelete.setBackground(UIManager.getColor("Button.background"));
+        btnDelete.setText("削除");
+        //btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
-        javax.swing.GroupLayout pnlAllUserLayout = new javax.swing.GroupLayout(pnlAllUser);
-        pnlAllUser.setLayout(pnlAllUserLayout);
-        pnlAllUserLayout.setHorizontalGroup(
-            pnlAllUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAllUserLayout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAlluser)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAdduser, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42))
-            .addGroup(pnlAllUserLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollTable, javax.swing.GroupLayout.PREFERRED_SIZE, 575, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAllUserLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnEdit)
-                .addGap(45, 45, 45)
-                .addComponent(btnDelete)
-                .addGap(35, 35, 35))
-        );
-        pnlAllUserLayout.setVerticalGroup(
-            pnlAllUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAllUserLayout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(pnlAllUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSearch)
-                    .addComponent(btnAlluser)
-                    .addComponent(btnAdduser))
-                .addGap(18, 18, 18)
-                .addComponent(scrollTable, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(pnlAllUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEdit)
-                    .addComponent(btnDelete))
-                .addContainerGap(40, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(pnlAllUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                // Giảm padding bên trái (từ 37 xuống 20 để cân bằng)
+                                .addGap(20, 20, 20)
+                                .addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnAlluser)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnAdduser, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
+                                // Giảm padding bên phải (từ 42 xuống 20 để cân bằng)
+                                .addGap(20, 20, 20))
+                        .addGroup(layout.createSequentialGroup()
+                                // 🌟 SỬA ĐỔI: Dùng khoảng trống co giãn để căn giữa
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(scrollTable, GroupLayout.PREFERRED_SIZE, 700, GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnEdit)
+                                .addGap(45, 45, 45)
+                                .addComponent(btnDelete)
+                                .addGap(35, 35, 35))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(pnlAllUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(30, 30, 30)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnSearch)
+                                        .addComponent(btnAlluser)
+                                        .addComponent(btnAdduser))
+                                .addGap(18, 18, 18)
+                                // 🌟 SỬA ĐỔI: Tăng chiều cao scrollTable lên 300
+                                .addComponent(scrollTable, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btnEdit)
+                                        .addComponent(btnDelete))
+                                .addContainerGap(55, Short.MAX_VALUE))
         );
-
-        getAccessibleContext().setAccessibleDescription("User List");
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private int currentPage = 1;
-    private final int pageSize = 10;
-    private long totalUsers = 0;
-    private int totalPages = 0;
+    // ========================================================
+    // EVENT HANDLERS
+    // ========================================================
 
-
-
-
-    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
-        // TODO add your handling code here:
+    private void txtSearchActionPerformed(ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        btnSearchActionPerformed(evt);
     }//GEN-LAST:event_txtSearchActionPerformed
 
-    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        // TODO add your handling code here:
+    private void btnSearchActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         currentPage = 1;
         loadUserTable();
     }//GEN-LAST:event_btnSearchActionPerformed
 
-    private void btnAlluserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlluserActionPerformed
-        // TODO add your handling code here:
+    private void btnAlluserActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnAlluserActionPerformed
         currentPage = 1;
         txtSearch.setText("");
         loadUserTable();
     }//GEN-LAST:event_btnAlluserActionPerformed
 
-    private void btnAdduserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdduserActionPerformed
-        // TODO add your handling code here:
-        AddUser addUserForm = new AddUser();
-        addUserForm.setVisible(true);
-        addUserForm.setLocationRelativeTo(null);
-        
-    }//GEN-LAST:event_btnAdduserActionPerformed
-
-    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
-       //Lấy ID rồi chuyển qua màn khác
-        int selectedRow = tbAllUser.getSelectedRow();
-
-        Integer id = userIds.get(selectedRow);
-
-       // Tìm user trong DB
-        Optional<Users> user = userController.findById(id);
-        if (user.isPresent()) {
-            EditUser editForm = new EditUser(user.get());
-            editForm.setVisible(true);
-            editForm.setLocationRelativeTo(null);
-        } else {
-            JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
-        }
-
-
-    }//GEN-LAST:event_btnEditActionPerformed
-
-    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
-        int row = tbAllUser.getSelectedRow();
-
+    private void btnAdduserActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnAdduserActionPerformed
         try {
-            // Lấy ID thật từ cột 0 (cột ẩn)
-            Integer id = userIds.get(row);
+            // 1. Lấy cửa sổ cha
+            Window parentWindow = SwingUtilities.getWindowAncestor(this);
+            JFrame parentFrame = (parentWindow instanceof JFrame) ? (JFrame) parentWindow : null;
 
-            // Lấy user từ DB
-            Optional<Users> u = userController.findById(id);
-
-            if (!u.isPresent()) {
-                JOptionPane.showMessageDialog(this, "このユーザーは存在しません");
+            // 2. Khởi tạo AddUser JPanel và truyền tham chiếu AllUser (this)
+            JPanel addUserPanel;
+            try {
+                // Giả định constructor của AddUser nhận AllUser làm đối số đầu tiên
+                Class<?> addUserClass = Class.forName("com.ra.View.user.AddUser");
+                Constructor<?> constructor = addUserClass.getConstructor(AllUser.class);
+                addUserPanel = (JPanel) constructor.newInstance(this);
+            } catch (ClassNotFoundException e) {
+                // Xử lý trường hợp không tìm thấy lớp AddUser
+                JOptionPane.showMessageDialog(this, "Lớp AddUser không tìm thấy. Đảm bảo AddUser.java đã tồn tại và nằm trong package com.ra.View.user.", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
+                logger.log(java.util.logging.Level.SEVERE, "Lỗi khi khởi tạo AddUser", e);
+                return;
+            } catch (NoSuchMethodException e) {
+                // Xử lý trường hợp không tìm thấy constructor AddUser(AllUser)
+                JOptionPane.showMessageDialog(this, "Lớp AddUser cần có constructor AddUser(AllUser parentPanel).", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
+                logger.log(java.util.logging.Level.SEVERE, "Lỗi Constructor AddUser", e);
                 return;
             }
 
-            // Hỏi xác nhận trước khi xóa
+
+            // 3. Tạo JDialog để chứa JPanel AddUser và hiển thị modal
+            JDialog dialog = new JDialog(parentFrame, "新ユーザー作成", true);
+            dialog.setContentPane(addUserPanel);
+
+            // Cài đặt hành động khi đóng và hiển thị
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.pack();
+            dialog.setLocationRelativeTo(parentFrame);
+
+            // Thêm Listener để refresh bảng khi Dialog đóng
+            dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadUserTable();
+                }
+            });
+
+            // Lệnh hiển thị dialog duy nhất
+            dialog.setVisible(true);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Xảy ra lỗi khi mở form AddUser: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
+            logger.log(java.util.logging.Level.SEVERE, "Lỗi khi mở AddUser Panel", e);
+        }
+
+    }//GEN-LAST:event_btnAdduserActionPerformed
+
+    private void btnEditActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        int selectedRow = tbAllUser.getSelectedRow();
+
+        if (selectedRow < 0 || selectedRow >= userIds.size()) {
+            JOptionPane.showMessageDialog(this, "ユーザーを選択してください！");
+            return;
+        }
+
+        try {
+            Integer id = userIds.get(selectedRow);
+
+            Users user = userController.findById(id);
+           if (user == null) {
+
+                JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
+                return;
+            } else {
+                user.setId(id);
+                // 1. Lấy cửa sổ cha
+                Window parentWindow = SwingUtilities.getWindowAncestor(this);
+                JFrame parentFrame = (parentWindow instanceof JFrame) ? (JFrame) parentWindow : null;
+                // 2. Khởi tạo EditUser JPanel và truyền tham chiếu AllUser (this) và user cần chỉnh sửa
+                JPanel editUserPanel;
+                try {
+                    // Giả định constructor của EditUser nhận (AllUser, Users) làm đối số
+                    Class<?> editUserClass = Class.forName("com.ra.View.user.EditUser");
+                    Constructor<?> constructor = editUserClass.getConstructor(AllUser.class, Users.class);
+                    editUserPanel = (JPanel) constructor.newInstance(this, user);
+                } catch (ClassNotFoundException e) {
+                    // Xử lý trường hợp không tìm thấy lớp EditUser
+                    JOptionPane.showMessageDialog(this, "Lớp EditUser không tìm thấy. Đảm bảo EditUser.java đã tồn tại và nằm trong package com.ra.View.user.", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
+                    logger.log(java.util.logging.Level.SEVERE, "Lỗi khi khởi tạo EditUser", e);
+                    return;
+                } catch (NoSuchMethodException e) {
+                    // Xử lý trường hợp không tìm thấy constructor EditUser(AllUser, Users)
+                    JOptionPane.showMessageDialog(this, "Lớp EditUser cần có constructor EditUser(AllUser parentPanel, Users user).", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
+                    logger.log(java.util.logging.Level.SEVERE, "Lỗi Constructor EditUser", e);
+                    return;
+                }
+            }
+        } catch (NoClassDefFoundError e) {
+            // Xử lý trường hợp quên import hoặc EditUser chưa compile
+            JOptionPane.showMessageDialog(this, "Lỗi: Không tìm thấy lớp EditUser. Vui lòng đảm bảo EditUser.java đã được import và compile thành công.", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
+            logger.log(java.util.logging.Level.SEVERE, "Lỗi ClassNotFound cho EditUser", e);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "ユーザーの取得中にエラーが発生しました。\n" + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
+            logger.log(java.util.logging.Level.SEVERE, "Lỗi khi lấy ID user để Edit", e);
+        }
+
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnDeleteActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        int row = tbAllUser.getSelectedRow();
+
+        if (row < 0 || row >= userIds.size()) {
+            JOptionPane.showMessageDialog(this, "ユーザーを選択してください！");
+            return;
+        }
+
+        try {
+            Integer id = userIds.get(row);
+
+            Users u = userController.findById(id);
+
+            if (u == null) {
+                JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
+                return;
+            }
+
             int confirm = JOptionPane.showConfirmDialog(
                     this,
                     "このユーザーを削除しますか？",
@@ -315,59 +490,28 @@ public class AllUser extends javax.swing.JFrame {
             );
 
             if (confirm == JOptionPane.YES_OPTION) {
-                // Xóa user
                 userController.deleteUser(id);
 
-                // Load lại bảng
                 loadUserTable();
 
                 JOptionPane.showMessageDialog(this, "削除しました"); // Đã xóa
             }
 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "ID không hợp lệ");
-            e.printStackTrace();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Xảy ra lỗi khi xóa user");
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Xảy ra lỗi khi xóa user: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
+            logger.log(java.util.logging.Level.SEVERE, "Lỗi khi xóa user", e);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AllUser().setVisible(true));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdduser;
-    private javax.swing.JButton btnAlluser;
-    private javax.swing.JButton btnDelete;
-    private javax.swing.JButton btnEdit;
-    private javax.swing.JButton btnSearch;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JPanel pnlAllUser;
-    private javax.swing.JScrollPane scrollTable;
-    private javax.swing.JTable tbAllUser;
-    private javax.swing.JTextField txtSearch;
+    private JButton btnAdduser;
+    private JButton btnAlluser;
+    private JButton btnDelete;
+    private JButton btnEdit;
+    private JButton btnSearch;
+    private JScrollPane scrollTable;
+    private JTable tbAllUser;
+    private JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

@@ -2,7 +2,6 @@ package com.ra.DTO.request;
 
 import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Tasks;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

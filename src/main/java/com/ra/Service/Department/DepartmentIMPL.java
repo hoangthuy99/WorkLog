@@ -32,7 +32,7 @@ public class DepartmentIMPL implements DepartmentService {
 
     @Override
     public Optional<Department> findFindById(int id) {
-        return departmentDAO.findFindById(id);
+        return departmentDAO.findFindByIdFetchAll(id);
     }
 
     @Override

@@ -7,8 +7,8 @@ import java.util.List;
 
 public class RecordController {
     private RecordDAO recordDAO;
-    public RecordController(RecordDAO recordDAO) {
-        this.recordDAO = recordDAO;
+    public RecordController() {
+        this.recordDAO = new RecordDAO();
     }
     public WorkRecord createRecord(WorkRecord workRecord) {
         return recordDAO.create(workRecord);
@@ -29,5 +29,11 @@ public class RecordController {
     public List<WorkRecord> searchRecords(String keyword, int page, int size) {
         return recordDAO.search(keyword, page, size);
     }
+    public List<WorkRecord> findByAttendanceId(int attendanceId) {
+        return recordDAO.findByAttendanceId(attendanceId);
+    }
 
+    public Integer sumBreakWorkByAttendanceId(int id) {
+        return recordDAO.sumBreakWorkByAttendanceId(id);
+    }
 }

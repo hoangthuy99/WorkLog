@@ -82,12 +82,16 @@ public class UserController {
         return userDAO.deleteFindById(id);
     }
 
-    public Optional<Users> findById(int id) {
+    public Users findById(int id) {
         return userDAO.findById(id);
     }
 
     public List<Users> findAll(String keyword, int page, int size) {
         return userDAO.findAll(keyword, page, size);
+    }
+
+    public List<Users> findAll() {
+        return userDAO.findAll();
     }
 
     public Optional<Users> findByUsername(String username) {

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,9 +22,12 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String name;
+
     @Column(name = "projectCode", length = 10, unique = true, nullable = false)
     private String projectCode;
+
     // Project - Department (n - n)
     @ManyToMany
     @JoinTable(
@@ -31,7 +35,8 @@ public class Project {
             joinColumns = @JoinColumn(name = "projectId"),
             inverseJoinColumns = @JoinColumn(name = "departmentId")
     )
-    private List<Department> departments;
+    private List<Department> departments = new ArrayList<>();
+
     // Project - Task (n - n)
     @ManyToMany
     @JoinTable(
@@ -39,7 +44,7 @@ public class Project {
             joinColumns = @JoinColumn(name = "projectId"),
             inverseJoinColumns = @JoinColumn(name = "taskId")
     )
-    private List<Tasks> tasks;
+    private List<Tasks> tasks = new ArrayList<>();
 
     private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
@@ -48,10 +53,9 @@ public class Project {
     public static String generateProjectCode() {
         return "PD" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8).toUpperCase();
     }
-
     @Override
     public String toString() {
-        return name;   // hiển thị tên dự án
+        return this.name;
     }
 
 }
