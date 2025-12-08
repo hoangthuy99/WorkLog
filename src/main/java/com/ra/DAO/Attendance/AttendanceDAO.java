@@ -19,16 +19,18 @@ public class AttendanceDAO implements IAttendanceDAO {
     private WorkRecordIMPL workRecordIMPL;
 
     @Override
-    public Attendance findByUsername(String username) {
+    public List<Attendance> findByUsername(String username) {
         //TODO:Tìm kiếm dữ liệu điểm danh theo username
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
+            Session session = HibernateUtil.getSessionFactory().openSession();
             String hql = "FROM Attendance a WHERE a.user.userName = :username";
-            return session.createQuery(hql, Attendance.class)
+            List<Attendance> attendances = session.createQuery(hql, Attendance.class)
                     .setParameter("username", username)
-                    .uniqueResult();
+                    .list();
+            return attendances;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return List.of();
         }
     }
 
@@ -60,13 +62,30 @@ public class AttendanceDAO implements IAttendanceDAO {
         try{
             Session session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
-            session.update(attendance);
+            session.merge(attendance);
             transaction.commit();
             System.out.println("Attendence updated successfully!");
         }catch (Exception e){
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Attendance updateStatus(Attendance attendance) {
+        //TODO:Cập nhật trạng thái dữ liệu điểm danh
+        Transaction transaction = null;
+        try{
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+            session.merge(attendance);
+            transaction.commit();
+            System.out.println("Attendence status updated successfully!");
+        }catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+        }
+        return attendance;
     }
 
     @Override
@@ -123,13 +142,13 @@ public class AttendanceDAO implements IAttendanceDAO {
     }
 
     @Override
-    public List<Attendance> findFindById(int id) {
+    public Attendance findFindById(int id) {
         //TODO:Tìm kiếm dữ liệu điểm danh theo ID
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             String hql = "FROM Attendance a WHERE a.id = :id";
-            List<Attendance> attendance = session.createQuery(hql, Attendance.class)
+            Attendance attendance = session.createQuery(hql, Attendance.class)
                     .setParameter("id", id)
-                    .list();
+                    .uniqueResult();
             return attendance;
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,5 +188,30 @@ public class AttendanceDAO implements IAttendanceDAO {
         }
     }
 
+    @Override
+    public List<Attendance> findByAttendanceMonth(int userId, int month, int year) {
+        return List.of();
+    }
 
+    @Override
+    public List<Attendance> findByUserAndStatus(int userId, int status) {
+        //TODO:Tìm kiếm dữ liệu điểm danh theo userId và status
+        try{
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            String hql = "FROM Attendance a WHERE a.user.id = :userId AND a.status = :status";
+            List<Attendance> attendances = session.createQuery(hql, Attendance.class)
+                    .setParameter("userId", userId)
+                    .setParameter("status", status)
+                    .list();
+            return attendances;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> a6f86596c1a64d3646c97c616c4b79b3c4a7e17c

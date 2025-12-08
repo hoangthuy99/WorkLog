@@ -8,6 +8,7 @@ import com.ra.Model.Entity.Project;
 import com.ra.Model.Entity.Tasks;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ProjectController {
 
@@ -79,5 +80,8 @@ public class ProjectController {
 
     public List<Tasks> getAllTasks() {
         return taskDAO.findAll();
+    }
+    public Optional<Project> findByName(String name) {
+        return projectDAO.findByName(name);
     }
 }

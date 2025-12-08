@@ -170,4 +170,8 @@ public class AddHoliday extends JPanel {
     private JTextField txtDescription;
     private JTextField txtName;
     // End of variables declaration//GEN-END:variables
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> a6f86596c1a64d3646c97c616c4b79b3c4a7e17c

@@ -136,21 +136,14 @@ public class UserDAO implements IUserDAO {
 
 
     @Override
-    public Optional<Users> findById(int id) {
+    public Users findById(int id) {
         //TODO: Tìm kiếm theo ID
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT u FROM Users u " +
-                    "LEFT JOIN FETCH u.tasks " + // load tasks
-                    "LEFT JOIN FETCH u.department " + // load department nếu muốn
-                    "LEFT JOIN FETCH u.role " +       // load role
-                    "WHERE u.id = :id";
-            Users user = session.createQuery(hql, Users.class)
-                    .setParameter("id", id)
-                    .uniqueResult();
-            return Optional.ofNullable(user);
+       try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Users user = session.get(Users.class, id);
+            return user;
         } catch (Exception e) {
             e.printStackTrace();
-            return Optional.empty();
+            return null;
         }
     }
     @Override

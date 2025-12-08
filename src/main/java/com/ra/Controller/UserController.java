@@ -82,7 +82,7 @@ public class UserController {
         return userDAO.deleteFindById(id);
     }
 
-    public Optional<Users> findById(int id) {
+    public Users findById(int id) {
         return userDAO.findById(id);
     }
 
