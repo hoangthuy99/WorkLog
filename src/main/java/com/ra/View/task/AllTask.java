@@ -103,7 +103,7 @@ public class AllTask extends JPanel {
 
         tblAddtask.setModel(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"タスク名", "プロジェクト名", "部署名"}
+                new String[]{"No.","タスク名", "プロジェクト名", "部署名"}
         ));
         scrAddtask.setViewportView(tblAddtask);
 
@@ -158,7 +158,10 @@ public class AllTask extends JPanel {
     private void deleteTask() {
         int row = tblAddtask.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "削除するタスクを選択してください。");
+            JOptionPane.showMessageDialog(this,
+                    "削除するタスクを選択してください。",
+                    "エラー",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -170,10 +173,12 @@ public class AllTask extends JPanel {
             return;
         }
 
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "このタスクを削除しますか？",
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "このタスクを削除しますか？\n",
                 "確認",
-                JOptionPane.YES_NO_OPTION);
+                JOptionPane.YES_NO_OPTION
+        );
 
         if (confirm == JOptionPane.YES_OPTION) {
             taskController.delete(t.get().getId());
@@ -182,10 +187,15 @@ public class AllTask extends JPanel {
         }
     }
 
+
+
     private void loadTable(List<Tasks> list) {
+        // ✅ Thêm cột "No." vào đầu
         DefaultTableModel model = new DefaultTableModel(
-                new String[]{"タスク名", "プロジェクト名", "部署名"}, 0
+                new String[]{"No.", "タスク名", "プロジェクト名", "部署名"}, 0
         );
+
+        int no = 1;
 
         for (Tasks t : list) {
 
@@ -196,11 +206,15 @@ public class AllTask extends JPanel {
                     String.join(", ", t.getDepartments().stream().map(Department::getName).toList());
 
             model.addRow(new Object[]{
-                    t.getName(), projects, deps
+                    no++,
+                    t.getName(),
+                    projects,
+                    deps
             });
         }
 
         tblAddtask.setModel(model);
     }
+
 
 }

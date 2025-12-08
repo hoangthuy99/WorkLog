@@ -15,22 +15,75 @@ public class DepartmentDAO implements IDepartmentDAO {
 
     @Override
     public void create(Department department) {
-        Transaction transaction = null;
+        Transaction tx = null;
+
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
+
+            // 1️⃣ CHECK duplicate name
+            Long countName = session.createQuery(
+                            "SELECT COUNT(d) FROM Department d WHERE d.name = :name AND d.deletedAt IS NULL",
+                            Long.class
+                    ).setParameter("name", department.getName())
+                    .uniqueResult();
+
+            if (countName != null && countName > 0) {
+                throw new RuntimeException("部署名が既に存在しています。");
+            }
+
+            // 2️⃣ CHECK duplicate code
+            Long countCode = session.createQuery(
+                    "SELECT COUNT(d) FROM Department d WHERE d.departmentCode = :code AND d.deletedAt IS NULL",
+                    Long.class
+                    ).setParameter("code", department.getDepartmentCode())
+                    .uniqueResult();
+
+            if (countCode != null && countCode > 0) {
+                throw new RuntimeException("部署コードが既に存在しています。");
+            }
+
+            // 3️⃣ SAVE
+            tx = session.beginTransaction();
             session.save(department);
-            transaction.commit();
-            System.out.println("Department created successfully!");
+            tx.commit();
+
         } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            e.printStackTrace();
+            if (tx != null) tx.rollback();
+            throw e;
         }
     }
+
 
     @Override
     public void update(Department d) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            // CHECK duplicate name (except itself)
+            Long countName = session.createQuery(
+                            "SELECT COUNT(d) FROM Department d WHERE d.name = :name AND d.id <> :id AND d.deletedAt IS NULL",
+                            Long.class
+                    )
+                    .setParameter("name", d.getName())
+                    .setParameter("id", d.getId())
+                    .uniqueResult();
+
+            if (countName != null && countName > 0) {
+                throw new RuntimeException("部署名は既に使用されています。");
+            }
+
+// CHECK duplicate departmentCode (except itself)
+            Long countCode = session.createQuery(
+                            "SELECT COUNT(d) FROM Department d WHERE d.departmentCode = :code AND d.id <> :id AND d.deletedAt IS NULL",
+                            Long.class
+                    )
+                    .setParameter("code", d.getDepartmentCode())
+                    .setParameter("id", d.getId())
+                    .uniqueResult();
+
+            if (countCode != null && countCode > 0) {
+                throw new RuntimeException("部署コードは既に使用されています。");
+            }
+
 
             tx = session.beginTransaction();
 
@@ -91,29 +144,59 @@ public class DepartmentDAO implements IDepartmentDAO {
 
     @Override
     public boolean deleteFindById(int id) {
-        Transaction transaction = null;
+
+        Transaction tx = null;
+
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
             Department dep = session.get(Department.class, id);
             if (dep == null) return false;
 
-            transaction = session.beginTransaction();
-            session.remove(dep);
-            transaction.commit();
+            // 1️⃣ CHECK — Department có User?
+            Long userCount = session.createQuery(
+                    "SELECT COUNT(u) FROM Users u WHERE u.department.id = :id",
+                    Long.class
+            ).setParameter("id", id).uniqueResult();
+
+            if (userCount != null && userCount > 0) {
+                throw new RuntimeException("部署はユーザーに使用されているため、削除できません。");
+            }
+
+            // 2️⃣ CHECK — Department có trong WorkRecord (qua Task)?
+            Long workRecordCount = session.createQuery(
+                    "SELECT COUNT(w) FROM WorkRecord w " +
+                            "JOIN w.task t " +
+                            "JOIN t.departments d " +
+                            "WHERE d.id = :id",
+                    Long.class
+            ).setParameter("id", id).uniqueResult();
+
+            if (workRecordCount != null && workRecordCount > 0) {
+                throw new RuntimeException("部署は勤務記録で使用されているため、削除できません。");
+            }
+
+            // 3️⃣ SOFT DELETE
+            tx = session.beginTransaction();
+            dep.setDeletedAt(java.time.LocalDateTime.now());
+            session.update(dep);
+            tx.commit();
 
             return true;
+
         } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
+            if (tx != null) tx.rollback();
             e.printStackTrace();
+            throw e;
         }
-        return false;
     }
+
 
     @Override
     public List<Department> search(String keyword) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                            "FROM Department d WHERE d.name LIKE :kw",
+                            "FROM Department d WHERE d.deletedAt IS NULL AND d.name LIKE :kw"
+                            ,
                             Department.class)
                     .setParameter("kw", "%" + keyword + "%")
                     .list();
@@ -147,7 +230,11 @@ public class DepartmentDAO implements IDepartmentDAO {
     public List<Department> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            List<Department> list = session.createQuery("FROM Department", Department.class).list();
+            List<Department> list = session.createQuery(
+                    "FROM Department d WHERE d.deletedAt IS NULL",
+                    Department.class
+            ).list();
+
 
             for (Department d : list) {
                 Hibernate.initialize(d.getProjects());
@@ -166,7 +253,7 @@ public class DepartmentDAO implements IDepartmentDAO {
     @Override
     public Optional<Department> findFindByName(String name) {
             try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-                String hql = "FROM Department d WHERE d.name = :name";
+                String hql = "FROM Department d WHERE d.name = :name AND d.deletedAt IS NULL";
                 Department dept = session.createQuery(hql, Department.class)
                         .setParameter("name", name)
                         .uniqueResult();

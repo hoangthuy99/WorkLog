@@ -170,7 +170,12 @@ public class AllUser extends JPanel {
 
         for (int i = 0; i < list.size(); i++) {
             Users u = list.get(i);
-//            data[i][0] = String.valueOf((currentPage - 1) * pageSize + i + 1);
+
+            // ✅ GÁN SỐ THỨ TỰ CHO CỘT "No."
+            // Nếu sau này có phân trang thật thì dùng công thức dưới,
+            // còn hiện tại pageSize = Integer.MAX_VALUE nên vẫn OK.
+            data[i][0] = String.valueOf((currentPage - 1) * pageSize + i + 1);
+            // Hoặc đơn giản: data[i][0] = String.valueOf(i + 1);
 
             data[i][1] = u.getUserCode();
             data[i][2] = u.getFullName();
@@ -183,9 +188,10 @@ public class AllUser extends JPanel {
             userIds.add(u.getId());
         }
 
+
         tbAllUser.setModel(new javax.swing.table.DefaultTableModel(
                 data,
-                new String[]{"STT", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール","タスク"}
+                new String[]{"No.", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール","タスク"}
         ));
         // Gọi lại setColumnWidths để đảm bảo bảng luôn có kích thước đúng sau khi load dữ liệu
         setColumnWidths();
@@ -274,7 +280,7 @@ public class AllUser extends JPanel {
 
         btnDelete.setBackground(UIManager.getColor("Button.background"));
         btnDelete.setText("削除");
-        btnDelete.addActionListener(this::btnDeleteActionPerformed);
+        //btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

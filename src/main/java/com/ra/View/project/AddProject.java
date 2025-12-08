@@ -11,21 +11,15 @@ import java.util.List;
 
 public class AddProject extends JPanel {
 
-    // 1. CHUYỂN KHAI BÁO CONTROLLER VÀ THUỘC TÍNH TRẠNG THÁI
     private final ProjectController projectController = new ProjectController();
-
     private Integer editingProjectId = null;
     private Project editingProject;
 
-    // Sử dụng JComboBox với kiểu đối tượng để phù hợp với logic loadComboBoxes
-    // Trong trường hợp này, tôi sẽ thay đổi kiểu trong phần Variables declaration
-    // để phù hợp với logic Controller.
 
     /** ---------------- ADD MODE (Constructor mặc định) ---------------- */
     public AddProject() {
         initComponents();
         loadComboBoxes();
-        // setTitle không áp dụng cho JPanel
         setupEventHandlers();
     }
 
@@ -35,39 +29,68 @@ public class AddProject extends JPanel {
         initComponents();
         loadComboBoxes();
         loadProjectData();
-        btnCreate.setText("更新"); // Cập nhật text cho nút Create thành Update
+        btnCreate.setText("更新");
         setupEventHandlers();
     }
 
-    // Phương thức gán sự kiện thủ công (vì initComponents() của JPanel thường không gán sẵn)
     private void setupEventHandlers() {
-        // Sự kiện cho nút Hủy
-        btnCancel.addActionListener(this::btnCancelActionPerformed);
-        // Sự kiện cho nút Lưu/Cập nhật
+
         btnCreate.addActionListener(this::btnCreateActionPerformed);
 
-        // Loại bỏ các sự kiện không cần thiết do IDE tự tạo (nếu có)
     }
 
-
-    // 2. CHUYỂN PHƯƠNG THỨC LOAD DATA
 
     /** Load department/task */
     private void loadComboBoxes() {
-        // LƯU Ý: Nếu không dùng kiểu generic đúng, cần ép kiểu khi gọi removeAllItems()
         ((JComboBox<Department>) cbDepartment).removeAllItems();
         ((JComboBox<Tasks>) cbTask).removeAllItems();
 
-        // Sử dụng projectController.getAllDepartments() để lấy danh sách
-        for (Department d : projectController.getAllDepartments())
-            // Thêm đối tượng Department vào JComboBox
-            // LƯU Ý: JComboBox hiển thị đối tượng bằng cách gọi phương thức toString() của đối tượng đó.
-            ((JComboBox<Department>) cbDepartment).addItem(d);
+        // ✅ 1. THÊM OPTION "KHÔNG CHỌN"
+        ((JComboBox<Department>) cbDepartment).addItem(null);
+        ((JComboBox<Tasks>) cbTask).addItem(null);
 
-        for (Tasks t : projectController.getAllTasks())
-            // Thêm đối tượng Tasks vào JComboBox
+        // ✅ 2. LOAD DATA NHƯ CŨ
+        for (Department d : projectController.getAllDepartments()) {
+            ((JComboBox<Department>) cbDepartment).addItem(d);
+        }
+
+        for (Tasks t : projectController.getAllTasks()) {
             ((JComboBox<Tasks>) cbTask).addItem(t);
+        }
+
+        // ✅ 3. RENDERER DEPARTMENT
+        ((JComboBox<Department>) cbDepartment).setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("未選択"); // chưa chọn
+                } else {
+                    setText(((Department) value).getName());
+                }
+                return this;
+            }
+        });
+        ((JComboBox<Tasks>) cbTask).setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    setText("未選択");
+                } else {
+                    setText(((Tasks) value).getName());
+                }
+                return this;
+            }
+        });
     }
+
 
     /** Load data lên form */
     private void loadProjectData() {
@@ -76,14 +99,21 @@ public class AddProject extends JPanel {
 
         txtAddProject.setText(editingProject.getName());
 
-        // Chọn Department
-        if (!editingProject.getDepartments().isEmpty())
+        // Department
+        if (editingProject.getDepartments() != null && !editingProject.getDepartments().isEmpty()) {
             ((JComboBox<Department>) cbDepartment).setSelectedItem(editingProject.getDepartments().get(0));
+        } else {
+            ((JComboBox<Department>) cbDepartment).setSelectedItem(null);
+        }
 
-        // Chọn Tasks
-        if (!editingProject.getTasks().isEmpty())
+        // Tasks
+        if (editingProject.getTasks() != null && !editingProject.getTasks().isEmpty()) {
             ((JComboBox<Tasks>) cbTask).setSelectedItem(editingProject.getTasks().get(0));
+        } else {
+            ((JComboBox<Tasks>) cbTask).setSelectedItem(null);
+        }
     }
+
 
 
     @SuppressWarnings("unchecked")
@@ -98,13 +128,10 @@ public class AddProject extends JPanel {
         // Giữ nguyên khai báo của IDE
         cbDepartment = new JComboBox<>();
         cbTask = new JComboBox<>();
-        btnCancel = new JButton();
         btnCreate = new JButton();
 
-        // ------------------------- ĐỔI MÀU NỀN CHO PANEL CHÍNH (this) -------------------------
         setBackground(new java.awt.Color(255, 255, 255));
 
-        // ------------------------- ĐỔI MÀU NỀN CHO PANEL CON (pnlAddProject) -------------------------
         pnlAddProject.setBackground(new java.awt.Color(255, 255, 255));
 
 
@@ -116,8 +143,6 @@ public class AddProject extends JPanel {
 
         txtAddProject.setText("プロジェクト名");
 
-        btnCancel.setBackground(new java.awt.Color(255, 204, 204));
-        btnCancel.setText("キャンセル");
 
         btnCreate.setBackground(new java.awt.Color(204, 204, 255));
         btnCreate.setText("保存");
@@ -125,9 +150,6 @@ public class AddProject extends JPanel {
         GroupLayout pnlAddProjectLayout = new GroupLayout(pnlAddProject);
         pnlAddProject.setLayout(pnlAddProjectLayout);
 
-        // =========================================================================
-        // CĂN CHỈNH BỐ CỤC HORIZONTAL GROUP
-        // =========================================================================
         pnlAddProjectLayout.setHorizontalGroup(
                 pnlAddProjectLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(pnlAddProjectLayout.createSequentialGroup()
@@ -147,18 +169,13 @@ public class AddProject extends JPanel {
                                                         .addComponent(cbDepartment, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addComponent(cbTask, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                         .addGroup(pnlAddProjectLayout.createSequentialGroup()
-                                                // Nhóm nút Cancel/Create (căn giữa)
                                                 .addGap(120, 120, 120) // Điều chỉnh khoảng cách để căn giữa nhóm nút
-                                                .addComponent(btnCancel)
                                                 .addGap(89, 89, 89)
                                                 .addComponent(btnCreate)))
                                 // Thêm khoảng trống co giãn ở cuối (phải) để căn giữa
                                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        // =========================================================================
-        // CĂN CHỈNH BỐ CỤC VERTICAL GROUP
-        // =========================================================================
         pnlAddProjectLayout.setVerticalGroup(
                 pnlAddProjectLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(pnlAddProjectLayout.createSequentialGroup()
@@ -177,7 +194,6 @@ public class AddProject extends JPanel {
                                         .addComponent(cbTask, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                 .addGap(32, 32, 32)
                                 .addGroup(pnlAddProjectLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(btnCreate, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE))
                                 // Thêm khoảng trống co giãn ở dưới
                                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -197,12 +213,10 @@ public class AddProject extends JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    // Loại bỏ các phương thức ActionPerformed không cần thiết
     private void txtAddProjectActionPerformed(ActionEvent evt) {}
     private void cbDepartmentActionPerformed(ActionEvent evt) {}
 
 
-    // 3. CHUYỂN PHƯƠNG THỨC XỬ LÝ SỰ KIỆN
 
     /** Xử lý sự kiện cho nút Tạo/Cập nhật */
     private void btnCreateActionPerformed(ActionEvent e) {
@@ -210,14 +224,7 @@ public class AddProject extends JPanel {
     }
 
     /** Xử lý sự kiện cho nút Hủy */
-    private void btnCancelActionPerformed(ActionEvent e) {
-        // Trong File 1 (JFrame), logic là dispose().
-        // Trong File 2 (JPanel), cần đóng cửa sổ cha chứa nó.
-        java.awt.Window parentWindow = SwingUtilities.getWindowAncestor(this);
-        if (parentWindow != null) {
-            parentWindow.dispose();
-        }
-    }
+
 
 
     /** Save or update (TỪ FILE GỐC) */
@@ -225,43 +232,55 @@ public class AddProject extends JPanel {
 
         String name = txtAddProject.getText().trim();
         if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "プロジェクト名を入力してください");
+            JOptionPane.showMessageDialog(this,
+                    "プロジェクト名を入力してください。",
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        // Ép kiểu các item từ JComboBox về kiểu dữ liệu gốc (vì JComboBox mặc định dùng String)
         Department dept = (Department) cbDepartment.getSelectedItem();
         Tasks task = (Tasks) cbTask.getSelectedItem();
+        List<Department> departments = (dept != null) ? List.of(dept) : List.of();
+        List<Tasks> tasks = (task != null) ? List.of(task) : List.of();
+        try {
 
-        if (editingProjectId == null) {
-            // Logic CREATE
-            Project newProject = projectController.create(
-                    name,
-                    List.of(dept),
-                    List.of(task)
-            );
+            if (editingProjectId == null) {
 
-            JOptionPane.showMessageDialog(this, "作成完了");
+                projectController.create(
+                        name,
+                        departments,
+                        tasks
+                );
 
-        } else {
-            // Logic UPDATE
-            editingProject.setName(name);
-            editingProject.setDepartments(List.of(dept));
-            editingProject.setTasks(List.of(task));
+                JOptionPane.showMessageDialog(this,
+                        "プロジェクトを作成しました。",
+                        "成功",
+                        JOptionPane.INFORMATION_MESSAGE);
 
-            projectController.update(editingProject);
+            } else {
 
-            JOptionPane.showMessageDialog(this, "更新完了");
+                editingProject.setName(name);
+                editingProject.setDepartments(departments);
+                editingProject.setTasks(tasks);
+
+                projectController.update(editingProject);
+
+                JOptionPane.showMessageDialog(this,
+                        "プロジェクトを更新しました。",
+                        "成功",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        } catch (Exception ex) {
+
+            JOptionPane.showMessageDialog(this,
+                    ex.getMessage(),
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE);
         }
 
     }
-
-
-    // 4. KHAI BÁO BIẾN (Chỉnh sửa để dùng kiểu đối tượng, mặc dù IDE có thể khai báo là <String>)
-    private JButton btnCancel;
     private JButton btnCreate;
-    // Để giữ IDE Generated Code không bị lỗi, ta giữ kiểu generic không xác định hoặc String,
-    // và ép kiểu khi sử dụng trong logic (như đã làm trong loadComboBoxes và saveProject).
     private JComboBox cbDepartment;
     private JComboBox cbTask;
     private JLabel jLabel2;
@@ -269,5 +288,4 @@ public class AddProject extends JPanel {
     private JLabel lbAddProjectName;
     private JPanel pnlAddProject;
     private JTextField txtAddProject;
-    // End of variables declaration//GEN-END:variables
 }

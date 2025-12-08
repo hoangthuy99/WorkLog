@@ -42,7 +42,7 @@ public class AllProject extends JPanel {
                 return;
             }
 
-            int projectId = (int) tblAllProject.getValueAt(row, 3); // cột 3 = hidden id
+            int projectId = (int) tblAllProject.getValueAt(row, 4); // cột 3 = hidden id
             openProjectForm(projectId);
         });
 
@@ -53,41 +53,72 @@ public class AllProject extends JPanel {
                 return;
             }
 
-            int projectId = (int) tblAllProject.getValueAt(row, 3);
+            int projectId = (int) tblAllProject.getValueAt(row, 4);
 
             int confirm = JOptionPane.showConfirmDialog(
                     this,
-                    "本当に削除しますか？",
+                    "このプロジェクトを削除しますか？\n",
                     "確認",
                     JOptionPane.YES_NO_OPTION
             );
 
-            if (confirm == JOptionPane.YES_OPTION) {
+            if (confirm != JOptionPane.YES_OPTION) return;
+
+            try {
                 boolean success = projectController.delete(projectId);
+
                 if (success) {
-                    JOptionPane.showMessageDialog(this, "削除しました");
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "プロジェクトを削除しました。",
+                            "完了",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                     loadTable(projectController.findAll());
                 } else {
-                    JOptionPane.showMessageDialog(this, "削除に失敗しました");
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "削除に失敗しました。",
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+
+            } catch (Exception ex) {
+
+                String msg = ex.getMessage();
+
+                // Nếu lỗi do đang dùng trong WorkRecord
+                if (msg != null && msg.contains("使用されている")) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "このプロジェクトは勤務記録で使用されているため、削除できません。",
+                            "削除エラー",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                } else {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "削除中に予期しないエラーが発生しました。\n" + msg,
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         });
+
     }
 
     private void openProjectForm(Integer projectId) {
-
         JFrame frame = new JFrame(projectId == null ? "プロジェクト作成" : "プロジェクト編集");
-
         if (projectId == null) {
             frame.add(new AddProject());
         } else {
             frame.add(new AddProject(projectId));
         }
-
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosed(java.awt.event.WindowEvent e) {
@@ -100,12 +131,10 @@ public class AllProject extends JPanel {
             }
         });
     }
-
     private void loadTable(List<Project> list) {
-
-        String[] columns = {"プロジェクト名", "部署名", "タスク名", "ID(hidden)"};
+        String[] columns = {"No.", "プロジェクト名", "部署名", "タスク名", "ID(hidden)"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
-
+        int no = 1;
         for (Project p : list) {
 
             // Department names
@@ -116,7 +145,6 @@ public class AllProject extends JPanel {
                         .map(Department::getName)
                         .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
             }
-
             // Task names
             String taskNames = "";
             if (p.getTasks() != null) {
@@ -127,6 +155,7 @@ public class AllProject extends JPanel {
             }
 
             model.addRow(new Object[]{
+                    no++,
                     p.getName(),
                     depNames,
                     taskNames,
@@ -135,23 +164,15 @@ public class AllProject extends JPanel {
         }
 
         tblAllProject.setModel(model);
-        tblAllProject.getColumnModel().getColumn(3).setMinWidth(0);
-        tblAllProject.getColumnModel().getColumn(3).setMaxWidth(0);
+        tblAllProject.getColumnModel().getColumn(4).setMinWidth(0);
+        tblAllProject.getColumnModel().getColumn(4).setMaxWidth(0);
     }
-
-    // ================================================================
-    // UI – APPLY CENTER LAYOUT (giữ nguyên code của bạn)
-    // ================================================================
     private void applyCenteredLayout() {
-
         contentPanel = new JPanel();
         contentPanel.setBackground(new Color(255, 255, 255));
-
         GroupLayout contentLayout = new GroupLayout(contentPanel);
         contentPanel.setLayout(contentLayout);
-
         this.removeAll();
-
         contentPanel.add(txtProject);
         contentPanel.add(btnSearch);
         contentPanel.add(btnAll);
@@ -207,21 +228,16 @@ public class AllProject extends JPanel {
 
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.CENTER;
-
         this.add(contentPanel, gbc);
         this.revalidate();
         this.repaint();
     }
 
-    // ================================================================
-    // INIT COMPONENT (giữ nguyên)
-    // ================================================================
     private JTextField txtProject;
     private JButton btnSearch;
     private JButton btnAll;
@@ -235,7 +251,7 @@ public class AllProject extends JPanel {
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
-        txtProject = new JTextField("キーワード入力");
+        txtProject = new JTextField();
         btnSearch = new JButton("検索");
         btnAll = new JButton("全て");
         btnCreateDepartment = new JButton("プロジェクト作成");

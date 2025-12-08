@@ -146,6 +146,8 @@ public class ReportSummaryPanel extends JPanel {
         tableScrollPane.setPreferredSize(new Dimension(780, 400));
 
         add(tableScrollPane, BorderLayout.CENTER);
+        loadDeptData();
+
     }
 
     private void createTableModels() {
@@ -202,7 +204,7 @@ public class ReportSummaryPanel extends JPanel {
         // Left side - Export and Bulk Delete button
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         exportCsvButton = new JButton("CSV出力");
-        bulkDeleteButton = new JButton("一括削除"); // Nút Xóa hàng loạt
+        bulkDeleteButton = new JButton("削除");
 
         exportCsvButton.setFont(font);
         bulkDeleteButton.setFont(font);
@@ -289,11 +291,6 @@ public class ReportSummaryPanel extends JPanel {
         }
     }
 
-
-    // =========================================================================
-    //  --- BULK DELETE LOGIC ---
-    // =========================================================================
-
     /**
      * Handles the bulk delete action for all selected rows.
      */
@@ -314,16 +311,16 @@ public class ReportSummaryPanel extends JPanel {
 
         if (selectedRows.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                    "Vui lòng chọn ít nhất một hàng để xóa.",
-                    "Lỗi Xóa",
+                    "削除する行を選択してください。",
+                    "削除エラー",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         // 2. Confirmation Dialog
         int confirm = JOptionPane.showConfirmDialog(this,
-                "Bạn có chắc chắn muốn XÓA (" + selectedRows.size() + ") hàng đã chọn không?",
-                "Xác Nhận Xóa Hàng Loạt",
+                "選択された " + selectedRows.size() + " 行を本当に削除してもよろしいですか？",
+                "一括削除確認",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
 
@@ -333,15 +330,11 @@ public class ReportSummaryPanel extends JPanel {
             selectedRows.stream().sorted((a, b) -> b.compareTo(a)).forEach(model::removeRow);
 
             JOptionPane.showMessageDialog(this,
-                    "Đã xóa thành công " + selectedRows.size() + " hàng.",
-                    "Thành công",
+                    selectedRows.size() + " 行を削除しました。",
+                    "完了",
                     JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
-    // =========================================================================
-    //  --- CUSTOM TABLE CELL COMPONENTS (Renderer & Editor) ---
-    // =========================================================================
 
     /**
      * Renderer for the Checkbox in the table header (Select All).
@@ -390,10 +383,6 @@ public class ReportSummaryPanel extends JPanel {
             table.getTableHeader().repaint();
         }
     }
-
-    // =========================================================================
-    //  --- PLACEHOLDER LOGIC ---
-    // =========================================================================
 
     /**
      * Main method for testing the UI
