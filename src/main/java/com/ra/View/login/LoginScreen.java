@@ -132,7 +132,6 @@ public class LoginScreen extends javax.swing.JFrame {
         }
     }
 
-    // ======================== LOGIN LOGIC ======================== //
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {
 
