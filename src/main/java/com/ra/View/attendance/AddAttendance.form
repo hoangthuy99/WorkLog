@@ -164,6 +164,7 @@
                           <Component id="fmCheckOut" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lbLatestendtime" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="rbHoliday" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
