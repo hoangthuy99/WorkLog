@@ -7,13 +7,17 @@ import java.util.Optional;
 
 public interface IHolidayDAO {
     Holidays create(Holidays holiday);
+
     Holidays update(Holidays holiday);
+
     boolean deleteFindById(int id);
+
     List<Holidays> findAll();
+
     Optional<Holidays> findById(int id);
+
     Optional<Holidays> findByName(String name);
+
     List<Holidays> findByDate(String dateHoliday);
 
-
 }
-

@@ -39,7 +39,7 @@ public class AttendanceDAO implements IAttendanceDAO {
         // TODO:Tạo mới dữ liệu điểm danh
         Transaction transaction = null;
         //TODO: try-with-resources để tự động đóng session
-        try{
+        try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
             // Thêm attendenceRequest vào DB
@@ -47,8 +47,8 @@ public class AttendanceDAO implements IAttendanceDAO {
             // Commit transaction
             transaction.commit();
             System.out.println("Attendence created successfully!");
-        }catch (Exception e){
-            if (transaction != null){
+        } catch (Exception e) {
+            if (transaction != null) {
                 transaction.rollback(); // rollback nếu lỗi
             }
             e.printStackTrace();
@@ -59,13 +59,13 @@ public class AttendanceDAO implements IAttendanceDAO {
     public void update(Attendance attendance) {
         //ToDO:Cập nhật dữ liệu điểm danh
         Transaction transaction = null;
-        try{
+        try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
             session.merge(attendance);
             transaction.commit();
             System.out.println("Attendence updated successfully!");
-        }catch (Exception e){
+        } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
@@ -75,13 +75,13 @@ public class AttendanceDAO implements IAttendanceDAO {
     public Attendance updateStatus(Attendance attendance) {
         //TODO:Cập nhật trạng thái dữ liệu điểm danh
         Transaction transaction = null;
-        try{
+        try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
             session.merge(attendance);
             transaction.commit();
             System.out.println("Attendence status updated successfully!");
-        }catch (Exception e) {
+        } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
@@ -182,7 +182,7 @@ public class AttendanceDAO implements IAttendanceDAO {
                     .setParameter("workDate", today)
                     .list();
             return attendances;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
@@ -196,7 +196,7 @@ public class AttendanceDAO implements IAttendanceDAO {
     @Override
     public List<Attendance> findByUserAndStatus(int userId, int status) {
         //TODO:Tìm kiếm dữ liệu điểm danh theo userId và status
-        try{
+        try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             String hql = "FROM Attendance a WHERE a.user.id = :userId AND a.status = :status";
             List<Attendance> attendances = session.createQuery(hql, Attendance.class)
@@ -204,11 +204,10 @@ public class AttendanceDAO implements IAttendanceDAO {
                     .setParameter("status", status)
                     .list();
             return attendances;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
     }
 
 }
-

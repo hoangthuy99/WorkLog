@@ -9,4 +9,3 @@ public class WorkRecordIMPL implements WorkRecordService {
         return null;
     }
 }
-
