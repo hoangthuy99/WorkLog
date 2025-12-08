@@ -204,7 +204,7 @@ public class ReportSummaryPanel extends JPanel {
         // Left side - Export and Bulk Delete button
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         exportCsvButton = new JButton("CSV出力");
-        bulkDeleteButton = new JButton("一括削除"); // Nút Xóa hàng loạt
+        bulkDeleteButton = new JButton("削除");
 
         exportCsvButton.setFont(font);
         bulkDeleteButton.setFont(font);

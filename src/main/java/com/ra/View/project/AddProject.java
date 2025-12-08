@@ -11,21 +11,15 @@ import java.util.List;
 
 public class AddProject extends JPanel {
 
-    // 1. CHUYỂN KHAI BÁO CONTROLLER VÀ THUỘC TÍNH TRẠNG THÁI
     private final ProjectController projectController = new ProjectController();
-
     private Integer editingProjectId = null;
     private Project editingProject;
 
-    // Sử dụng JComboBox với kiểu đối tượng để phù hợp với logic loadComboBoxes
-    // Trong trường hợp này, tôi sẽ thay đổi kiểu trong phần Variables declaration
-    // để phù hợp với logic Controller.
 
     /** ---------------- ADD MODE (Constructor mặc định) ---------------- */
     public AddProject() {
         initComponents();
         loadComboBoxes();
-        // setTitle không áp dụng cho JPanel
         setupEventHandlers();
     }
 
@@ -35,21 +29,16 @@ public class AddProject extends JPanel {
         initComponents();
         loadComboBoxes();
         loadProjectData();
-        btnCreate.setText("更新"); // Cập nhật text cho nút Create thành Update
+        btnCreate.setText("更新");
         setupEventHandlers();
     }
 
-    // Phương thức gán sự kiện thủ công (vì initComponents() của JPanel thường không gán sẵn)
     private void setupEventHandlers() {
 
-        // Sự kiện cho nút Lưu/Cập nhật
         btnCreate.addActionListener(this::btnCreateActionPerformed);
 
-        // Loại bỏ các sự kiện không cần thiết do IDE tự tạo (nếu có)
     }
 
-
-    // 2. CHUYỂN PHƯƠNG THỨC LOAD DATA
 
     /** Load department/task */
     private void loadComboBoxes() {
@@ -85,8 +74,6 @@ public class AddProject extends JPanel {
                 return this;
             }
         });
-
-        // ✅ 4. RENDERER TASKS
         ((JComboBox<Tasks>) cbTask).setRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(
@@ -116,14 +103,14 @@ public class AddProject extends JPanel {
         if (editingProject.getDepartments() != null && !editingProject.getDepartments().isEmpty()) {
             ((JComboBox<Department>) cbDepartment).setSelectedItem(editingProject.getDepartments().get(0));
         } else {
-            ((JComboBox<Department>) cbDepartment).setSelectedItem(null); // ✅ hiển thị "未選択"
+            ((JComboBox<Department>) cbDepartment).setSelectedItem(null);
         }
 
         // Tasks
         if (editingProject.getTasks() != null && !editingProject.getTasks().isEmpty()) {
             ((JComboBox<Tasks>) cbTask).setSelectedItem(editingProject.getTasks().get(0));
         } else {
-            ((JComboBox<Tasks>) cbTask).setSelectedItem(null); // ✅ hiển thị "未選択"
+            ((JComboBox<Tasks>) cbTask).setSelectedItem(null);
         }
     }
 
@@ -143,10 +130,8 @@ public class AddProject extends JPanel {
         cbTask = new JComboBox<>();
         btnCreate = new JButton();
 
-        // ------------------------- ĐỔI MÀU NỀN CHO PANEL CHÍNH (this) -------------------------
         setBackground(new java.awt.Color(255, 255, 255));
 
-        // ------------------------- ĐỔI MÀU NỀN CHO PANEL CON (pnlAddProject) -------------------------
         pnlAddProject.setBackground(new java.awt.Color(255, 255, 255));
 
 
@@ -165,9 +150,6 @@ public class AddProject extends JPanel {
         GroupLayout pnlAddProjectLayout = new GroupLayout(pnlAddProject);
         pnlAddProject.setLayout(pnlAddProjectLayout);
 
-        // =========================================================================
-        // CĂN CHỈNH BỐ CỤC HORIZONTAL GROUP
-        // =========================================================================
         pnlAddProjectLayout.setHorizontalGroup(
                 pnlAddProjectLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(pnlAddProjectLayout.createSequentialGroup()
@@ -194,9 +176,6 @@ public class AddProject extends JPanel {
                                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        // =========================================================================
-        // CĂN CHỈNH BỐ CỤC VERTICAL GROUP
-        // =========================================================================
         pnlAddProjectLayout.setVerticalGroup(
                 pnlAddProjectLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(pnlAddProjectLayout.createSequentialGroup()
@@ -238,7 +217,6 @@ public class AddProject extends JPanel {
     private void cbDepartmentActionPerformed(ActionEvent evt) {}
 
 
-    // 3. CHUYỂN PHƯƠNG THỨC XỬ LÝ SỰ KIỆN
 
     /** Xử lý sự kiện cho nút Tạo/Cập nhật */
     private void btnCreateActionPerformed(ActionEvent e) {

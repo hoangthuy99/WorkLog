@@ -6,33 +6,24 @@ import com.ra.Controller.TaskController;
 import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Project;
 import com.ra.Model.Entity.Tasks;
-import com.ra.View.dashboard.MainDashboard;
-import com.ra.View.report.ReportSummaryPanel;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-
 public class AddDepartment extends JPanel {
 
     public interface DepartmentListener {
         void onDepartmentOperationComplete();
     }
-
     private DepartmentListener listener;
     private Integer editingDepartmentId;
     private Department editingDepartment;
     private Window parentWindow;
-
     private DepartmentController departmentController = new DepartmentController();
     private ProjectController projectController = new ProjectController();
     private TaskController taskController = new TaskController();
-
     private List<Project> projectList = new ArrayList<>();
     private List<Tasks> taskList = new ArrayList<>();
-
     private JPanel contentPanel;
 
     // COMPONENTS
@@ -162,7 +153,7 @@ public class AddDepartment extends JPanel {
         String depName = txtDepartmentname.getText().trim();
 
         if (depName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "部署名は空にできません！", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "部署名は空にできません！", "エラー", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -226,7 +217,6 @@ public class AddDepartment extends JPanel {
         }
     }
 
-    // -------------------- UI LAYOUT --------------------
     private void applyCenteredLayout() {
         contentPanel = new JPanel();
         contentPanel.setBackground(Color.WHITE);
@@ -287,10 +277,6 @@ public class AddDepartment extends JPanel {
         this.add(contentPanel, gbc);
     }
 
-
-
-
-    // -------------------- INIT COMPONENTS --------------------
     private void initComponents() {
         lbDepartmentname = new JLabel("部署名");
         lbProjectname = new JLabel("プロジェクト名");
