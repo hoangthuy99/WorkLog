@@ -74,20 +74,27 @@ public class AttendanceDAO implements IAttendanceDAO {
 
     @Override
     public Attendance updateStatus(Attendance attendance) {
-        //TODO:Cập nhật trạng thái dữ liệu điểm danh
         Transaction transaction = null;
-        try {
-            Session session = HibernateUtil.getSessionFactory().openSession();
+        Attendance managed = null;
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.merge(attendance);
+
+            // merge trả về entity đã được quản lý bởi Hibernate
+            managed = (Attendance) session.merge(attendance);
+
             transaction.commit();
-            System.out.println("Attendence status updated successfully!");
+            System.out.println("Attendance status updated successfully!");
+
+            return managed; // trả về bản đã merge
+
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
+            return null; // cho caller biết là failed
         }
-        return attendance;
     }
+
 
     @Override
     public boolean delete(int id) {
@@ -143,7 +150,7 @@ public class AttendanceDAO implements IAttendanceDAO {
     }
 
     @Override
-    public Attendance findFindById(int id) {
+    public Attendance findById(int id) {
         //TODO:Tìm kiếm dữ liệu điểm danh theo ID
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             String hql = "FROM Attendance a WHERE a.id = :id";

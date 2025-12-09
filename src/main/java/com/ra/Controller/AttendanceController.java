@@ -53,7 +53,7 @@ public class AttendanceController {
 
     // Find by ID
     public Attendance findById(int id) {
-        return attendanceDAO.findFindById(id);
+        return attendanceDAO.findById(id);
     }
 
     public Attendance updateStatus(Attendance attendance) {
@@ -83,5 +83,5 @@ public class AttendanceController {
     public List<Attendance> findByDepartmentAndMonth(String departmentName, int month, int year) {
         return attendanceDAO.findByDepartmentAndMonth(departmentName, month, year);
     }
-    
+
 }

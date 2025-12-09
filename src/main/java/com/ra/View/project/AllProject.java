@@ -254,7 +254,7 @@ public class AllProject extends JPanel {
         txtProject = new JTextField();
         btnSearch = new JButton("検索");
         btnAll = new JButton("全て");
-        btnCreateDepartment = new JButton("プロジェクトの作成が完了しました");
+        btnCreateDepartment = new JButton("新プロジェクト作成");
 
         jScrollPane1 = new JScrollPane();
         tblAllProject = new JTable();

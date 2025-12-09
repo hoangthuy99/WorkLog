@@ -90,15 +90,20 @@ public class AttendanceMonth extends javax.swing.JPanel {
         }
     }
     private void adjustColumnWidths() {
-        // Điều chỉnh độ rộng từng cột
-        tblAttendanceDate.getColumnModel().getColumn(0).setPreferredWidth(50);  // No
-        tblAttendanceDate.getColumnModel().getColumn(1).setPreferredWidth(80);  // 曜日
-        tblAttendanceDate.getColumnModel().getColumn(2).setPreferredWidth(80);  // 開始
-        tblAttendanceDate.getColumnModel().getColumn(3).setPreferredWidth(80);  // 終了
-        tblAttendanceDate.getColumnModel().getColumn(4).setPreferredWidth(80);  // 休憩
-        tblAttendanceDate.getColumnModel().getColumn(5).setPreferredWidth(80);  // 残業
-        tblAttendanceDate.getColumnModel().getColumn(6).setPreferredWidth(100); // 状態
+        // 0 = ID (ẩn), 1 = No, 2 = 社員名 ...
+        if (tblAttendanceDate.getColumnCount() < 10) return;
+
+        tblAttendanceDate.getColumnModel().getColumn(1).setPreferredWidth(50);   // No
+        tblAttendanceDate.getColumnModel().getColumn(2).setPreferredWidth(120);  // 社員名
+        tblAttendanceDate.getColumnModel().getColumn(3).setPreferredWidth(60);   // 曜日
+        tblAttendanceDate.getColumnModel().getColumn(4).setPreferredWidth(80);   // 開始
+        tblAttendanceDate.getColumnModel().getColumn(5).setPreferredWidth(80);   // 終了
+        tblAttendanceDate.getColumnModel().getColumn(6).setPreferredWidth(100);  // 勤務時間
+        tblAttendanceDate.getColumnModel().getColumn(7).setPreferredWidth(80);   // 休憩
+        tblAttendanceDate.getColumnModel().getColumn(8).setPreferredWidth(80);   // 残業
+        tblAttendanceDate.getColumnModel().getColumn(9).setPreferredWidth(100);  // 状態
     }
+
     private void centerTableColumns(JTable table) {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -279,13 +284,18 @@ public class AttendanceMonth extends javax.swing.JPanel {
                 Component c = super.getTableCellRendererComponent(table, value,
                         isSelected, hasFocus, row, column);
 
-                // Kiểm tra nếu là dòng tổng kết
-                String employeeName = (String) table.getValueAt(row, 1);
+                // Cột 2 = 社員名 (sau khi thêm ID,No)
+                String employeeName = null;
+                Object val = table.getValueAt(row, 2);
+                if (val != null) {
+                    employeeName = val.toString();
+                }
+
                 if (employeeName != null && employeeName.contains("合計")) {
-                    c.setBackground(new Color(220, 240, 255)); // Màu xanh nhạt
+                    c.setBackground(new Color(220, 240, 255)); // xanh nhạt
                     c.setFont(c.getFont().deriveFont(Font.BOLD));
                 } else if (employeeName != null && employeeName.equals("総合計")) {
-                    c.setBackground(new Color(255, 240, 220)); // Màu cam nhạt
+                    c.setBackground(new Color(255, 240, 220)); // cam nhạt
                     c.setFont(c.getFont().deriveFont(Font.BOLD));
                 } else {
                     c.setBackground(Color.WHITE);
@@ -296,6 +306,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
             }
         });
     }
+
     private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
         // TODO add your handling code here:
         int row = tblAttendanceDate.getSelectedRow();
@@ -372,159 +383,151 @@ public class AttendanceMonth extends javax.swing.JPanel {
     }
 
     private void btnSearchMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchMonthActionPerformed
-        // TODO add your handling code here:
-            try {
-                // Lấy tháng và năm
-                int month = cbMonth.getMonth() + 1;
-                int year = cbYear.getYear();
+        try {
+            // Lấy tháng và năm
+            int month = cbMonth.getMonth() + 1;
+            int year = cbYear.getYear();
 
-                System.out.println("Searching for month: " + month + "/" + year);
+            System.out.println("Searching for month: " + month + "/" + year);
 
-                // Tạo table model với đúng số cột
-                String[] columns = {"No", "社員名", "曜日", "開始", "終了", "勤務時間", "休憩", "残業", "状態"};
-                DefaultTableModel model = new DefaultTableModel(columns, 0) {
-                    @Override
-                    public boolean isCellEditable(int row, int column) {
-                        return false;
-                    }
-
-                    @Override
-                    public Class<?> getColumnClass(int columnIndex) {
-                        if (columnIndex == 0) return Integer.class; // No
-                        return String.class;
-                    }
-                };
-
-                // Lấy danh sách user
-                List<Users> users = getUsersBasedOnRole();
-
-                if (users == null || users.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "ユーザーが見つかりません。");
-                    return;
+            // Tạo table model với cột có ID (ẩn)
+            String[] columns = {"ID", "No", "社員名", "曜日", "開始", "終了", "勤務時間", "休憩", "残業", "状態"};
+            DefaultTableModel model = new DefaultTableModel(columns, 0) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
                 }
 
-                int index = 1;
-                int totalWorkMinutes = 0;
-                int totalOvertimeMinutes = 0;
-
-                // Duyệt qua từng user
-                for (Users user : users) {
-                    System.out.println("Processing user: " + user.getUserName());
-
-                    // Lấy attendance của user trong tháng
-                    List<Attendance> attendances = attendanceController.findByAttendanceMonth(
-                            user.getId(), month, year);
-
-                    System.out.println("Found " + (attendances != null ? attendances.size() : 0) + " attendances");
-
-                    if (attendances != null && !attendances.isEmpty()) {
-                        // Tính tổng cho user này
-                        int userWorkMinutes = 0;
-                        int userOvertimeMinutes = 0;
-
-                        for (Attendance att : attendances) {
-                            System.out.println("Processing attendance ID: " + att.getId());
-                            System.out.println("Work date: " + att.getWorkDate() +
-                                    ", Type: " + (att.getWorkDate() != null ? att.getWorkDate().getClass().getName() : "null"));
-
-                            // Tính toán giá trị
-                            String dayOfWeek = getJapaneseDayOfWeek(att.getWorkDate());
-
-                            // Format thời gian
-                            String startTime = att.getCheckInTime() != null ?
-                                    att.getCheckInTime().toString().substring(0, 5) : ""; // HH:mm
-                            String endTime = att.getCheckOutTime() != null ?
-                                    att.getCheckOutTime().toString().substring(0, 5) : "";
-
-                            String workTime = formatMinutesToHours(att.getTotalMinutes());
-                            String breakTime = att.getBreakMinutes() + "分";
-                            String overtime = att.getOvertimeMinutes() + "分";
-                            String status = getStatusJapanese(att.getStatus());
-
-                            // Thêm vào bảng
-                            model.addRow(new Object[]{
-                                    index++,                  // No
-                                    user.getUserName(),       // 社員名
-                                    dayOfWeek,                // 曜日
-                                    startTime,                // 開始
-                                    endTime,                  // 終了
-                                    workTime,                 // 勤務時間
-                                    breakTime,                // 休憩
-                                    overtime,                 // 残業
-                                    status                    // 状態
-                            });
-
-                            // Cộng dồn tổng
-                            userWorkMinutes += att.getTotalMinutes();
-                            userOvertimeMinutes += att.getOvertimeMinutes();
-                        }
-
-                        // Thêm dòng tổng kết cho user (nếu có dữ liệu)
-                        if (!attendances.isEmpty()) {
-                            model.addRow(new Object[]{
-                                    "",
-                                    user.getUserName() + " 合計",
-                                    "",
-                                    "",
-                                    "",
-                                    formatMinutesToHours(userWorkMinutes),
-                                    "",
-                                    formatMinutesToHours(userOvertimeMinutes),
-                                    ""
-                            });
-
-                            totalWorkMinutes += userWorkMinutes;
-                            totalOvertimeMinutes += userOvertimeMinutes;
-                        }
-                    }
+                @Override
+                public Class<?> getColumnClass(int columnIndex) {
+                    if (columnIndex == 0 || columnIndex == 1) return Integer.class; // ID, No
+                    return String.class;
                 }
+            };
 
-                // Hiển thị lên bảng
-                tblAttendanceDate.setModel(model);
-                centerTableColumns(tblAttendanceDate);
+            // Lấy danh sách user theo role (manager thấy tất cả, staff chỉ thấy mình)
+            List<Users> users = getUsersBasedOnRole();
 
-                // Thêm dòng tổng kết cuối cùng
-                if (model.getRowCount() > 0) {
-                    model.addRow(new Object[]{
-                            "",
-                            "総合計",
-                            "",
-                            "",
-                            "",
-                            formatMinutesToHours(totalWorkMinutes),
-                            "",
-                            formatMinutesToHours(totalOvertimeMinutes),
-                            "全 " + (index - 1) + " 件"
-                    });
-                }
-
-                // Điều chỉnh giao diện
-                adjustColumnWidths();
-
-                // Áp dụng màu cho các dòng tổng kết
-                colorSummaryRows();
-
-
-                // Hiển thị thông báo
-                if (index == 1) {
-                    JOptionPane.showMessageDialog(this,
-                            month + "月 " + year + "年の勤怠データはありません。",
-                            "情報",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-
-                System.out.println("Search completed. Total records: " + (index - 1));
-
-            } catch (Exception e) {
-                System.err.println("Error in btnSearchMonthActionPerformed:");
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this,
-                        "検索中にエラーが発生しました: " + e.getMessage(),
-                        "エラー",
-                        JOptionPane.ERROR_MESSAGE);
+            if (users == null || users.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "ユーザーが見つかりません。");
+                return;
             }
 
+            int index = 1;
+            int totalWorkMinutes = 0;
+            int totalOvertimeMinutes = 0;
+
+            // Duyệt qua từng user
+            for (Users user : users) {
+                System.out.println("Processing user: " + user.getUserName());
+
+                // Lấy attendance của user trong tháng
+                List<Attendance> attendances = attendanceController.findByAttendanceMonth(
+                        user.getId(), month, year);
+
+                System.out.println("Found " + (attendances != null ? attendances.size() : 0) + " attendances");
+
+                if (attendances != null && !attendances.isEmpty()) {
+                    // Tính tổng cho user này
+                    int userWorkMinutes = 0;
+                    int userOvertimeMinutes = 0;
+
+                    for (Attendance att : attendances) {
+                        System.out.println("Processing attendance ID: " + att.getId());
+
+                        String dayOfWeek = getJapaneseDayOfWeek(att.getWorkDate());
+
+                        // Format giờ
+                        String startTime = att.getCheckInTime() != null ?
+                                att.getCheckInTime().toString().substring(0, 5) : ""; // HH:mm
+                        String endTime = att.getCheckOutTime() != null ?
+                                att.getCheckOutTime().toString().substring(0, 5) : "";
+
+                        String workTime = formatMinutesToHours(att.getTotalMinutes());
+                        String breakTime = att.getBreakMinutes() + "分";
+                        String overtime = att.getOvertimeMinutes() + "分";
+                        String status = getStatusJapanese(att.getStatus());
+
+                        // Thêm dòng chi tiết (có ID attendance)
+                        model.addRow(new Object[]{
+                                att.getId(),            // ID (ẩn)
+                                index++,                // No
+                                user.getUserName(),     // 社員名
+                                dayOfWeek,              // 曜日
+                                startTime,              // 開始
+                                endTime,                // 終了
+                                workTime,               // 勤務時間
+                                breakTime,              // 休憩
+                                overtime,               // 残業
+                                status                  // 状態
+                        });
+
+                        userWorkMinutes += att.getTotalMinutes();
+                        userOvertimeMinutes += att.getOvertimeMinutes();
+                    }
+
+                    // Dòng tổng cho từng user
+                    model.addRow(new Object[]{
+                            "",                                // ID
+                            "",                                // No
+                            user.getUserName() + " 合計",      // 社員名
+                            "", "", "",
+                            formatMinutesToHours(userWorkMinutes), // 勤務時間 合計
+                            "",                                // 休憩
+                            formatMinutesToHours(userOvertimeMinutes), // 残業 合計
+                            ""                                 // 状態
+                    });
+
+                    totalWorkMinutes += userWorkMinutes;
+                    totalOvertimeMinutes += userOvertimeMinutes;
+                }
+            }
+
+            // Gán model cho table
+            tblAttendanceDate.setModel(model);
+            centerTableColumns(tblAttendanceDate);
+
+            // Ẩn cột ID
+            tblAttendanceDate.getColumnModel().getColumn(0).setMinWidth(0);
+            tblAttendanceDate.getColumnModel().getColumn(0).setMaxWidth(0);
+            tblAttendanceDate.getColumnModel().getColumn(0).setWidth(0);
+
+            // Dòng tổng cuối cùng (tất cả user)
+            if (model.getRowCount() > 0) {
+                model.addRow(new Object[]{
+                        "",          // ID
+                        "",          // No
+                        "総合計",    // 社員名
+                        "", "", "",
+                        formatMinutesToHours(totalWorkMinutes),   // 勤務時間 総合計
+                        "",
+                        formatMinutesToHours(totalOvertimeMinutes), // 残業 総合計
+                        "全 " + (index - 1) + " 件"
+                });
+            }
+
+            adjustColumnWidths();
+            colorSummaryRows();
+
+            if (index == 1) {
+                JOptionPane.showMessageDialog(this,
+                        month + "月 " + year + "年の勤怠データはありません。",
+                        "情報",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            System.out.println("Search completed. Total records: " + (index - 1));
+
+        } catch (Exception e) {
+            System.err.println("Error in btnSearchMonthActionPerformed:");
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "検索中にエラーが発生しました: " + e.getMessage(),
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnSearchMonthActionPerformed
+//GEN-LAST:event_btnSearchMonthActionPerformed
 
     private void btnSearchUserActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSearchUserActionPerformed
         // TODO add your handling code here:
@@ -607,8 +610,8 @@ public class AttendanceMonth extends javax.swing.JPanel {
             return;
         }
 
-        // Tạo model cho table
-        String[] columns = {"No", "社員名", "部署", "曜日", "開始", "終了",
+        // Tạo model với cột ID
+        String[] columns = {"ID", "No", "社員名", "部署", "曜日", "開始", "終了",
                 "勤務時間", "休憩", "残業", "状態"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
@@ -618,12 +621,12 @@ public class AttendanceMonth extends javax.swing.JPanel {
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 0) return Integer.class;
+                if (columnIndex == 0 || columnIndex == 1) return Integer.class;
                 return String.class;
             }
         };
 
-        // Nhóm attendance theo user để tính tổng
+        // Nhóm theo user
         Map<Users, List<Attendance>> attendanceByUser = attendances.stream()
                 .collect(Collectors.groupingBy(Attendance::getUser));
 
@@ -631,7 +634,6 @@ public class AttendanceMonth extends javax.swing.JPanel {
         int totalWorkMinutes = 0;
         int totalOvertimeMinutes = 0;
 
-        // Hiển thị theo từng user
         for (Map.Entry<Users, List<Attendance>> entry : attendanceByUser.entrySet()) {
             Users user = entry.getKey();
             List<Attendance> userAttendances = entry.getValue();
@@ -639,7 +641,6 @@ public class AttendanceMonth extends javax.swing.JPanel {
             int userWorkMinutes = 0;
             int userOvertimeMinutes = 0;
 
-            // Hiển thị từng attendance của user
             for (Attendance att : userAttendances) {
                 String dayOfWeek = getJapaneseDayOfWeek(att.getWorkDate());
                 String deptName = att.getUser().getDepartment() != null ?
@@ -656,27 +657,28 @@ public class AttendanceMonth extends javax.swing.JPanel {
                 String status = getStatusJapanese(att.getStatus());
 
                 model.addRow(new Object[]{
-                        index++,
-                        user.getUserName(),
-                        deptName,
-                        dayOfWeek,
-                        startTime,
-                        endTime,
-                        workTime,
-                        breakTime,
-                        overtime,
-                        status
+                        att.getId(),           // ID (ẩn)
+                        index++,               // No
+                        user.getUserName(),    // 社員名
+                        deptName,              // 部署
+                        dayOfWeek,             // 曜日
+                        startTime,             // 開始
+                        endTime,               // 終了
+                        workTime,              // 勤務時間
+                        breakTime,             // 休憩
+                        overtime,              // 残業
+                        status                 // 状態
                 });
 
                 userWorkMinutes += att.getTotalMinutes();
                 userOvertimeMinutes += att.getOvertimeMinutes();
             }
 
-            // Thêm dòng tổng kết cho user
+            // Dòng tổng cho user
             model.addRow(new Object[]{
                     "",
-                    user.getUserName() + " 合計",
                     "",
+                    user.getUserName() + " 合計",
                     "",
                     "",
                     "",
@@ -690,22 +692,25 @@ public class AttendanceMonth extends javax.swing.JPanel {
             totalOvertimeMinutes += userOvertimeMinutes;
         }
 
-
-        // Hiển thị lên table
         tblAttendanceDate.setModel(model);
         centerTableColumns(tblAttendanceDate);
+
+        // Ẩn cột ID
+        tblAttendanceDate.getColumnModel().getColumn(0).setMinWidth(0);
+        tblAttendanceDate.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblAttendanceDate.getColumnModel().getColumn(0).setWidth(0);
+
         adjustColumnWidths();
         colorSummaryRows();
 
-        // Hiển thị thông báo
         JOptionPane.showMessageDialog(this,
                 attendances.size() + " 件の勤怠データが見つかりました\n" +
                         "検索条件: " + searchCriteria + "\n" +
                         "期間: " + month + "月 " + year + "年",
                 "検索結果",
                 JOptionPane.INFORMATION_MESSAGE);
+    }
 
-    }//GEN-LAST:event_btnSearchUserActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

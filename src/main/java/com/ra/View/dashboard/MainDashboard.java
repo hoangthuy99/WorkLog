@@ -27,11 +27,6 @@ import com.ra.View.holidays.AllHoliday;
 
 
 
-
-
-// --------------- Import các JPanel mới kết thúc -------------------------
-
-
 import java.time.LocalDate;
 import java.time.ZonedDateTime; // Để lấy thời gian hiện tại
 import java.time.format.DateTimeFormatter; // Để định dạng chuỗi
@@ -44,6 +39,7 @@ import java.awt.event.ActionListener;
 public class MainDashboard extends javax.swing.JFrame {
 
     public Users currentUser;
+    private javax.swing.JPanel currentPanel;
 
     AttendanceController attendanceController;
 
@@ -54,11 +50,8 @@ public class MainDashboard extends javax.swing.JFrame {
         initComponents();
         applyRoleAccess();
         startClock();
-
-
     }
 
-    // 🌟 SỬA PHƯƠNG THỨC applyRoleAccess ĐỂ XỬ LÝ NULL AN TOÀN
     private void applyRoleAccess() {
         int roleId = currentUser.getRole().getId();
 
@@ -94,31 +87,45 @@ public class MainDashboard extends javax.swing.JFrame {
     }
 
 
-    // ---------- Thêm phương thức showPanel -----------------
     public void showPanel(javax.swing.JPanel panel) {
+        if (currentPanel instanceof AddAttendance) {
+            AddAttendance attPanel = (AddAttendance) currentPanel;
 
-        // 1. Xóa tất cả các component hiện có trong Working Area
+            try {
+                if (attPanel.hasUnfinishedAttendance()) {
+                    int choice = JOptionPane.showConfirmDialog(
+                            this,
+                            "本日はまだ退勤していません。\n" +
+                                    "画面を切り替えてもデータ（業務記録・出勤時間）は保存されていますが、\n" +
+                                    "退勤処理を忘れないようご注意ください。\n\n" +
+                                    "このまま画面を切り替えますか？",
+                            "確認",
+                            JOptionPane.YES_NO_OPTION
+                    );
+
+                    if (choice != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
         pnlWorkingArea.removeAll();
-
-        // 2. Thiết lập Layout cho Working Area (quan trọng)
         pnlWorkingArea.setLayout(new java.awt.BorderLayout());
-
-        // 3. Thêm JPanel mới vào Working Area
         pnlWorkingArea.add(panel, java.awt.BorderLayout.CENTER);
-
-        // 4. Cập nhật giao diện để hiển thị Panel mới
         pnlWorkingArea.revalidate();
         pnlWorkingArea.repaint();
+
+        currentPanel = panel;
     }
 
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainDashboard.class.getName());
-
-
-    // 🌟 CONSTRUCTOR MẶC ĐỊNH
     public MainDashboard() {
         this(null); // Gọi constructor chính với User là null để không bị lỗi
     }
-
 
 
     private String getCurrentDateTimeJapan() {
@@ -1205,6 +1212,24 @@ public class MainDashboard extends javax.swing.JFrame {
 
     private void btnLogoutActionPerformed(ActionEvent evt) {
 
+        // 🔹 Nếu đang ở AddAttendance và còn ngày chưa check-out → confirm nhẹ trước
+        if (currentPanel instanceof AddAttendance) {
+            AddAttendance attPanel = (AddAttendance) currentPanel;
+            if (attPanel.hasUnfinishedAttendance()) {
+                int c = JOptionPane.showConfirmDialog(
+                        this,
+                        "本日はまだ退勤していません。\n" +
+                                "ログアウトしてもデータは保存されていますが、\n" +
+                                "退勤処理を忘れないようご注意ください。\n\n" +
+                                "このままログアウトしますか？",
+                        "確認",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (c != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
+        }
         int confirm = JOptionPane.showConfirmDialog(
                 this,
                 "ログアウトしますか？",
@@ -1213,11 +1238,7 @@ public class MainDashboard extends javax.swing.JFrame {
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
-
-            // Đóng Dashboard trước
             this.dispose();
-
-            // Mở lại LoginScreen
             java.awt.EventQueue.invokeLater(() -> {
                 new LoginScreen().setVisible(true);
             });
@@ -1229,25 +1250,9 @@ public class MainDashboard extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new MainDashboard().setVisible(true));
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton UserHeader;
     private javax.swing.JButton btnAddAttendance;
     private javax.swing.JButton btnAddDepartment;

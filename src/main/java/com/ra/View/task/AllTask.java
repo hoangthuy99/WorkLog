@@ -120,7 +120,7 @@ public class AllTask extends JPanel {
     private void openAddForm() {
         JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(this);
 
-        JDialog dialog = new JDialog(parent, "タスク作成", true);
+        JDialog dialog = new JDialog(parent, "新タスク作成", true);
         dialog.setContentPane(new AddTask());
         dialog.pack();
         dialog.setLocationRelativeTo(null);

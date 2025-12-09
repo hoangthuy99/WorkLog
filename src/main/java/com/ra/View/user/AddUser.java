@@ -39,6 +39,7 @@ public class AddUser extends JPanel {
     public AddUser(AllUser parentPanel) {
         initComponents();
         this.parentPanel = parentPanel;
+        txtPassWord.setEchoChar((char) 0);
         listTask.setModel(taskModel);
         listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         listTask.addMouseListener(new MouseAdapter() {

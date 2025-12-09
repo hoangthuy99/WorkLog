@@ -16,7 +16,7 @@ public interface IAttendanceDAO {
     boolean delete(int id);
     List<Attendance> findAll();
     List<Attendance> search(String keyword, int page, int size);
-    Attendance findFindById(int id);
+    Attendance findById(int id);
     List<WorkRecord> findByAttendanceId(int attendanceId);
     List<Attendance> findByUserAndDate(int userId, LocalDate today);
     List<Attendance> findByAttendanceMonth(int userId, int month, int year);

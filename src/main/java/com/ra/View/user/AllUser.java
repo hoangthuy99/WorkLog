@@ -425,11 +425,11 @@ public class AllUser extends JPanel {
             }
         } catch (NoClassDefFoundError e) {
             // Xử lý trường hợp quên import hoặc EditUser chưa compile
-            JOptionPane.showMessageDialog(this, "Lỗi: Không tìm thấy lớp EditUser. Vui lòng đảm bảo EditUser.java đã được import và compile thành công.", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
-            logger.log(java.util.logging.Level.SEVERE, "Lỗi ClassNotFound cho EditUser", e);
+            JOptionPane.showMessageDialog(this, "EditUser クラスが見つかりません。EditUser.java が正しくインポートされ、コンパイルされていることを確認してください。", "エラー", JOptionPane.ERROR_MESSAGE);
+            logger.log(java.util.logging.Level.SEVERE, "EditUser の ClassNotFound エラー", e);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "ユーザーの取得中にエラーが発生しました。\n" + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
-            logger.log(java.util.logging.Level.SEVERE, "Lỗi khi lấy ID user để Edit", e);
+            logger.log(java.util.logging.Level.SEVERE, "ユーザー編集ID取得エラー", e);
         }
 
     }//GEN-LAST:event_btnEditActionPerformed
@@ -468,8 +468,8 @@ public class AllUser extends JPanel {
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Xảy ra lỗi khi xóa user: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
-            logger.log(java.util.logging.Level.SEVERE, "Lỗi khi xóa user", e);
+            JOptionPane.showMessageDialog(this, "ユーザー削除エラー： " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
+            logger.log(java.util.logging.Level.SEVERE, "ユーザー削除エラー", e);
         }
     }
 
