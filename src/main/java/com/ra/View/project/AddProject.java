@@ -14,12 +14,18 @@ public class AddProject extends JPanel {
     private final ProjectController projectController = new ProjectController();
     private Integer editingProjectId = null;
     private Project editingProject;
+    private List<Department> departmentList;
+    private List<Tasks> taskList;
 
+
+    /** ---------------- ADD MODE (Constructor mặc định) ---------------- */
     public AddProject() {
         initComponents();
         loadComboBoxes();
         setupEventHandlers();
     }
+
+    /** ---------------- EDIT MODE (Constructor cho Edit) ---------------- */
     public AddProject(int projectId) {
         this.editingProjectId = projectId;
         initComponents();
@@ -37,22 +43,32 @@ public class AddProject extends JPanel {
 
 
     /** Load department/task */
+    /** Load department/task */
     private void loadComboBoxes() {
-        ((JComboBox<Department>) cbDepartment).removeAllItems();
-        ((JComboBox<Tasks>) cbTask).removeAllItems();
+        JComboBox<Department> cbDept = (JComboBox<Department>) cbDepartment;
+        JComboBox<Tasks> cbTaskBox = (JComboBox<Tasks>) cbTask;
 
-        ((JComboBox<Department>) cbDepartment).addItem(null);
-        ((JComboBox<Tasks>) cbTask).addItem(null);
+        cbDept.removeAllItems();
+        cbTaskBox.removeAllItems();
 
-        for (Department d : projectController.getAllDepartments()) {
-            ((JComboBox<Department>) cbDepartment).addItem(d);
+        // ✅ 1. THÊM OPTION "KHÔNG CHỌN"
+        cbDept.addItem(null);
+        cbTaskBox.addItem(null);
+
+        // ✅ 2. LẤY DATA TỪ CONTROLLER VÀ LƯU LẠI
+        departmentList = projectController.getAllDepartments();
+        taskList = projectController.getAllTasks();
+
+        for (Department d : departmentList) {
+            cbDept.addItem(d);
         }
 
-        for (Tasks t : projectController.getAllTasks()) {
-            ((JComboBox<Tasks>) cbTask).addItem(t);
+        for (Tasks t : taskList) {
+            cbTaskBox.addItem(t);
         }
 
-        ((JComboBox<Department>) cbDepartment).setRenderer(new DefaultListCellRenderer() {
+        // ✅ 3. RENDERER DEPARTMENT
+        cbDept.setRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(
                     JList<?> list, Object value, int index,
@@ -67,7 +83,8 @@ public class AddProject extends JPanel {
                 return this;
             }
         });
-        ((JComboBox<Tasks>) cbTask).setRenderer(new DefaultListCellRenderer() {
+
+        cbTaskBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(
                     JList<?> list, Object value, int index,
@@ -85,6 +102,8 @@ public class AddProject extends JPanel {
     }
 
 
+
+    /** Load data lên form */
     /** Load data lên form */
     private void loadProjectData() {
         editingProject = projectController.findById(editingProjectId);
@@ -92,20 +111,42 @@ public class AddProject extends JPanel {
 
         txtAddProject.setText(editingProject.getName());
 
-        // Department
-        if (editingProject.getDepartments() != null && !editingProject.getDepartments().isEmpty()) {
-            ((JComboBox<Department>) cbDepartment).setSelectedItem(editingProject.getDepartments().get(0));
-        } else {
-            ((JComboBox<Department>) cbDepartment).setSelectedItem(null);
-        }
+        JComboBox<Department> cbDept = (JComboBox<Department>) cbDepartment;
+        JComboBox<Tasks> cbTaskBox = (JComboBox<Tasks>) cbTask;
 
-        // Tasks
-        if (editingProject.getTasks() != null && !editingProject.getTasks().isEmpty()) {
-            ((JComboBox<Tasks>) cbTask).setSelectedItem(editingProject.getTasks().get(0));
-        } else {
-            ((JComboBox<Tasks>) cbTask).setSelectedItem(null);
+        // ===== DEPARTMENT =====
+        Department selectedDept = null;
+        if (editingProject.getDepartments() != null && !editingProject.getDepartments().isEmpty()) {
+            int editDeptId = editingProject.getDepartments().get(0).getId();
+
+            if (departmentList != null) {
+                for (Department d : departmentList) {
+                    if (d.getId() == editDeptId) {
+                        selectedDept = d;
+                        break;
+                    }
+                }
+            }
         }
+        cbDept.setSelectedItem(selectedDept);  // null -> 未選択, != null -> tên dept
+
+        // ===== TASK =====
+        Tasks selectedTask = null;
+        if (editingProject.getTasks() != null && !editingProject.getTasks().isEmpty()) {
+            int editTaskId = editingProject.getTasks().get(0).getId();
+
+            if (taskList != null) {
+                for (Tasks t : taskList) {
+                    if (t.getId() == editTaskId) {
+                        selectedTask = t;
+                        break;
+                    }
+                }
+            }
+        }
+        cbTaskBox.setSelectedItem(selectedTask);  // tương tự
     }
+
 
 
 
@@ -246,7 +287,7 @@ public class AddProject extends JPanel {
                 );
 
                 JOptionPane.showMessageDialog(this,
-                        "プロジェクトの作成が完了しました",
+                        "プロジェクトを作成しました。",
                         "成功",
                         JOptionPane.INFORMATION_MESSAGE);
 

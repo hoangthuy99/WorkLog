@@ -136,26 +136,32 @@ public class AllTask extends JPanel {
             return;
         }
 
+        // LẤY ĐÚNG CỘT: "タスク名" là cột 1
+        String taskName = tblAddtask.getValueAt(row, 1).toString();
 
-        String taskName = tblAddtask.getValueAt(row, 0).toString();
-        Optional<Tasks> task = taskController.findByName(taskName);
+        Optional<Tasks> optTask = taskController.findByName(taskName);
 
-
-        if (task == null) {
+        // Optional không bao giờ null → dùng isEmpty()
+        if (optTask.isEmpty()) {
             JOptionPane.showMessageDialog(this, "タスクが見つかりません。");
             return;
         }
 
+        Tasks task = optTask.get(); // task cần edit
+
         JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog(parent, "タスク編集", true);
 
-        dialog.setContentPane(new AddTask()); // ← chế độ EDIT
+        // 👉 PHẢI TRUYỀN task VÀO CONSTRUCTOR EDIT
+        dialog.setContentPane(new AddTask(task));
+
         dialog.pack();
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
 
         loadTable(taskController.findAll());
     }
+
 
     private void deleteTask() {
         int row = tblAddtask.getSelectedRow();
@@ -167,7 +173,7 @@ public class AllTask extends JPanel {
             return;
         }
 
-        String taskName = tblAddtask.getValueAt(row, 0).toString();
+        String taskName = tblAddtask.getValueAt(row, 1).toString();
         Optional<Tasks> t = taskController.findByName(taskName);
 
 

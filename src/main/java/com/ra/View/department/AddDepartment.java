@@ -43,6 +43,7 @@ public class AddDepartment extends JPanel {
         initializeForm(null);
     }
 
+    // -------------------- CONSTRUCTOR - EDIT MODE --------------------
     public AddDepartment(Window parentWindow, DepartmentListener listener, Integer id) {
         this.parentWindow = parentWindow;
         this.listener = listener;
@@ -50,6 +51,7 @@ public class AddDepartment extends JPanel {
         initializeForm(id);
     }
 
+    // -------------------- INIT FORM --------------------
     private void initializeForm(Integer id) {
         initComponents();
         applyCenteredLayout();
@@ -68,26 +70,50 @@ public class AddDepartment extends JPanel {
         btnSave.addActionListener(e -> saveDepartment());
     }
 
+    // -------------------- LOAD DATA EDIT MODE --------------------
     private void loadDepartmentData(int id) {
         editingDepartment = departmentController.findById(id);
         departmentController.loadRelations(editingDepartment);
 
         txtDepartmentname.setText(editingDepartment.getName());
 
+        // ===== PROJECT =====
+        Project selectedProject = null;
         if (editingDepartment.getProjects() != null && !editingDepartment.getProjects().isEmpty()) {
-            cbbProjectname.setSelectedItem(editingDepartment.getProjects().get(0));
-        } else {
-            cbbProjectname.setSelectedItem(null);
-        }
+            int editProjectId = editingDepartment.getProjects().get(0).getId();
 
-        if (editingDepartment.getTasks() != null && !editingDepartment.getTasks().isEmpty()) {
-            cbbTaskname.setSelectedItem(editingDepartment.getTasks().get(0));
-        } else {
-            cbbTaskname.setSelectedItem(null);
+            if (projectList != null) {
+                for (Project p : projectList) {
+                    if (p.getId() == editProjectId) {
+                        selectedProject = p;
+                        break;
+                    }
+                }
+            }
         }
+        cbbProjectname.setSelectedItem(selectedProject);
+        // selectedProject == null  -> "未選択"
+        // selectedProject != null -> hiển thị tên project
+
+        // ===== TASK =====
+        Tasks selectedTask = null;
+        if (editingDepartment.getTasks() != null && !editingDepartment.getTasks().isEmpty()) {
+            int editTaskId = editingDepartment.getTasks().get(0).getId();
+
+            if (taskList != null) {
+                for (Tasks t : taskList) {
+                    if (t.getId() == editTaskId) {
+                        selectedTask = t;
+                        break;
+                    }
+                }
+            }
+        }
+        cbbTaskname.setSelectedItem(selectedTask);
     }
 
 
+    // -------------------- LOAD PROJECT COMBO --------------------
     private void loadProjects() {
         projectList = projectController.findAll();
         cbbProjectname.removeAllItems();
@@ -105,7 +131,7 @@ public class AddDepartment extends JPanel {
                                                           boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value == null) {
-                    setText("未選択");
+                    setText("未選択"); // hoặc "プロジェクト未選択"
                 } else {
                     setText(((Project) value).getName());
                 }
@@ -114,6 +140,8 @@ public class AddDepartment extends JPanel {
         });
     }
 
+
+    // -------------------- LOAD TASK COMBO --------------------
     private void loadTasks() {
         taskList = taskController.findAll();
         cbbTaskname.removeAllItems();
@@ -132,7 +160,7 @@ public class AddDepartment extends JPanel {
                                                           boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value == null) {
-                    setText("未選択");
+                    setText("未選択"); // hoặc "タスク未選択"
                 } else {
                     setText(((Tasks) value).getName());
                 }
