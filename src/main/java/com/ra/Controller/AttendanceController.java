@@ -64,5 +64,4 @@ public class AttendanceController {
     public List<Attendance> findByUserAndDate(int userId, java.time.LocalDate date) {
         return attendanceDAO.findByUserAndDate(userId, date);
     }
-    
 }

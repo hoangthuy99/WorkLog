@@ -151,10 +151,8 @@ public class ReportSummaryPanel extends JPanel {
     }
 
     private void createTableModels() {
-        // Cột cuối là "作業時間"
         String[] deptColumns = {"選択", "部署コード", "部署名", "タスクコード", "タスク名", "作業時間"};
         deptTableModel = new DefaultTableModel(deptColumns, 0) {
-            // Đặt kiểu dữ liệu cho cột Checkbox (cột 0) là Boolean
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 if (columnIndex == CHECKBOX_COLUMN_INDEX) {
@@ -216,10 +214,7 @@ public class ReportSummaryPanel extends JPanel {
         leftPanel.add(exportCsvButton);
         leftPanel.add(bulkDeleteButton);
 
-        // actionFooter chỉ còn leftPanel được căn lề WEST
-
         actionFooter.add(leftPanel, BorderLayout.WEST);
-        // Không thêm rightPanel vì nó trống
 
         add(actionFooter, BorderLayout.SOUTH);
     }
@@ -230,8 +225,7 @@ public class ReportSummaryPanel extends JPanel {
         byDeptProjectButton.addActionListener(new ViewFilterListener());
 
         exportCsvButton.addActionListener(e -> exportToCsv());
-        bulkDeleteButton.addActionListener(e -> handleBulkDeleteAction()); // Sự kiện Xóa hàng loạt
-        // backButton.addActionListener(e -> goBack()); // ĐÃ BỎ
+        bulkDeleteButton.addActionListener(e -> handleBulkDeleteAction());
     }
 
     /**
@@ -239,9 +233,7 @@ public class ReportSummaryPanel extends JPanel {
      * Cột Action đã bị loại bỏ.
      */
     private void applyTableCustomComponents(int totalColumns) {
-        // Áp dụng cho cột Checkbox (cột 0)
         if (totalColumns > CHECKBOX_COLUMN_INDEX) {
-            // Đặt tiêu đề cột 0 là một Checkbox để chọn/bỏ chọn tất cả
             JCheckBox selectAllBox = new JCheckBox();
             selectAllBox.addActionListener(new SelectAllListener(dataTable, CHECKBOX_COLUMN_INDEX));
             dataTable.getColumnModel().getColumn(CHECKBOX_COLUMN_INDEX).setHeaderRenderer(new CheckboxHeaderRenderer(selectAllBox));
@@ -335,7 +327,6 @@ public class ReportSummaryPanel extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
     /**
      * Renderer for the Checkbox in the table header (Select All).
      */

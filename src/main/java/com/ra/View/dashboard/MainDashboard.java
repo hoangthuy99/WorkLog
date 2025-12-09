@@ -4,6 +4,8 @@ package com.ra.View.dashboard;
 
 
 // --------------- Import các JPanel mới bắt đầu -------------------------
+import com.ra.Controller.AttendanceController;
+import com.ra.Model.Entity.Attendance;
 import com.ra.Model.Entity.Users;
 import com.ra.View.login.LoginScreen;
 import com.ra.View.user.AddUser;
@@ -30,9 +32,10 @@ import com.ra.View.holidays.AllHoliday;
 // --------------- Import các JPanel mới kết thúc -------------------------
 
 
-
+import java.time.LocalDate;
 import java.time.ZonedDateTime; // Để lấy thời gian hiện tại
 import java.time.format.DateTimeFormatter; // Để định dạng chuỗi
+import java.util.List;
 import java.util.Locale; // Để định dạng theo Locale Nhật Bản
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -40,11 +43,14 @@ import java.awt.event.ActionListener;
 
 public class MainDashboard extends javax.swing.JFrame {
 
-    private Users currentUser;
+    public Users currentUser;
 
-    // 🌟 CONSTRUCTOR CHÍNH (ĐƯỢC GỌI TỪ LOGINSCREEN)
+    AttendanceController attendanceController;
+
+    //  CONSTRUCTOR CHÍNH (ĐƯỢC GỌI TỪ LOGINSCREEN)
     public MainDashboard(Users user) {
         this.currentUser = user;
+        this.attendanceController = new AttendanceController();
         initComponents();
         applyRoleAccess();
         startClock();
@@ -89,7 +95,7 @@ public class MainDashboard extends javax.swing.JFrame {
 
 
     // ---------- Thêm phương thức showPanel -----------------
-    private void showPanel(javax.swing.JPanel panel) {
+    public void showPanel(javax.swing.JPanel panel) {
 
         // 1. Xóa tất cả các component hiện có trong Working Area
         pnlWorkingArea.removeAll();
@@ -1134,7 +1140,8 @@ public class MainDashboard extends javax.swing.JFrame {
         Users userToPass = this.currentUser;
 
         // 2. Gọi constructor có tham số và truyền đối tượng Users vào
-        AddAttendance addAttendancePanel = new AddAttendance(userToPass);
+        List<Attendance> a = attendanceController.findByUserAndDate(currentUser.getId(), LocalDate.now());
+        AddAttendance addAttendancePanel = new AddAttendance(userToPass, a);
 
         // 3. Gọi phương thức showPanel (thực hiện xóa panel cũ, thêm panel mới, revalidate/repaint)
         showPanel(addAttendancePanel);
@@ -1142,12 +1149,12 @@ public class MainDashboard extends javax.swing.JFrame {
 
     private void btnViewAttendanceMonthActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnViewAttendanceMonthActionPerformed
         // Gọi phương thức showPanel và truyền vào JPanel
-        showPanel(new AttendanceMonth());
+        showPanel(new AttendanceMonth(currentUser) );
     }//GEN-LAST:event_btnViewAttendanceMonthActionPerformed
 
     private void btnViewAttendanceDayActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnViewAttendanceDayActionPerformed
         // Gọi phương thức showPanel và truyền vào JPanel
-        showPanel(new AttendanceDate());
+        showPanel(new AttendanceDate(currentUser) );
     }//GEN-LAST:event_btnViewAttendanceDayActionPerformed
 
     private void btnReportActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed

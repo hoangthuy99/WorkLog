@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -136,33 +137,24 @@ public class UserDAO implements IUserDAO {
 
 
     @Override
-    public Optional<Users> findById(int id) {
+    public Users findById(int id) {
         //TODO: Tìm kiếm theo ID
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT u FROM Users u " +
-                    "LEFT JOIN FETCH u.tasks " + // load tasks
-                    "LEFT JOIN FETCH u.department " + // load department nếu muốn
-                    "LEFT JOIN FETCH u.role " +       // load role
-                    "WHERE u.id = :id";
-            Users user = session.createQuery(hql, Users.class)
-                    .setParameter("id", id)
-                    .uniqueResult();
-            return Optional.ofNullable(user);
+       try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Users user = session.get(Users.class, id);
+            return user;
         } catch (Exception e) {
             e.printStackTrace();
-            return Optional.empty();
+            return null;
         }
     }
     @Override
     public Optional<Users> findByUsername(String username) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
-            String hql =
-                    "SELECT DISTINCT u FROM Users u " +
-                            "LEFT JOIN FETCH u.role r " +
-                            "LEFT JOIN FETCH r.permissions " +
-                            "LEFT JOIN FETCH u.department " +
-                            "WHERE u.userName = :username AND u.deletedAt IS NULL";
+            String hql = "SELECT DISTINCT u FROM Users u " +
+                    "LEFT JOIN FETCH u.role r " +
+                    "LEFT JOIN FETCH r.permissions " +
+                    "LEFT JOIN FETCH u.department " +
+                    "WHERE u.userName = :username AND u.deletedAt IS NULL";
 
             Users user = session.createQuery(hql, Users.class)
                     .setParameter("username", username)
@@ -176,6 +168,27 @@ public class UserDAO implements IUserDAO {
         }
     }
 
+    @Override
+    public List<Users> findUserByDepartmentId(int departmentId) {
+        //TODO : Tìm kiếm user theo departmentId
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "SELECT DISTINCT u FROM Users u " +
+                    "LEFT JOIN FETCH u.department d " +
+                    "LEFT JOIN FETCH u.role " +
+                    "WHERE d.id = :deptId AND u.deletedAt IS NULL " +
+                    "ORDER BY u.userName";
+
+            List<Users> users = session.createQuery(hql, Users.class)
+                    .setParameter("deptId", departmentId)
+                    .list();
+
+            return users != null ? users : new ArrayList<>();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 
 
 }

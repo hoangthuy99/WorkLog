@@ -1,17 +1,17 @@
 package com.ra.Controller;
 
+import com.ra.DAO.Department.DepartmentDAO;
 import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Project;
 import com.ra.Model.Entity.Tasks;
-import com.ra.Service.Department.DepartmentIMPL;
-import com.ra.Service.Department.DepartmentService;
+
 
 import java.util.List;
 import java.util.Optional;
 
 public class DepartmentController {
 
-    private final DepartmentService departmentService = new DepartmentIMPL();
+    private final DepartmentDAO departmentService = new DepartmentDAO();
 
     public List<Department> findAll() {
         return departmentService.findAll();

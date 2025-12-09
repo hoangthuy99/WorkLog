@@ -161,6 +161,7 @@ public class AllUser extends JPanel {
 
     // SỬA: Đổi từ private sang public để EditUser có thể gọi phương thức này để refresh bảng
     public void loadUserTable() {
+
 //        String keyword = txtSearch.getText().trim();
 //        List<Users> list = userController.findAll(keyword, currentPage, pageSize);
         String keyword = txtSearch.getText().trim();  // lấy từ khóa người dùng nhập
@@ -172,6 +173,7 @@ public class AllUser extends JPanel {
         } else {
             list = userController.findAll(keyword, currentPage, pageSize);  // có keyword → search
         }
+
 
         userIds = new java.util.ArrayList<>();
 
@@ -422,29 +424,34 @@ public class AllUser extends JPanel {
         try {
             Integer id = userIds.get(selectedRow);
 
-            Optional<Users> user = userController.findById(id);
-            if (user.isPresent()) {
+            Users user = userController.findById(id);
+           if (user == null) {
 
-                Users userToEdit = user.get();
-
-                // EditUser là JFrame: Khởi tạo trực tiếp và gọi setVisible(true) MỘT LẦN ở đây
-
-                // Khởi tạo EditUser (là JFrame)
-                EditUser editForm = new EditUser(userToEdit, this);
-
-                // Lấy cửa sổ cha (để căn giữa form)
-                Window parentWindow = SwingUtilities.getWindowAncestor(this);
-
-                // Cài đặt hành động khi đóng
-                editForm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-                // Hiển thị cửa sổ Edit và căn giữa
-                editForm.pack();
-                editForm.setLocationRelativeTo(parentWindow);
-                editForm.setVisible(true); // 🌟 CHỈ CÓ MỘT LỆNH HIỂN THỊ DUY NHẤT 🌟
-
-            } else {
                 JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
+                return;
+            } else {
+                user.setId(id);
+                // 1. Lấy cửa sổ cha
+                Window parentWindow = SwingUtilities.getWindowAncestor(this);
+                JFrame parentFrame = (parentWindow instanceof JFrame) ? (JFrame) parentWindow : null;
+                // 2. Khởi tạo EditUser JPanel và truyền tham chiếu AllUser (this) và user cần chỉnh sửa
+                JPanel editUserPanel;
+                try {
+                    // Giả định constructor của EditUser nhận (AllUser, Users) làm đối số
+                    Class<?> editUserClass = Class.forName("com.ra.View.user.EditUser");
+                    Constructor<?> constructor = editUserClass.getConstructor(AllUser.class, Users.class);
+                    editUserPanel = (JPanel) constructor.newInstance(this, user);
+                } catch (ClassNotFoundException e) {
+                    // Xử lý trường hợp không tìm thấy lớp EditUser
+                    JOptionPane.showMessageDialog(this, "Lớp EditUser không tìm thấy. Đảm bảo EditUser.java đã tồn tại và nằm trong package com.ra.View.user.", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
+                    logger.log(java.util.logging.Level.SEVERE, "Lỗi khi khởi tạo EditUser", e);
+                    return;
+                } catch (NoSuchMethodException e) {
+                    // Xử lý trường hợp không tìm thấy constructor EditUser(AllUser, Users)
+                    JOptionPane.showMessageDialog(this, "Lớp EditUser cần có constructor EditUser(AllUser parentPanel, Users user).", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
+                    logger.log(java.util.logging.Level.SEVERE, "Lỗi Constructor EditUser", e);
+                    return;
+                }
             }
         } catch (NoClassDefFoundError e) {
             // Xử lý trường hợp quên import hoặc EditUser chưa compile
@@ -468,10 +475,10 @@ public class AllUser extends JPanel {
         try {
             Integer id = userIds.get(row);
 
-            Optional<Users> u = userController.findById(id);
+            Users u = userController.findById(id);
 
-            if (!u.isPresent()) {
-                JOptionPane.showMessageDialog(this, "このユーザーは存在しません");
+            if (u == null) {
+                JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
                 return;
             }
 

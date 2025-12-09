@@ -33,4 +33,7 @@ public class RecordController {
         return recordDAO.findByAttendanceId(attendanceId);
     }
 
+    public Integer sumBreakWorkByAttendanceId(int id) {
+        return recordDAO.sumBreakWorkByAttendanceId(id);
+    }
 }
