@@ -228,11 +228,16 @@ public class AddAttendance extends javax.swing.JPanel {
             if (loggedInUser != null) {
                 // Tên nhân viên
                 txtEmployeeName.setText(loggedInUser.getUserName());
+
+                // 🔒 Không cho sửa / nhập nữa
+                txtEmployeeName.setEditable(false);   // không cho edit
+                txtEmployeeName.setFocusable(false);  // không focus được luôn (option, cho form “clean” hơn)
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
 
     private void loadProjects() {
