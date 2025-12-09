@@ -220,7 +220,6 @@ public class AllTask extends JPanel {
 
 
     private void loadTable(List<Tasks> list) {
-        // ✅ Thêm cột "No." vào đầu
         DefaultTableModel model = new DefaultTableModel(
                 new String[]{"No.", "タスク名", "プロジェクト名", "部署名"}, 0
         );

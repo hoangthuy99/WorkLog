@@ -255,12 +255,12 @@ public class AddAttendance extends javax.swing.JPanel {
         Date selectedDate = csDate.getDate();
 
         if (selectedDate == null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày làm việc!");
+            JOptionPane.showMessageDialog(this, "勤務日を選択してください！");
             return false;
         }
 
         if (selectedDate.after(today)) {
-            JOptionPane.showMessageDialog(this, "Không được nhập ngày trong tương lai!");
+            JOptionPane.showMessageDialog(this, "未来の日付は入力できません！");
             return false;
         }
 
@@ -279,7 +279,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
             if (!isHoliday) {
                 JOptionPane.showMessageDialog(this,
-                        "Ngày này không phải ngày nghỉ! Không thể chọn Holiday.");
+                        "この日は休暇日ではありません！Holiday を選択できません。");
                 rbHoliday.setSelected(false);
                 return false;
             }
@@ -344,11 +344,11 @@ public class AddAttendance extends javax.swing.JPanel {
                 // Load work records
                 loadWorkRecordTable(attendance.getId());
 
-                System.out.println("Loaded existing attendance for date: " + workDate);
+                System.out.println("既存出勤データを読み込みました： " + workDate);
             } else {
                 // Clear form nếu không có attendance
                 clearAttendanceForm();
-                System.out.println("No existing attendance for date: " + workDate);
+                System.out.println("該当日の出勤データはありません：" + workDate);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -721,7 +721,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
         String[] parts = input.split(":");
         if (parts.length < 2) {
-            throw new IllegalArgumentException("Định dạng thời gian không hợp lệ: " + input);
+            throw new IllegalArgumentException("時間の形式が無効です： " + input);
         }
 
         int hour = Integer.parseInt(parts[0].trim());
@@ -729,10 +729,10 @@ public class AddAttendance extends javax.swing.JPanel {
 
         // Cho phép nhập từ 0 đến 30 giờ
         if (hour > 30 || hour < 0) {
-            throw new IllegalArgumentException("Giờ chỉ được nhập từ 0 đến 30");
+            throw new IllegalArgumentException("時間は 0〜30 の範囲で入力してください");
         }
         if (minute > 59 || minute < 0) {
-            throw new IllegalArgumentException("Phút chỉ được nhập từ 0 đến 59");
+            throw new IllegalArgumentException("分は 0〜59 の範囲で入力してください");
         }
 
         // Nếu giờ >= 24, chuyển về giờ trong ngày (0-23)
@@ -802,7 +802,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     " mins, Overtime: " + attendance.getOvertimeMinutes() + " mins");
 
         } catch (Exception e) {
-            System.err.println("Error calculating attendance times: " + e.getMessage());
+            System.err.println("出勤時間計算エラー： " + e.getMessage());
             attendance.setTotalMinutes(0);
             attendance.setOvertimeMinutes(0);
         }
@@ -817,7 +817,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
         Date selectedDate = csDate.getDate();
         if (selectedDate == null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày!");
+            JOptionPane.showMessageDialog(this, "日付を選択してください！");
             return;
         }
 
@@ -825,7 +825,7 @@ public class AddAttendance extends javax.swing.JPanel {
         String checkOutStr = fmCheckOut.getText().trim();
 
         if (checkInStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập giờ Check-in!");
+            JOptionPane.showMessageDialog(this, "チェックイン時間を入力してください！");
             return;
         }
 
@@ -840,11 +840,11 @@ public class AddAttendance extends javax.swing.JPanel {
                 checkIn = LocalTime.parse(checkInStr);
                 if (checkInStr.contains("24") || checkInStr.contains("25") || checkInStr.contains("26") ||
                         checkInStr.contains("27") || checkInStr.contains("28") || checkInStr.contains("29") || checkInStr.contains("30")) {
-                    JOptionPane.showMessageDialog(this, "Check-in chỉ được nhập từ 00:00 đến 23:59!");
+                    JOptionPane.showMessageDialog(this, "チェックイン時間は 00:00〜23:59 の範囲で入力してください！");
                     return;
                 }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Check-in không hợp lệ! Vui lòng nhập từ 00:00 đến 23:59");
+                JOptionPane.showMessageDialog(this, "チェックイン時間が無効です！00:00〜23:59 の範囲で入力してください。");
                 return;
             }
 
@@ -875,7 +875,7 @@ public class AddAttendance extends javax.swing.JPanel {
                             ", Final datetime: " + checkOutDT);
 
                 } catch (IllegalArgumentException e) {
-                    JOptionPane.showMessageDialog(this, "Check-out không hợp lệ: " + e.getMessage());
+                    JOptionPane.showMessageDialog(this, "チェックアウト時間が無効です： " + e.getMessage());
                     return;
                 }
             }
@@ -885,7 +885,7 @@ public class AddAttendance extends javax.swing.JPanel {
             if (checkOutDT != null) {
                 if (checkOutDT.isBefore(checkInDT)) {
                     JOptionPane.showMessageDialog(this,
-                            String.format("Check-out (%s) không thể trước Check-in (%s)!",
+                            String.format("チェックアウト (%s) はチェックイン (%s) より前にはできません！",
                                     checkOutDT, checkInDT));
                     return;
                 }
@@ -927,7 +927,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 attendance.setUpdatedAt(LocalDateTime.now());
 
                 attendanceController.create(attendance);
-                JOptionPane.showMessageDialog(this, "Đã thêm mới Attendance thành công!");
+                JOptionPane.showMessageDialog(this, "出勤データが正常に追加されました！");
 
             } else {
                 // CẬP NHẬT
@@ -962,7 +962,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     totalBreak = recordController.sumBreakWorkByAttendanceId(attendance.getId());
                     System.out.println("DEBUG: Total break minutes = " + totalBreak);
                 } catch (Exception e) {
-                    System.err.println("Warning: Could not calculate break minutes: " + e.getMessage());
+                    System.err.println("休憩時間を計算できませんでした: " + e.getMessage());
                     totalBreak = 0;
                 }
                 attendance.setBreakMinutes(totalBreak);
@@ -976,9 +976,9 @@ public class AddAttendance extends javax.swing.JPanel {
                 // Cập nhật DB
                 boolean updateSuccess = attendanceController.update(attendance);
                 if (updateSuccess) {
-                    JOptionPane.showMessageDialog(this, "Đã cập nhật Attendance thành công!");
+                    JOptionPane.showMessageDialog(this, "出勤データが正常に更新されました！");
                 } else {
-                    JOptionPane.showMessageDialog(this, "Cập nhật Attendance thất bại!");
+                    JOptionPane.showMessageDialog(this, "出勤データの更新に失敗しました！");
                     return;
                 }
             }
@@ -988,7 +988,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, "エラー： " + ex.getMessage());
         }
     }//GEN-LAST:event_btnAddAttendActionPerformed
 
@@ -1005,7 +1005,7 @@ public class AddAttendance extends javax.swing.JPanel {
         try {
                 // 1. Lấy ngày
                 if (csDate.getDate() == null) {
-                    JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày!");
+                    JOptionPane.showMessageDialog(this, "日付を選択してください！");
                     return;
                 }
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -1032,7 +1032,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 String endStr = fmEnd.getText().trim();
 
                 if (startStr.isEmpty() || endStr.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Vui lòng nhập giờ bắt đầu và kết thúc!");
+                    JOptionPane.showMessageDialog(this, "開始時間と終了時間を入力してください！");
                     return;
                 }
 
@@ -1040,12 +1040,12 @@ public class AddAttendance extends javax.swing.JPanel {
                 long totalMinutes = calculateMinutesAllowOver24(startStr, endStr);
 
                 if (totalMinutes <= 0) {
-                    JOptionPane.showMessageDialog(this, "Giờ kết thúc phải sau giờ bắt đầu!");
+                    JOptionPane.showMessageDialog(this, "終了時間は開始時間より後でなければなりません！");
                     return;
                 }
                 //nếu checkOut rồi thì không thể ghi thêm workrecord
                 if(attendance.getCheckOutTime() != null) {
-                    JOptionPane.showMessageDialog(this, "Đã Check-out, không thể thêm WorkRecord!");
+                    JOptionPane.showMessageDialog(this, "チェックアウト済みのため、勤怠記録を追加できません！");
                     return;
 
                 }
@@ -1055,7 +1055,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 Tasks task = taskController.findByName((String) cbTask.getSelectedItem()).orElse(null);
 
                 if (project == null || task == null) {
-                    JOptionPane.showMessageDialog(this, "Không tìm thấy Project hoặc Task!");
+                    JOptionPane.showMessageDialog(this, "プロジェクトまたはタスクが見つかりません！");
                     return;
                 }
 
@@ -1067,7 +1067,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
                 int workMinutes = (int) totalMinutes - breakWork;
                 if (workMinutes < 0) {
-                    JOptionPane.showMessageDialog(this, "Phút nghỉ không thể lớn hơn tổng thời gian!");
+                    JOptionPane.showMessageDialog(this, "休憩時間は総勤務時間を超えることはできません！");
                     return;
                 }
 
@@ -1098,11 +1098,11 @@ public class AddAttendance extends javax.swing.JPanel {
                 // 9. Load table
                 loadWorkRecordTable(attendance.getId());
 
-                JOptionPane.showMessageDialog(this, "Thêm WorkRecord thành công!");
+                JOptionPane.showMessageDialog(this, "勤怠記録を正常に追加しました！");
 
             } catch (Exception ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage());
+                JOptionPane.showMessageDialog(this, "エラー " + ex.getMessage());
             }
 
 
@@ -1110,7 +1110,7 @@ public class AddAttendance extends javax.swing.JPanel {
     private void updateAttendanceBreakTime(int attendanceId) {
         try {
             if (attendanceId <= 0) {
-                System.err.println("Invalid attendance ID: " + attendanceId);
+                System.err.println("無効な出勤ID： " + attendanceId);
                 return;
             }
 
@@ -1121,7 +1121,7 @@ public class AddAttendance extends javax.swing.JPanel {
             Attendance attendance = attendanceController.findById(attendanceId);
 
             if (attendance == null) {
-                System.err.println("Attendance not found for ID: " + attendanceId);
+                System.err.println("指定されたIDの出勤データが見つかりません： " + attendanceId);
                 return;
             }
 

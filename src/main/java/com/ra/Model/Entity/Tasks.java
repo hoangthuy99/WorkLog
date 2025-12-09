@@ -22,11 +22,8 @@ public class Tasks {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-
     @Column(name = "taskCode", length = 10, unique = true, nullable = false)
     private String taskCode;
-
-
     // Task - Project (n - n)
     @ManyToMany
     @JoinTable(

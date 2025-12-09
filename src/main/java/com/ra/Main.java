@@ -17,7 +17,7 @@ public class Main {
             System.out.println("Kết nối thành công");
         }
         // Tạo khung
-        JFrame frame = new JFrame("All Holiday Panel");
+        /*JFrame frame = new JFrame("All Holiday Panel");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
 
@@ -28,7 +28,7 @@ public class Main {
         frame.add(panel);
 
         // Hiển thị
-        frame.setVisible(true);
+        frame.setVisible(true);*/
 
     }
 }

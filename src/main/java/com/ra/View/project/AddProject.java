@@ -15,15 +15,11 @@ public class AddProject extends JPanel {
     private Integer editingProjectId = null;
     private Project editingProject;
 
-
-    /** ---------------- ADD MODE (Constructor mặc định) ---------------- */
     public AddProject() {
         initComponents();
         loadComboBoxes();
         setupEventHandlers();
     }
-
-    /** ---------------- EDIT MODE (Constructor cho Edit) ---------------- */
     public AddProject(int projectId) {
         this.editingProjectId = projectId;
         initComponents();
@@ -45,11 +41,9 @@ public class AddProject extends JPanel {
         ((JComboBox<Department>) cbDepartment).removeAllItems();
         ((JComboBox<Tasks>) cbTask).removeAllItems();
 
-        // ✅ 1. THÊM OPTION "KHÔNG CHỌN"
         ((JComboBox<Department>) cbDepartment).addItem(null);
         ((JComboBox<Tasks>) cbTask).addItem(null);
 
-        // ✅ 2. LOAD DATA NHƯ CŨ
         for (Department d : projectController.getAllDepartments()) {
             ((JComboBox<Department>) cbDepartment).addItem(d);
         }
@@ -58,7 +52,6 @@ public class AddProject extends JPanel {
             ((JComboBox<Tasks>) cbTask).addItem(t);
         }
 
-        // ✅ 3. RENDERER DEPARTMENT
         ((JComboBox<Department>) cbDepartment).setRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(
@@ -253,7 +246,7 @@ public class AddProject extends JPanel {
                 );
 
                 JOptionPane.showMessageDialog(this,
-                        "プロジェクトを作成しました。",
+                        "プロジェクトの作成が完了しました",
                         "成功",
                         JOptionPane.INFORMATION_MESSAGE);
 

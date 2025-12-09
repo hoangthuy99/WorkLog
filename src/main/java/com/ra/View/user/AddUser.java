@@ -242,13 +242,9 @@ public class AddUser extends JPanel {
 
         }catch (Exception e){
             e.printStackTrace();
-            logger.log(java.util.logging.Level.SEVERE, "Lỗi tải Roles", e);
+            logger.log(java.util.logging.Level.SEVERE, "ロールの読み込みエラー", e);
         }
     }
-
-    // ========================================================
-    // LOGIC XÁC THỰC FORM
-    // ========================================================
 
     private boolean validateForm() {
         String email = txtMail.getText().trim();
@@ -452,7 +448,7 @@ public class AddUser extends JPanel {
             if (roleOpt.isPresent()) {
                 user.setRole(roleOpt.get());
             } else {
-                JOptionPane.showMessageDialog(this, "Role không tồn tại!");
+                JOptionPane.showMessageDialog(this, "ロールが存在しません！");
                 return;
             }
 
@@ -471,7 +467,7 @@ public class AddUser extends JPanel {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "エラー： " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
         }
     }
 

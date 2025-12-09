@@ -45,7 +45,7 @@ public class LoginScreen extends javax.swing.JFrame {
 
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("LOGINSCREEN");
+        setTitle("ログイン画面");
         setPreferredSize(new java.awt.Dimension(600, 400));
 
         pnlLogin.setBackground(new java.awt.Color(255, 255, 255));
@@ -138,9 +138,9 @@ public class LoginScreen extends javax.swing.JFrame {
             return;
         }
         Optional<Users> userOpt = userController.findByUsername(username);
-        logger.info("login with username " + username);
+        logger.info("ユーザー名でログイン " + username);
         if (userOpt.isEmpty()) {
-            logger.info("Không tìm thấy username : " + username);
+            logger.info("ユーザー名が見つかりません : " + username);
             JOptionPane.showMessageDialog(this, "ユーザーが存在しません。");
             return;
         }
@@ -170,7 +170,7 @@ public class LoginScreen extends javax.swing.JFrame {
             List<String> permCodes = user.getRole()
                     .getPermissions()
                     .stream()
-                    .map(p -> p.getCode())   // lấy code: USER_MANAGE, TASK_MANAGE ...
+                    .map(p -> p.getCode())
                     .toList();
 
             SessionLocal.set("USER_PERMISSIONS", permCodes);

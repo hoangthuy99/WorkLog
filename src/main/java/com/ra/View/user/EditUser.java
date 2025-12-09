@@ -29,17 +29,11 @@ public class EditUser extends JFrame {
 
     private UserController userController = new UserController();
     private Users currentUser;
-
-    // BIẾN THAM CHIẾU ĐẾN ALLUSER ĐỂ GỌI REFRESH BẢNG
     private AllUser parentPanel;
-
-    // SỬA CONSTRUCTOR ĐỂ NHẬN THÊM THAM CHIẾU ALLUSER
     public EditUser(Users users, AllUser parentPanel) {
         initComponents();
         listTask.setModel(taskModel);
         listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-        // --- Thêm đoạn MouseListener để click thường chọn được nhiều ---
         listTask.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int index = listTask.locationToIndex(evt.getPoint());
@@ -53,8 +47,8 @@ public class EditUser extends JFrame {
             }
         });
 
-        // Gán tham chiếu và dữ liệu User
-        this.parentPanel = parentPanel; // GÁN THAM CHIẾU
+
+        this.parentPanel = parentPanel;
         this.currentUser = users;
 
         loadData();
@@ -63,7 +57,6 @@ public class EditUser extends JFrame {
 
     }
 
-    // GIỮ CONSTRUCTOR CŨ NẾU CẦN CHẠY MAIN TRONG EDITUSER MÀ KHÔNG GÂY LỖI
     public EditUser(Users users) {
         this(users, null);
     }
@@ -436,7 +429,7 @@ public class EditUser extends JFrame {
             if (roleOpt.isPresent()) {
                 currentUser.setRole(roleOpt.get());
             } else {
-                JOptionPane.showMessageDialog(this, "Role không tồn tại!");
+                JOptionPane.showMessageDialog(this, "ロールが存在しません！");
                 return;
             }
 
@@ -468,7 +461,7 @@ public class EditUser extends JFrame {
             this.dispose(); // đóng form sau khi lưu
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "エラー： " + e.getMessage());
         }
     }
 //GEN-LAST:event_btnSaveActionPerformed

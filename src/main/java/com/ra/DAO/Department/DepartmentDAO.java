@@ -194,14 +194,19 @@ public class DepartmentDAO implements IDepartmentDAO {
     @Override
     public List<Department> search(String keyword) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery(
-                            "FROM Department d WHERE d.deletedAt IS NULL AND d.name LIKE :kw"
-                            ,
-                            Department.class)
+
+            String hql =
+                    "SELECT DISTINCT d FROM Department d " +
+                            "LEFT JOIN FETCH d.projects " +
+                            "LEFT JOIN FETCH d.tasks " +
+                            "WHERE d.deletedAt IS NULL AND d.name LIKE :kw";
+
+            return session.createQuery(hql, Department.class)
                     .setParameter("kw", "%" + keyword + "%")
                     .list();
         }
     }
+
 
     @Override
     public Optional<Department> findFindById(int id) {

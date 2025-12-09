@@ -43,7 +43,6 @@ public class AddDepartment extends JPanel {
         initializeForm(null);
     }
 
-    // -------------------- CONSTRUCTOR - EDIT MODE --------------------
     public AddDepartment(Window parentWindow, DepartmentListener listener, Integer id) {
         this.parentWindow = parentWindow;
         this.listener = listener;
@@ -51,7 +50,6 @@ public class AddDepartment extends JPanel {
         initializeForm(id);
     }
 
-    // -------------------- INIT FORM --------------------
     private void initializeForm(Integer id) {
         initComponents();
         applyCenteredLayout();
@@ -70,7 +68,6 @@ public class AddDepartment extends JPanel {
         btnSave.addActionListener(e -> saveDepartment());
     }
 
-    // -------------------- LOAD DATA EDIT MODE --------------------
     private void loadDepartmentData(int id) {
         editingDepartment = departmentController.findById(id);
         departmentController.loadRelations(editingDepartment);
@@ -91,7 +88,6 @@ public class AddDepartment extends JPanel {
     }
 
 
-    // -------------------- LOAD PROJECT COMBO --------------------
     private void loadProjects() {
         projectList = projectController.findAll();
         cbbProjectname.removeAllItems();
@@ -109,7 +105,7 @@ public class AddDepartment extends JPanel {
                                                           boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value == null) {
-                    setText("未選択"); // hoặc "プロジェクト未選択"
+                    setText("未選択");
                 } else {
                     setText(((Project) value).getName());
                 }
@@ -118,8 +114,6 @@ public class AddDepartment extends JPanel {
         });
     }
 
-
-    // -------------------- LOAD TASK COMBO --------------------
     private void loadTasks() {
         taskList = taskController.findAll();
         cbbTaskname.removeAllItems();
@@ -138,7 +132,7 @@ public class AddDepartment extends JPanel {
                                                           boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value == null) {
-                    setText("未選択"); // hoặc "タスク未選択"
+                    setText("未選択");
                 } else {
                     setText(((Tasks) value).getName());
                 }

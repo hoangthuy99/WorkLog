@@ -42,7 +42,6 @@ public class Users {
             inverseJoinColumns = @JoinColumn(name = "taskId")
     )
     private List<Tasks> tasks;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     // Phương thức tạo mã người dùng duy nhất

@@ -70,30 +70,17 @@ public class AllUser extends JPanel {
         columnModel.getColumn(6).setPreferredWidth(110);
     }
 
-    // Phương thức mới để áp dụng lại bố cục căn giữa và cân đối
     private void applyCenteredLayout() {
 
-        // 🌟 SỬA ĐỔI: CHỈ GIỮ LẠI CÁC SỰ KIỆN CHƯA GÁN HOẶC CẦN GÁN LẠI
         btnSearch.addActionListener(this::btnSearchActionPerformed);
         btnAlluser.addActionListener(this::btnAlluserActionPerformed);
-        // ❌ LOẠI BỎ DÒNG NÀY ĐỂ TRÁNH GỌI HAI LẦN SỰ KIỆN THÊM MỚI
-        // btnAdduser.addActionListener(this::btnAdduserActionPerformed);
-
         btnDelete.addActionListener(this::btnDeleteActionPerformed);
         txtSearch.addActionListener(this::txtSearchActionPerformed);
-
-        // Bố cục căn giữa GroupLayout
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
-
-        // 🌟 SỬA ĐỔI: Giảm chiều rộng bảng từ 750 xuống 700
         int TABLE_WIDTH = 700;
         int BUTTON_WIDTH = 75;
         int BUTTON_GAP = 30; // Khoảng cách giữa Edit và Delete
-
-        // ====================================================================
-        // BỐ CỤC NGANG (HORIZONTAL GROUP)
-        // ====================================================================
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
@@ -159,11 +146,7 @@ public class AllUser extends JPanel {
         );
     }
 
-    // SỬA: Đổi từ private sang public để EditUser có thể gọi phương thức này để refresh bảng
     public void loadUserTable() {
-
-//        String keyword = txtSearch.getText().trim();
-//        List<Users> list = userController.findAll(keyword, currentPage, pageSize);
         String keyword = txtSearch.getText().trim();  // lấy từ khóa người dùng nhập
 
         List<Users> list;
@@ -174,20 +157,13 @@ public class AllUser extends JPanel {
             list = userController.findAll(keyword, currentPage, pageSize);  // có keyword → search
         }
 
-
         userIds = new java.util.ArrayList<>();
 
         String[][] data = new String[list.size()][7];
 
         for (int i = 0; i < list.size(); i++) {
             Users u = list.get(i);
-
-            // ✅ GÁN SỐ THỨ TỰ CHO CỘT "No."
-            // Nếu sau này có phân trang thật thì dùng công thức dưới,
-            // còn hiện tại pageSize = Integer.MAX_VALUE nên vẫn OK.
             data[i][0] = String.valueOf((currentPage - 1) * pageSize + i + 1);
-            // Hoặc đơn giản: data[i][0] = String.valueOf(i + 1);
-
             data[i][1] = u.getUserCode();
             data[i][2] = u.getFullName();
             data[i][3] = u.getUserName();
@@ -204,7 +180,6 @@ public class AllUser extends JPanel {
                 data,
                 new String[]{"No.", "ユーザーコード", "社員名", "ユーザー名", "部署", "ロール","タスク"}
         ));
-        // Gọi lại setColumnWidths để đảm bảo bảng luôn có kích thước đúng sau khi load dữ liệu
         setColumnWidths();
     }
 
@@ -424,34 +399,29 @@ public class AllUser extends JPanel {
         try {
             Integer id = userIds.get(selectedRow);
 
-            Users user = userController.findById(id);
-           if (user == null) {
+            Optional<Users> user = Optional.ofNullable(userController.findById(id));
+            if (user.isPresent()) {
 
-                JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
-                return;
-            } else {
-                user.setId(id);
-                // 1. Lấy cửa sổ cha
+                Users userToEdit = user.get();
+
+                // EditUser là JFrame: Khởi tạo trực tiếp và gọi setVisible(true) MỘT LẦN ở đây
+
+                // Khởi tạo EditUser (là JFrame)
+                EditUser editForm = new EditUser(userToEdit, this);
+
+                // Lấy cửa sổ cha (để căn giữa form)
                 Window parentWindow = SwingUtilities.getWindowAncestor(this);
-                JFrame parentFrame = (parentWindow instanceof JFrame) ? (JFrame) parentWindow : null;
-                // 2. Khởi tạo EditUser JPanel và truyền tham chiếu AllUser (this) và user cần chỉnh sửa
-                JPanel editUserPanel;
-                try {
-                    // Giả định constructor của EditUser nhận (AllUser, Users) làm đối số
-                    Class<?> editUserClass = Class.forName("com.ra.View.user.EditUser");
-                    Constructor<?> constructor = editUserClass.getConstructor(AllUser.class, Users.class);
-                    editUserPanel = (JPanel) constructor.newInstance(this, user);
-                } catch (ClassNotFoundException e) {
-                    // Xử lý trường hợp không tìm thấy lớp EditUser
-                    JOptionPane.showMessageDialog(this, "Lớp EditUser không tìm thấy. Đảm bảo EditUser.java đã tồn tại và nằm trong package com.ra.View.user.", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
-                    logger.log(java.util.logging.Level.SEVERE, "Lỗi khi khởi tạo EditUser", e);
-                    return;
-                } catch (NoSuchMethodException e) {
-                    // Xử lý trường hợp không tìm thấy constructor EditUser(AllUser, Users)
-                    JOptionPane.showMessageDialog(this, "Lớp EditUser cần có constructor EditUser(AllUser parentPanel, Users user).", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
-                    logger.log(java.util.logging.Level.SEVERE, "Lỗi Constructor EditUser", e);
-                    return;
-                }
+
+                // Cài đặt hành động khi đóng
+                editForm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                // Hiển thị cửa sổ Edit và căn giữa
+                editForm.pack();
+                editForm.setLocationRelativeTo(parentWindow);
+                editForm.setVisible(true); // 🌟 CHỈ CÓ MỘT LỆNH HIỂN THỊ DUY NHẤT 🌟
+
+            } else {
+                JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
             }
         } catch (NoClassDefFoundError e) {
             // Xử lý trường hợp quên import hoặc EditUser chưa compile
@@ -475,10 +445,10 @@ public class AllUser extends JPanel {
         try {
             Integer id = userIds.get(row);
 
-            Users u = userController.findById(id);
+            Optional<Users> u = Optional.ofNullable(userController.findById(id));
 
-            if (u == null) {
-                JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
+            if (!u.isPresent()) {
+                JOptionPane.showMessageDialog(this, "このユーザーは存在しません");
                 return;
             }
 
@@ -501,10 +471,9 @@ public class AllUser extends JPanel {
             JOptionPane.showMessageDialog(this, "Xảy ra lỗi khi xóa user: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
             logger.log(java.util.logging.Level.SEVERE, "Lỗi khi xóa user", e);
         }
-    }//GEN-LAST:event_btnDeleteActionPerformed
+    }
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton btnAdduser;
     private JButton btnAlluser;
     private JButton btnDelete;

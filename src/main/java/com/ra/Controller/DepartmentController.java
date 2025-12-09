@@ -62,7 +62,7 @@ public class DepartmentController {
 
 
     public Department findById(int id) {
-        return departmentService.findFindById(id).orElse(null);
+        return departmentService.findFindByIdFetchAll(id).orElse(null);
     }
 
     /** Load projects + tasks */
@@ -78,7 +78,7 @@ public class DepartmentController {
     }
 
     public Optional<Department> findFindById(int id) {
-        return departmentService.findFindById(id);
+        return departmentService.findFindByIdFetchAll(id);
     }
 
 

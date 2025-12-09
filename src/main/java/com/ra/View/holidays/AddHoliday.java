@@ -151,7 +151,7 @@ public class AddHoliday extends JPanel {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, "エラー： " + ex.getMessage());
         }
 
     }//GEN-LAST:event_btnSaveActionPerformed

@@ -63,7 +63,7 @@ public class AllDepartment extends JPanel implements DepartmentListener {
             dialog.setVisible(true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "ダイアログを開く際に致命的なエラーが発生しました: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
-            logger.severe("Fatal error opening AddEditDialog: " + e.toString());
+            logger.severe("AddEditDialog を開く際の致命的エラー： " + e.toString());
         }
     }
 
@@ -204,7 +204,7 @@ public class AllDepartment extends JPanel implements DepartmentListener {
             } else if (idValue instanceof String) {
                 id = Integer.parseInt((String) idValue);
             } else {
-                throw new ClassCastException("ID data type is unexpected: " + idValue.getClass().getName());
+                throw new ClassCastException("IDデータ型が予期しない形式です： " + idValue.getClass().getName());
             }
 
             showAddEditDialog(id);
@@ -212,10 +212,10 @@ public class AllDepartment extends JPanel implements DepartmentListener {
         } catch (ClassCastException | NumberFormatException e) {
             String errorMsg = "IDデータの形式エラー。IDが正しく設定されているか確認してください。";
             JOptionPane.showMessageDialog(this, errorMsg, "エラー", JOptionPane.ERROR_MESSAGE);
-            logger.severe("Error getting ID from table cell: " + e.toString());
+            logger.severe("テーブルセルからID取得中のエラー： " + e.toString());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "編集ウィンドウを開く際にエラーが発生しました。", "エラー", JOptionPane.ERROR_MESSAGE);
-            logger.severe("Error opening Edit dialog: " + e.toString());
+            logger.severe("編集ダイアログを開く際のエラー： " + e.toString());
         }
     }
 
