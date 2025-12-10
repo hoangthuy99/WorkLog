@@ -16,10 +16,9 @@ public class RecordController {
     public WorkRecord updateRecord(WorkRecord workRecord) {
         return recordDAO.update(workRecord);
     }
-    public WorkRecord deleteRecord(WorkRecord workRecord) {
-        recordDAO.deleteFindById(workRecord.getId());
-        return workRecord;
-    }
+   public boolean deleteRecord(int id) {
+        return recordDAO.deleteFindById(id);
+   }
     public List<WorkRecord> findById(int id) {
         return recordDAO.findById(id);
     }

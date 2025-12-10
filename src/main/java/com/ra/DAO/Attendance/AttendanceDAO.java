@@ -98,16 +98,14 @@ public class AttendanceDAO implements IAttendanceDAO {
 
     @Override
     public boolean delete(int id) {
-        //TODO:Xóa dữ liệu điểm danh theo ID
+        //TODO:Xóa dữ liệu điểm danh theo ID xoá mềm
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM Attendance a WHERE a.id = :id";
-            Attendance attendance = session.createQuery(hql, Attendance.class)
-                    .setParameter("id", id)
-                    .uniqueResult();
+            transaction = session.beginTransaction();
+            Attendance attendance = session.get(Attendance.class, id);
             if (attendance != null) {
-                transaction = session.beginTransaction();
-                session.delete(attendance);
+                attendance.setDeletedAt(true);  // Đánh dấu xóa mềm
+                session.update(attendance);                // Cập nhật thay vì delete
                 transaction.commit();
                 System.out.println("Attendance deleted successfully!");
                 return true;
@@ -115,7 +113,12 @@ public class AttendanceDAO implements IAttendanceDAO {
                 System.out.println("Attendance not found with id: " + id);
                 return false;
             }
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+            return false;
         }
+
     }
 
 
