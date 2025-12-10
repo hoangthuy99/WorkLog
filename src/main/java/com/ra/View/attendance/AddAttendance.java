@@ -676,7 +676,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
         jLabel6.setFont(new java.awt.Font("Trebuchet MS", 3, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel6.setText("分");
+        jLabel6.setText("mm");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

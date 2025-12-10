@@ -44,16 +44,25 @@ public class AttendanceMonth extends javax.swing.JPanel {
         initComponents();
         this.loggedInUser = user;
         this.attendanceController = new AttendanceController();
-         // Apply day type coloring
         this.userController = new UserController();
+
         // Center table columns
         centerTableColumns(tblAttendanceDate);
         tblAttendanceDate.setShowGrid(true);
         tblAttendanceDate.setGridColor(new Color(220, 220, 220));
+
         loadDepartments();
         LoadUsers();
 
+        // ➜ Ẩn các nút / control không dành cho employee
+        setupUIByRole();
+
+        // (option) nếu muốn tự động load tháng hiện tại cho employee:
+        // if (!isManager(loggedInUser)) {
+        //     btnSearchMonthActionPerformed(null);
+        // }
     }
+
 
     // Get users based on logged-in user's role
     private List<Users> getUsersBasedOnRole() {
@@ -77,6 +86,20 @@ public class AttendanceMonth extends javax.swing.JPanel {
         if (user == null || user.getRole() == null) return false;
         int roleId = user.getRole().getId();   // 1=EMP, 2=MANAGER, 3=ADMIN
         return roleId == 2 || roleId == 3;
+    }
+
+    private void setupUIByRole() {
+        // Nếu KHÔNG phải Manager/Admin => Employee
+        if (!isManager(loggedInUser)) {
+            // Ẩn 2 nút検索
+            btnSearchUser.setVisible(false);
+
+            // Ẩn luôn combobox + label chọn user/department
+            cbUserNo.setVisible(false);
+            cbDepart.setVisible(false);
+            jLabel1.setVisible(false); // 社員No
+            jLabel2.setVisible(false); // 部署
+        }
     }
 
 
@@ -307,7 +330,6 @@ public class AttendanceMonth extends javax.swing.JPanel {
     }
 
     private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
-        // TODO add your handling code here:
         int row = tblAttendanceDate.getSelectedRow();
 
         if (row == -1) {
@@ -316,10 +338,10 @@ public class AttendanceMonth extends javax.swing.JPanel {
         }
 
         try {
-            // Get attendance ID from hidden first column
+            // Lấy ID attendance từ cột 0 (đang ẩn)
             int attendanceId = (int) tblAttendanceDate.getValueAt(row, 0);
 
-            // Get attendance from database
+            // Lấy attendance từ DB
             Attendance attendance = attendanceController.findById(attendanceId);
 
             if (attendance == null) {
@@ -327,18 +349,38 @@ public class AttendanceMonth extends javax.swing.JPanel {
                 return;
             }
 
-            // Create list with single attendance
             List<Attendance> list = new ArrayList<>();
             list.add(attendance);
 
-            // Find MainDashboard parent
+            // ====== QUY ĐỊNH MODE EDIT / VIEW ======
+            boolean editable = false;
+            int status = attendance.getStatus();   // 0=pending,1=approved,2=rejected
+
+            // Manager/Admin -> luôn được quyền chỉnh sửa
+            if (isManager(loggedInUser)) {
+                editable = true;
+            }
+            // Employee -> chỉ được sửa khi Pending hoặc Rejected
+            else if (status == 0 || status == 2) {
+                editable = true;
+            }
+            // status == 1 (確認済み) -> employee chỉ được xem, không sửa
+
+            // Tìm MainDashboard
             MainDashboard mainDashboard = findParentMainDashboard(this);
 
             if (mainDashboard != null) {
-                // Open AddAttendance in view mode
-                AddAttendance addAttendancePanel = new AddAttendance(
-                        mainDashboard.currentUser, list, true);
+                // viewMode = !editable
+                AddAttendance addAttendancePanel =
+                        new AddAttendance(mainDashboard.currentUser, list, !editable);
                 mainDashboard.showPanel(addAttendancePanel);
+
+                JOptionPane.showMessageDialog(this,
+                        editable
+                                ? "編集可能モードで開きました。"
+                                : "閲覧モード：修正できません。",
+                        "情報",
+                        JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "メイン画面が見つかりません。");
             }
@@ -348,6 +390,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "エラー: " + e.getMessage());
         }
     }//GEN-LAST:event_btnViewActionPerformed
+
 
     private MainDashboard findParentMainDashboard(Component component) {
         Container parent = component.getParent();
