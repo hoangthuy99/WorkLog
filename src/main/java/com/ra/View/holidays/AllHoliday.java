@@ -109,11 +109,9 @@ public class AllHoliday extends JPanel {
         btnSearch = new JButton();
 
         jLabel4.setFont(new Font("Kannada MN", 1, 24)); // NOI18N
-        jLabel4.setText("休日一覧");
+        jLabel4.setText("カレンダー");
 
-        btnSearch.setBackground(new Color(102, 255, 255));
-        btnSearch.setFont(new Font("Helvetica Neue", 1, 13)); // NOI18N
-        btnSearch.setText("Search");
+
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -130,7 +128,6 @@ public class AllHoliday extends JPanel {
                                 .addContainerGap(14, Short.MAX_VALUE))
                         .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)
                                 .addGap(128, 128, 128))
         );
         layout.setVerticalGroup(
@@ -141,7 +138,6 @@ public class AllHoliday extends JPanel {
                                 .addGap(18, 18, 18)
                                 .addComponent(jCalendar, GroupLayout.PREFERRED_SIZE, 313, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(30, Short.MAX_VALUE))
         );
     }

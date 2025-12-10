@@ -59,8 +59,11 @@ public class AttendanceDate extends javax.swing.JPanel {
 
         // Employee không được đổi trạng thái
         if (!isManager(loggedInUser)) {
-            cbStatus.setEnabled(false);
-            btnStatus.setEnabled(false);
+            cbStatus.setVisible(false);
+            btnStatus.setVisible(false);
+            // 👇 ẨN TÌM KIẾM THEO TÊN NHÂN VIÊN
+            txtAttendanceDate.setVisible(false);
+            btnSearchField.setVisible(false);
         }
     }
 

@@ -1,9 +1,4 @@
 package com.ra.View.dashboard;
-
-//Thêm các imports cần thiết cho LoginScreen
-
-
-// --------------- Import các JPanel mới bắt đầu -------------------------
 import com.ra.Controller.AttendanceController;
 import com.ra.Model.Entity.Attendance;
 import com.ra.Model.Entity.Users;
@@ -24,9 +19,6 @@ import com.ra.View.attendance.AttendanceDate;
 import com.ra.View.attendance.AttendanceMonth;
 import com.ra.View.holidays.AddHoliday;
 import com.ra.View.holidays.AllHoliday;
-
-
-
 import java.time.LocalDate;
 import java.time.ZonedDateTime; // Để lấy thời gian hiện tại
 import java.time.format.DateTimeFormatter; // Để định dạng chuỗi
@@ -62,6 +54,7 @@ public class MainDashboard extends javax.swing.JFrame {
             case 3: // ADMIN
                 // Admin xem tất cả
                 pnlMenuHeader.setVisible(false);
+
                 break;
 
             case 2: // MANAGER
@@ -71,6 +64,7 @@ public class MainDashboard extends javax.swing.JFrame {
                 pnlDepartmentHeader.setVisible(false);
                 pnlTaskHeader.setVisible(false);
                 pnlHolidayHeader.setVisible(false);
+
                 break;
 
             case 1: // EMPLOYEE
@@ -82,6 +76,7 @@ public class MainDashboard extends javax.swing.JFrame {
                 pnlHolidayHeader.setVisible(false);
                 pnlAttendanceMonth.setVisible(false);
                 pnlReport.setVisible(false);
+                pnlAllHoliday.setVisible(false);
                 break;
         }
     }
@@ -220,7 +215,6 @@ public class MainDashboard extends javax.swing.JFrame {
         pnlHeader = new javax.swing.JPanel();
         lbDatetime = new javax.swing.JLabel();
         pnlWorkingArea = new javax.swing.JPanel();
-
         jLabel1.setText("jLabel1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -882,7 +876,7 @@ public class MainDashboard extends javax.swing.JFrame {
         btnAllMenu1.setBackground(new java.awt.Color(0, 102, 102));
         btnAllMenu1.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
         btnAllMenu1.setForeground(new java.awt.Color(255, 255, 255));
-        btnAllMenu1.setText("休日リスト");
+        btnAllMenu1.setText("カレンダー");
         btnAllMenu1.setMaximumSize(new java.awt.Dimension(250, 30));
         btnAllMenu1.setMinimumSize(new java.awt.Dimension(250, 30));
         btnAllMenu1.setPreferredSize(new java.awt.Dimension(250, 30));

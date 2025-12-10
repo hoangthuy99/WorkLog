@@ -16,23 +16,17 @@ public class LoginScreen extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger =
             java.util.logging.Logger.getLogger(LoginScreen.class.getName());
-
     private final UserController userController = new UserController();
-
     public LoginScreen(JFrame jFrame, boolean par) {
         initComponents();
         setLocationRelativeTo(null);
     }
-
     public LoginScreen() {
         initComponents();
         setLocationRelativeTo(null);
     }
-
-
     @SuppressWarnings("unchecked")
     private void initComponents() {
-
         pnlLogin = new javax.swing.JPanel();
         lbTitle = new javax.swing.JLabel();
         lbPassword = new javax.swing.JLabel();
@@ -42,8 +36,6 @@ public class LoginScreen extends javax.swing.JFrame {
         btnLogin = new javax.swing.JButton();
         chkShowPassword = new javax.swing.JCheckBox();
         getRootPane().setDefaultButton(btnLogin);
-
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ログイン画面");
         setPreferredSize(new java.awt.Dimension(600, 400));

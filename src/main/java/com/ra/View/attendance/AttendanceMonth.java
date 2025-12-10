@@ -75,9 +75,8 @@ public class AttendanceMonth extends javax.swing.JPanel {
     // Check if the user has a manager or admin role
     private boolean isManager(Users user) {
         if (user == null || user.getRole() == null) return false;
-
-        String role = user.getRole().getName();
-        return role.equals("MANAGER") || role.equals("ADMIN") || role.equals("ROLE_ADMIN");
+        int roleId = user.getRole().getId();   // 1=EMP, 2=MANAGER, 3=ADMIN
+        return roleId == 2 || roleId == 3;
     }
 
 
@@ -530,7 +529,6 @@ public class AttendanceMonth extends javax.swing.JPanel {
 //GEN-LAST:event_btnSearchMonthActionPerformed
 
     private void btnSearchUserActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnSearchUserActionPerformed
-        // TODO add your handling code here:
         try {
             // Lấy giá trị từ controls
             String selectedUserName = (String) cbUserNo.getSelectedItem();
@@ -550,14 +548,28 @@ public class AttendanceMonth extends javax.swing.JPanel {
             List<Attendance> searchResults = new ArrayList<>();
             String searchCriteria = "";
 
-            // Tìm kiếm theo user name
+            // 🔹 Tìm kiếm theo user name
             if (!"未選択".equals(selectedUserName)) {
-                // Kiểm tra quyền truy cập
-                Optional<Users> userOpt = userController.findByUsername(selectedUserName);
-                if (userOpt.isPresent()) {
-                    Users user = userOpt.get();
 
-                    if (!isManager(loggedInUser) && user.getId() != loggedInUser.getId()) {
+                Optional<Users> userOpt = userController.findByUsername(selectedUserName);
+                if (userOpt.isEmpty()) {
+                    JOptionPane.showMessageDialog(this,
+                            "社員が見つかりません: " + selectedUserName,
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                Users targetUser = userOpt.get(); // nhân viên được chọn trong combobox
+
+                if (isManager(loggedInUser)) {
+                    // ✅ Manager / Admin: xem được bất kỳ nhân viên nào
+                    searchResults = attendanceController.findByUsernameAndMonth(
+                            targetUser.getUserName(), month, year);
+                    searchCriteria = "社員: " + targetUser.getUserName();
+                } else {
+                    // 🔐 Employee: chỉ xem được chính mình
+                    if (targetUser.getId() != loggedInUser.getId()) {
                         JOptionPane.showMessageDialog(this,
                                 "他のユーザーのデータを表示する権限がありません",
                                 "権限エラー",
@@ -565,25 +577,23 @@ public class AttendanceMonth extends javax.swing.JPanel {
                         return;
                     }
 
-                    // Tìm attendance của user
-                    searchResults = attendanceController.findByUsernameAndMonth(
-                            selectedUserName, month, year);
-                    searchCriteria = "社員: " + selectedUserName;
-                }
-            }
-            // Tìm kiếm theo department
-            else if (!"未選択".equals(selectedDeptName)) {
-                // Kiểm tra quyền: nếu không phải manager, chỉ xem được chính mình
-                if (!isManager(loggedInUser)) {
-                    // Chỉ lấy attendance của chính user đó
                     searchResults = attendanceController.findByUsernameAndMonth(
                             loggedInUser.getUserName(), month, year);
-                    searchCriteria = "部署: " + selectedDeptName + " (自分のみ)";
-                } else {
-                    // Manager xem được cả department
+                    searchCriteria = "社員: " + loggedInUser.getUserName();
+                }
+            }
+            // 🔹 Tìm kiếm theo department
+            else if (!"未選択".equals(selectedDeptName)) {
+                if (isManager(loggedInUser)) {
+                    // ✅ Manager / Admin: xem được tất cả nhân viên trong department
                     searchResults = attendanceController.findByDepartmentAndMonth(
                             selectedDeptName, month, year);
                     searchCriteria = "部署: " + selectedDeptName;
+                } else {
+                    // 🔐 Employee: chỉ xem bản thân, dù chọn department nào
+                    searchResults = attendanceController.findByUsernameAndMonth(
+                            loggedInUser.getUserName(), month, year);
+                    searchCriteria = "部署: " + selectedDeptName + " (自分のみ)";
                 }
             }
 
@@ -597,7 +607,8 @@ public class AttendanceMonth extends javax.swing.JPanel {
                     "エラー",
                     JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }//GEN-LAST:event_btnSearchUserActionPerformed
+
 
     private void displaySearchResults(List<Attendance> attendances,
                                       String searchCriteria, int month, int year) {

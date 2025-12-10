@@ -59,6 +59,9 @@ public class AddAttendance extends javax.swing.JPanel {
         initDateChooserListener();
         initializeControllers();
 
+        // ⬇⬇ THÊM DÒNG NÀY
+        setupByRole();
+
         // Load dữ liệu attendance
         if (currentAttendance != null) {
             loadAttendanceData(currentAttendance);
@@ -133,6 +136,14 @@ public class AddAttendance extends javax.swing.JPanel {
         this.projectController = new ProjectController();
         this.holidayController = new HolidayController(new HolidayDAO());
     }
+    private void setupByRole() {
+        // Employee (không phải Manager/Admin) thì không cho đổi Status
+        if (!isManager(loggedInUser)) {
+            cbStatus.setEnabled(false);
+            cbStatus.setSelectedIndex(0); // 未確認 (PENDING)
+        }
+    }
+
     private void setupViewMode() {
         // Disable toàn bộ input
         cbProject.setEnabled(false);
@@ -222,14 +233,13 @@ public class AddAttendance extends javax.swing.JPanel {
         }
     }
 
-
     private void loadUserInfo() {
         try {
             if (loggedInUser != null) {
                 // Tên nhân viên
                 txtEmployeeName.setText(loggedInUser.getUserName());
 
-                // 🔒 Không cho sửa / nhập nữa
+
                 txtEmployeeName.setEditable(false);   // không cho edit
                 txtEmployeeName.setFocusable(false);  // không focus được luôn (option, cho form “clean” hơn)
             }
@@ -237,7 +247,6 @@ public class AddAttendance extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-
 
 
     private void loadProjects() {
@@ -254,9 +263,6 @@ public class AddAttendance extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-
-
-
     private void loadTasks() {
         try {
             TaskDAO taskDAO = new TaskDAO();
@@ -287,12 +293,8 @@ public class AddAttendance extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "未来の日付は入力できません！");
             return false;
         }
-
-
-
         // ==== 4. Validate Holiday ====
         if (rbHoliday.isSelected()) {
-
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String selectedStr = sdf.format(selectedDate);
 
@@ -333,8 +335,8 @@ public class AddAttendance extends javax.swing.JPanel {
         int endM = Integer.parseInt(e[1]);
 
         // 🔹 Làm tròn phút xuống bội số 10
-        startM = roundDownTo10Minutes(startM);
-        endM = roundDownTo10Minutes(endM);
+        startM = roundToNearest10(startM);
+        endM = roundToNearest10(endM);
 
         // Chuyển thành phút theo dạng “tổng phút từ 00:00”
         int startTotal = startH * 60 + startM;
@@ -342,7 +344,6 @@ public class AddAttendance extends javax.swing.JPanel {
 
         return endTotal - startTotal;
     }
-
 
 
     private void loadAttendanceForSelectedDate() {
@@ -497,7 +498,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
         cbTask.addActionListener(this::cbTaskActionPerformed);
 
-        jLabel1.setText("述べる");
+        jLabel1.setText("ノート");
 
         tblRecord.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -507,13 +508,12 @@ public class AddAttendance extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No", "プロジェクト名", "タスク名", "開始", "終了", "勤務時間", "休憩時間", "Status", "Remark"
+                "No.", "プロジェクト名", "タスク名", "開始", "終了", "勤務時間", "休憩時間", "状態", "ノート"
             }
         ) {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
-
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
@@ -532,23 +532,23 @@ public class AddAttendance extends javax.swing.JPanel {
         btnDelete.setBackground(new java.awt.Color(255, 204, 204));
         btnDelete.setText("削除");
 
-        jLabel2.setFont(new java.awt.Font("Trebuchet MS", 3, 10)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Yu Gothic Medium", 3, 10)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 0, 0));
         jLabel2.setText("HH:mm");
 
-        jLabel3.setFont(new java.awt.Font("Trebuchet MS", 3, 10)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Yu Gothic Medium", 3, 10)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 0, 0));
         jLabel3.setText("HH:mm");
 
-        jLabel4.setFont(new java.awt.Font("Trebuchet MS", 3, 10)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Yu Gothic Medium", 3, 10)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 0, 0));
         jLabel4.setText("HH:mm");
 
-        jLabel5.setFont(new java.awt.Font("Trebuchet MS", 3, 10)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Yu Gothic Medium", 3, 10)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 0, 0));
         jLabel5.setText("HH:mm");
 
-        jLabel6.setFont(new java.awt.Font("Trebuchet MS", 3, 12)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Yu Gothic Medium", 3, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 0, 0));
         jLabel6.setText("分");
 
@@ -744,12 +744,13 @@ public class AddAttendance extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Làm tròn phút xuống bội số 10 (0,10,20,30,40,50)
-    private int roundDownTo10Minutes(int minute) {
+    private int roundToNearest10(int minute) {
         if (minute < 0 || minute > 59) {
             throw new IllegalArgumentException("分は 0〜59 の範囲で入力してください");
         }
-        return (minute / 10) * 10;
+        return Math.round(minute / 10f) * 10;
     }
+
 
     public LocalTime parseFlexibleTime(String input) {
         if (input == null || input.trim().isEmpty()) {
@@ -773,7 +774,7 @@ public class AddAttendance extends javax.swing.JPanel {
         }
 
         // 🔹 Làm tròn phút xuống bội số 10
-        minute = roundDownTo10Minutes(minute);
+        minute = roundToNearest10(minute);
 
         // Nếu giờ >= 24, chuyển về giờ trong ngày (0-23)
         return LocalTime.of(hour % 24, minute);
@@ -893,7 +894,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 checkIn = LocalTime.parse(checkInStr);
 
                 // 🔹 Làm tròn phút xuống bội số 10
-                checkIn = checkIn.withMinute(roundDownTo10Minutes(checkIn.getMinute()));
+                checkIn = checkIn.withMinute(roundToNearest10(checkIn.getMinute()));
 
                 if (checkIn.getHour() < 0 || checkIn.getHour() > 23) {
                     JOptionPane.showMessageDialog(this, "チェックイン時間は 00:00〜23:59 の範囲で入力してください！");
@@ -930,7 +931,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
 
 // 🔹 Làm tròn phút xuống bội số 10
-                    minute = roundDownTo10Minutes(minute);
+                    minute = roundToNearest10(minute);
 
 // Nếu giờ >= 24 → thêm ngày và chuyển về giờ trong ngày
                     if (hour >= 24) {
@@ -1209,11 +1210,20 @@ public class AddAttendance extends javax.swing.JPanel {
             }
 
             // 6. Status
-            int status = switch (cbStatus.getSelectedIndex()) {
-                case 0 -> Constant.WORK_RECORD_STATUS_PENDING;
-                case 1 -> Constant.WORK_RECORD_STATUS_APPROVED;
-                default -> Constant.WORK_RECORD_STATUS_REJECTED;
-            };
+            // 6. Status
+            int status;
+            if (!isManager(loggedInUser)) {
+                // Employee: luôn luôn là PENDING
+                status = Constant.WORK_RECORD_STATUS_PENDING;
+            } else {
+                // Manager/Admin mới được chọn trong combobox
+                status = switch (cbStatus.getSelectedIndex()) {
+                    case 0 -> Constant.WORK_RECORD_STATUS_PENDING;
+                    case 1 -> Constant.WORK_RECORD_STATUS_APPROVED;
+                    default -> Constant.WORK_RECORD_STATUS_REJECTED;
+                };
+            }
+
 
             // 7. Tạo WorkRecord
             WorkRecord record = new WorkRecord();
