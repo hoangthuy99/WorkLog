@@ -613,7 +613,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No", "プロジェクト名", "タスク名", "開始", "終了", "勤務時間", "休憩時間", "Status", "Remark"
+                "ID","No", "プロジェクト名", "タスク名", "開始", "終了", "勤務時間", "休憩時間", "状態", "ノート"
             }
         ) {
             Class[] types = new Class [] {

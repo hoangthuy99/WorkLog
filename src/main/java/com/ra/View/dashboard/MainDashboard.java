@@ -64,6 +64,7 @@ public class MainDashboard extends javax.swing.JFrame {
                 pnlDepartmentHeader.setVisible(false);
                 pnlTaskHeader.setVisible(false);
                 pnlHolidayHeader.setVisible(false);
+                pnlAddUser.setVisible(false);
 
                 break;
 
