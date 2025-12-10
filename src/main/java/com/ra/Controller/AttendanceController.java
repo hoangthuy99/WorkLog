@@ -4,6 +4,7 @@ import com.ra.Common.Constant;
 import com.ra.DAO.Attendance.AttendanceDAO;
 import com.ra.Model.Entity.Attendance;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class AttendanceController {
@@ -82,6 +83,9 @@ public class AttendanceController {
     }
     public List<Attendance> findByDepartmentAndMonth(String departmentName, int month, int year) {
         return attendanceDAO.findByDepartmentAndMonth(departmentName, month, year);
+    }
+    public List<Attendance> findByDate(LocalDate workDate){
+        return attendanceDAO.findByDate(workDate);
     }
 
 }

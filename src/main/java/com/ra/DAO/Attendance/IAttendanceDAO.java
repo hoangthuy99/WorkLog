@@ -18,6 +18,7 @@ public interface IAttendanceDAO {
     List<Attendance> search(String keyword, int page, int size);
     Attendance findById(int id);
     List<WorkRecord> findByAttendanceId(int attendanceId);
+    List<Attendance> findByDate(LocalDate workDate);
     List<Attendance> findByUserAndDate(int userId, LocalDate today);
     List<Attendance> findByAttendanceMonth(int userId, int month, int year);
     List<Attendance> findByUserAndStatus(int userId, int status);

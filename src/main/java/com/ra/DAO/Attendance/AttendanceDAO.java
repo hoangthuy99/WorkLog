@@ -9,12 +9,14 @@ import com.ra.Utils.HibernateUtil;
 import jakarta.persistence.EntityManager;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 public class AttendanceDAO implements IAttendanceDAO {
     private RecordDAO recordDAO;
@@ -164,6 +166,26 @@ public class AttendanceDAO implements IAttendanceDAO {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Override
+    public List<Attendance> findByDate(LocalDate workDate) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // Sử dụng JOIN FETCH để load tất cả quan hệ cần thiết
+            String hql = "SELECT DISTINCT a FROM Attendance a " +
+                    "LEFT JOIN FETCH a.user u " + // Load user
+                    "LEFT JOIN FETCH u.department " + // Load department nếu cần
+                    "WHERE a.workDate = :workDate " +
+                    "ORDER BY u.fullName";
+
+            Query<Attendance> query = session.createQuery(hql, Attendance.class);
+            query.setParameter("workDate", workDate);
+
+            return query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 

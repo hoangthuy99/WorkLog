@@ -4,6 +4,7 @@ import com.ra.Controller.UserController;
 import com.ra.Model.Entity.Users;
 import com.ra.Sercurity.PasswordHash;
 import com.ra.Sercurity.PermissionUtil;
+import com.ra.Service.AutoHardDeleteService;
 import com.ra.View.dashboard.MainDashboard;
 
 import javax.swing.*;
@@ -168,6 +169,7 @@ public class LoginScreen extends javax.swing.JFrame {
             SessionLocal.set("USER_PERMISSIONS", permCodes);
         }
         PermissionUtil.setUser(user);
+        AutoHardDeleteService.start();// tự động xoá sau 1 tháng ở xoá mềm
         new MainDashboard(user).setVisible(true);
         this.dispose();
         // Lưu role của user
