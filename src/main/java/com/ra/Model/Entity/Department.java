@@ -28,7 +28,7 @@ public class Department {
     private List<Users> users;
 
     // Department - Project (n - n)
-    // ⭐ DEPARTMENT LÀ OWNER
+    //  DEPARTMENT LÀ OWNER
     @ManyToMany
     @JoinTable(
             name = "department_project",
