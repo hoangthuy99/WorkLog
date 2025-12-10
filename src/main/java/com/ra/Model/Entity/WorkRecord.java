@@ -49,7 +49,10 @@ public class WorkRecord {
     private String remarks;
     private Integer status;
 
-    private boolean deletedAt;
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;  // Trạng thái xóaprivate Boolean deletedAt = false;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;    // Thời gian xóa
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     public String getWorkTimeFormatted() {
@@ -60,6 +63,16 @@ public class WorkRecord {
         int seconds = totalSeconds % 60;
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+    // Phương thức helper
+    public void softDelete() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void restore() {
+        this.isDeleted = false;
+        this.deletedAt = null;
     }
 
 

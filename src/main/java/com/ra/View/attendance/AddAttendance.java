@@ -42,6 +42,8 @@ public class AddAttendance extends javax.swing.JPanel {
     private boolean viewMode = false;
     private Attendance currentAttendance;
     private List<WorkRecord> currentRecords;
+    private boolean isLoadingRecord = false; // Thêm biến flag
+    private LocalDate currentSelectedDate = null; // Thêm biến lưu ngày đang xem
 
 
     public AddAttendance(Users user, List<Attendance> a, boolean viewMode) {
@@ -52,6 +54,7 @@ public class AddAttendance extends javax.swing.JPanel {
         if (a != null && !a.isEmpty()) {
             this.currentAttendance = a.get(0);
         }
+
         loadUserInfo();
         loadProjects();
         loadTasks();
@@ -61,12 +64,6 @@ public class AddAttendance extends javax.swing.JPanel {
 
 
         setupByRole();
-
-        // Load dữ liệu attendance
-        if (currentAttendance != null) {
-            loadAttendanceData(currentAttendance);
-        }
-
         // Thêm sự kiện click cho bảng
         tblRecord.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -74,6 +71,13 @@ public class AddAttendance extends javax.swing.JPanel {
                 tblRecordMouseClicked(evt);
             }
         });
+
+        // Load dữ liệu attendance
+        if (currentAttendance != null) {
+            loadAttendanceData(currentAttendance);
+        }
+
+
 
         // Thiết lập chế độ xem/chỉnh sửa
         if (viewMode) {
@@ -112,11 +116,13 @@ public class AddAttendance extends javax.swing.JPanel {
             }
         }
     }
-
     private void loadRecordToForm(WorkRecord record) {
         if (record == null) return;
 
         try {
+            // Đánh dấu đang load record (để ngăn sự kiện date change)
+            isLoadingRecord = true;
+
             // Hiển thị thông tin cơ bản
             if (record.getStartTime() != null) {
                 fmStart.setText(formatTime(record.getStartTime()));
@@ -156,13 +162,16 @@ public class AddAttendance extends javax.swing.JPanel {
             // Disable status combo nếu không phải Manager/Admin
             cbStatus.setEnabled(isManager(loggedInUser));
 
-            // Hiển thị Attendance date
-            if (record.getAttendance() != null && record.getAttendance().getWorkDate() != null) {
-                csDate.setDate(java.sql.Date.valueOf(record.getAttendance().getWorkDate()));
-            }
+            // KHÔNG SET LẠI NGÀY - CHỈ HIỂN THỊ THÔNG TIN RECORD
+            // if (record.getAttendance() != null && record.getAttendance().getWorkDate() != null) {
+            //     csDate.setDate(java.sql.Date.valueOf(record.getAttendance().getWorkDate()));
+            // }
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            // Reset flag sau khi load xong
+            isLoadingRecord = false;
         }
     }
 
@@ -217,14 +226,7 @@ public class AddAttendance extends javax.swing.JPanel {
     public AddAttendance(Users user, List<Attendance> a) {
         this(user, a, false); // Gọi constructor mới với viewMode = false
     }
-    // Thêm phương thức để refresh dữ liệu
-    public void refreshData(List<Attendance> newList) {
-        this.a = newList;
-        if (newList != null && !newList.isEmpty()) {
-            this.currentAttendance = newList.get(0);
-            loadAttendanceData(currentAttendance);
-        }
-    }
+
 
 
     private void initializeControllers() {
@@ -273,16 +275,13 @@ public class AddAttendance extends javax.swing.JPanel {
         cbStatus.addItem("拒否済み"); // Status 2
     }
     private void loadWorkRecordTable(int attendanceId) {
-
         List<WorkRecord> list = recordController.findByAttendanceId(Math.toIntExact(attendanceId));
-        this.currentRecords = list;   // 🔹 lưu lại để dùng khi update/delete
+        this.currentRecords = list;
 
         DefaultTableModel model = (DefaultTableModel) tblRecord.getModel();
         model.setRowCount(0); // clear table
 
-        int maxRecords = Math.min(list.size(), 20);
-
-        for (int i = 0; i < maxRecords; i++) {
+        for (int i = 0; i < list.size(); i++) {
             WorkRecord wr = list.get(i);
 
             String statusText;
@@ -294,8 +293,10 @@ public class AddAttendance extends javax.swing.JPanel {
                 statusText = "拒否済み";
             }
 
+            // SỬA: Thêm ID vào cột 0 (ẩn), STT vào cột 1
             Object[] row = new Object[]{
-                    i + 1,
+                    wr.getId(),      // Cột 0: ID (sẽ ẩn đi)
+                    i + 1,           // Cột 1: STT hiển thị
                     wr.getProject() != null ? wr.getProject().getName() : "",
                     wr.getTask() != null ? wr.getTask().getName() : "",
                     wr.getStartTime(),
@@ -308,6 +309,12 @@ public class AddAttendance extends javax.swing.JPanel {
 
             model.addRow(row);
         }
+
+        // Ẩn cột ID (cột 0)
+        tblRecord.getColumnModel().getColumn(0).setMinWidth(0);
+        tblRecord.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblRecord.getColumnModel().getColumn(0).setWidth(0);
+        tblRecord.getColumnModel().getColumn(0).setPreferredWidth(0);
 
         centerTableColumns(tblRecord);
     }
@@ -613,7 +620,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, true, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {

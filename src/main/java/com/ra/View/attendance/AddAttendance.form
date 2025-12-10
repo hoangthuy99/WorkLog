@@ -423,7 +423,7 @@
                 <Column editable="false" title="&#x7d42;&#x4e86;" type="java.lang.String"/>
                 <Column editable="false" title="&#x52e4;&#x52d9;&#x6642;&#x9593;" type="java.lang.String"/>
                 <Column editable="false" title="&#x4f11;&#x61a9;&#x6642;&#x9593;" type="java.lang.String"/>
-                <Column editable="true" title="Status" type="java.lang.String"/>
+                <Column editable="false" title="Status" type="java.lang.String"/>
                 <Column editable="false" title="Remark" type="java.lang.String"/>
               </Table>
             </Property>
