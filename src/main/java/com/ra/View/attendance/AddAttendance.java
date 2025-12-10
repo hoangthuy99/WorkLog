@@ -59,7 +59,7 @@ public class AddAttendance extends javax.swing.JPanel {
         initDateChooserListener();
         initializeControllers();
 
-        // ⬇⬇ THÊM DÒNG NÀY
+
         setupByRole();
 
         // Load dữ liệu attendance
@@ -67,10 +67,108 @@ public class AddAttendance extends javax.swing.JPanel {
             loadAttendanceData(currentAttendance);
         }
 
+        // Thêm sự kiện click cho bảng
+        tblRecord.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblRecordMouseClicked(evt);
+            }
+        });
+
         // Thiết lập chế độ xem/chỉnh sửa
         if (viewMode) {
             setupViewMode();
         }
+    }
+
+    private void tblRecordMouseClicked(java.awt.event.MouseEvent evt) {
+        if (evt.getClickCount() == 1) { // Single click
+            int selectedRow = tblRecord.getSelectedRow();
+            if (selectedRow >= 0) {
+                try {
+                    // Lấy ID từ cột ẩn (giả sử cột 0 là ID)
+                    int recordId = (int) tblRecord.getValueAt(selectedRow, 0);
+
+                    // Lấy dữ liệu từ database
+                    List<WorkRecord> records = recordController.findById(recordId);
+                    if (records != null && !records.isEmpty()) {
+                        WorkRecord record = records.get(0);
+
+                        // Hiển thị dữ liệu lên form
+                        loadRecordToForm(record);
+
+                        // Enable nút Update, disable nút Add
+                        btnUpdateRecord.setEnabled(true);
+                        btnAddRecord.setEnabled(false);
+                        btnDelete.setEnabled(true);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(this,
+                            "データの読み込み中にエラーが発生しました: " + e.getMessage(),
+                            "エラー",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    }
+
+    private void loadRecordToForm(WorkRecord record) {
+        if (record == null) return;
+
+        try {
+            // Hiển thị thông tin cơ bản
+            if (record.getStartTime() != null) {
+                fmStart.setText(formatTime(record.getStartTime()));
+            }
+            if (record.getEndTime() != null) {
+                fmEnd.setText(formatTime(record.getEndTime()));
+            }
+
+            txtBreak.setText(record.getBreakWork() != null ?
+                    String.valueOf(record.getBreakWork()) : "0");
+            txtRemark.setText(record.getRemarks() != null ? record.getRemarks() : "");
+
+            // Hiển thị project và task
+            if (record.getProject() != null && record.getProject().getName() != null) {
+                cbProject.setSelectedItem(record.getProject().getName());
+            }
+            if (record.getTask() != null && record.getTask().getName() != null) {
+                cbTask.setSelectedItem(record.getTask().getName());
+            }
+
+            // Hiển thị status (chỉ Manager/Admin mới được thay đổi)
+            if (record.getStatus() != null) {
+                int statusIndex;
+                switch (record.getStatus()) {
+                    case Constant.WORK_RECORD_STATUS_APPROVED:
+                        statusIndex = 1;
+                        break;
+                    case Constant.WORK_RECORD_STATUS_REJECTED:
+                        statusIndex = 2;
+                        break;
+                    default:
+                        statusIndex = 0; // PENDING
+                }
+                cbStatus.setSelectedIndex(statusIndex);
+            }
+
+            // Disable status combo nếu không phải Manager/Admin
+            cbStatus.setEnabled(isManager(loggedInUser));
+
+            // Hiển thị Attendance date
+            if (record.getAttendance() != null && record.getAttendance().getWorkDate() != null) {
+                csDate.setDate(java.sql.Date.valueOf(record.getAttendance().getWorkDate()));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String formatTime(LocalTime time) {
+        if (time == null) return "";
+        return String.format("%02d:%02d", time.getHour(), time.getMinute());
     }
 
     private boolean isManager(Users user) {
@@ -498,7 +596,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
         cbTask.addActionListener(this::cbTaskActionPerformed);
 
-        jLabel1.setText("ノート");
+        jLabel1.setText("述べる");
 
         tblRecord.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -508,19 +606,38 @@ public class AddAttendance extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No.", "プロジェクト名", "タスク名", "開始", "終了", "勤務時間", "休憩時間", "状態", "ノート"
+                "No", "プロジェクト名", "タスク名", "開始", "終了", "勤務時間", "休憩時間", "Status", "Remark"
             }
         ) {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, true, false
+            };
+
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         tblRecord.setColumnSelectionAllowed(true);
         jScrollPane1.setViewportView(tblRecord);
         tblRecord.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        if (tblRecord.getColumnModel().getColumnCount() > 0) {
+            tblRecord.getColumnModel().getColumn(0).setResizable(false);
+            tblRecord.getColumnModel().getColumn(1).setResizable(false);
+            tblRecord.getColumnModel().getColumn(2).setResizable(false);
+            tblRecord.getColumnModel().getColumn(3).setResizable(false);
+            tblRecord.getColumnModel().getColumn(4).setResizable(false);
+            tblRecord.getColumnModel().getColumn(5).setResizable(false);
+            tblRecord.getColumnModel().getColumn(6).setResizable(false);
+            tblRecord.getColumnModel().getColumn(7).setResizable(false);
+            tblRecord.getColumnModel().getColumn(8).setResizable(false);
+        }
 
         btnAddRecord.setBackground(new java.awt.Color(153, 255, 153));
         btnAddRecord.setText("追加");
@@ -528,27 +645,29 @@ public class AddAttendance extends javax.swing.JPanel {
 
         btnUpdateRecord.setBackground(new java.awt.Color(204, 255, 255));
         btnUpdateRecord.setText("編集");
+        btnUpdateRecord.addActionListener(this::btnUpdateRecordActionPerformed);
 
         btnDelete.setBackground(new java.awt.Color(255, 204, 204));
         btnDelete.setText("削除");
+        btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
-        jLabel2.setFont(new java.awt.Font("Yu Gothic Medium", 3, 10)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Trebuchet MS", 3, 10)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 0, 0));
         jLabel2.setText("HH:mm");
 
-        jLabel3.setFont(new java.awt.Font("Yu Gothic Medium", 3, 10)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Trebuchet MS", 3, 10)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 0, 0));
         jLabel3.setText("HH:mm");
 
-        jLabel4.setFont(new java.awt.Font("Yu Gothic Medium", 3, 10)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Trebuchet MS", 3, 10)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 0, 0));
         jLabel4.setText("HH:mm");
 
-        jLabel5.setFont(new java.awt.Font("Yu Gothic Medium", 3, 10)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Trebuchet MS", 3, 10)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 0, 0));
         jLabel5.setText("HH:mm");
 
-        jLabel6.setFont(new java.awt.Font("Yu Gothic Medium", 3, 12)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Trebuchet MS", 3, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 0, 0));
         jLabel6.setText("分");
 
@@ -670,7 +789,8 @@ public class AddAttendance extends javax.swing.JPanel {
                         .addGap(38, 38, 38)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(fmCheckOut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbLatestendtime)))
+                            .addComponent(lbLatestendtime))
+                        .addComponent(rbHoliday))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(36, 36, 36)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -679,9 +799,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(rbHoliday)
-                            .addComponent(csDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(csDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(29, 29, 29))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(36, 36, 36)
@@ -1252,6 +1370,230 @@ public class AddAttendance extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "エラー " + ex.getMessage());
         }
     }//GEN-LAST:event_btnAddRecordActionPerformed
+
+    private void btnUpdateRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateRecordActionPerformed
+        // TODO add your handling code here:
+        try {
+            int selectedRow = tblRecord.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "更新する勤怠記録を選択してください！");
+                return;
+            }
+
+            // Lấy ID từ bảng
+            int recordId = (int) tblRecord.getValueAt(selectedRow, 0);
+
+            List<WorkRecord> records = recordController.findById(recordId);
+            if (records == null || records.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "選択された勤怠記録が見つかりません！");
+                return;
+            }
+
+            WorkRecord existingRecord = records.get(0);
+
+            // Kiểm tra attendance tồn tại
+            if (existingRecord.getAttendance() == null) {
+                JOptionPane.showMessageDialog(this, "この勤怠記録に関連する出勤データが見つかりません！");
+                return;
+            }
+
+            // Kiểm tra nếu đã check-out thì chỉ Manager/Admin được sửa
+            if (existingRecord.getAttendance().getCheckOutTime() != null && !isManager(loggedInUser)) {
+                JOptionPane.showMessageDialog(this, "チェックアウト済みのため、勤怠記録を更新できません！");
+                return;
+            }
+
+            // Lấy và validate giờ bắt đầu + kết thúc
+            String startStr = fmStart.getText().trim();
+            String endStr   = fmEnd.getText().trim();
+            if (startStr.isEmpty() || endStr.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "開始時間と終了時間を入力してください！");
+                return;
+            }
+
+            // Parse sang LocalTime
+            LocalTime newStart = parseFlexibleTime(startStr);
+            LocalTime newEnd   = parseFlexibleTime(endStr);
+            if (newStart == null || newEnd == null) {
+                JOptionPane.showMessageDialog(this, "時間の形式が無効です。");
+                return;
+            }
+
+            int newStartMin = newStart.getHour() * 60 + newStart.getMinute();
+            int newEndMin   = newEnd.getHour() * 60 + newEnd.getMinute();
+            if (newEndMin <= newStartMin) {
+                JOptionPane.showMessageDialog(this, "終了時間は開始時間より後でなければなりません！");
+                return;
+            }
+
+            // Kiểm tra trùng giờ với các record khác
+            List<WorkRecord> allRecords = recordController.findByAttendanceId(
+                    existingRecord.getAttendance().getId());
+            if (allRecords != null) {
+                for (WorkRecord wr : allRecords) {
+                    // Bỏ qua record đang sửa
+                    if (wr.getId() == recordId) continue;
+
+                    LocalTime eStart = wr.getStartTime();
+                    LocalTime eEnd = wr.getEndTime();
+                    if (eStart == null || eEnd == null) continue;
+
+                    int eStartMin = eStart.getHour() * 60 + eStart.getMinute();
+                    int eEndMin = eEnd.getHour() * 60 + eEnd.getMinute();
+
+                    // Kiểm tra overlap
+                    if (newStartMin < eEndMin && eStartMin < newEndMin) {
+                        JOptionPane.showMessageDialog(this,
+                                "この時間帯は既存の勤怠記録と重複しています。\n" +
+                                        "既存: " + eStart + "〜" + eEnd);
+                        return;
+                    }
+                }
+            }
+
+            // Tính thời gian làm việc
+            long totalMinutes = calculateMinutesAllowOver24(startStr, endStr);
+            if (totalMinutes <= 0) {
+                JOptionPane.showMessageDialog(this, "終了時間は開始時間より後でなければなりません！");
+                return;
+            }
+
+            // Lấy project + task
+            Project project = projectController.findByName((String) cbProject.getSelectedItem()).orElse(null);
+            Tasks task     = taskController.findByName((String) cbTask.getSelectedItem()).orElse(null);
+            if (project == null || task == null) {
+                JOptionPane.showMessageDialog(this, "プロジェクトまたはタスクが見つかりません！");
+                return;
+            }
+
+            // Break time
+            int breakWork = 0;
+            if (!txtBreak.getText().trim().isEmpty()) {
+                try {
+                    breakWork = Integer.parseInt(txtBreak.getText().trim());
+                    if (breakWork < 0) {
+                        JOptionPane.showMessageDialog(this, "休憩時間は0以上でなければなりません！");
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "休憩時間は数値で入力してください！");
+                    return;
+                }
+            }
+
+            int workMinutes = (int) totalMinutes - breakWork;
+            if (workMinutes < 0) {
+                JOptionPane.showMessageDialog(this, "休憩時間は総勤務時間を超えることはできません！");
+                return;
+            }
+
+            // Status
+            int status;
+            if (!isManager(loggedInUser)) {
+                // Employee: luôn luôn là PENDING
+                status = Constant.WORK_RECORD_STATUS_PENDING;
+            } else {
+                // Manager/Admin mới được chọn trong combobox
+                status = switch (cbStatus.getSelectedIndex()) {
+                    case 0 -> Constant.WORK_RECORD_STATUS_PENDING;
+                    case 1 -> Constant.WORK_RECORD_STATUS_APPROVED;
+                    default -> Constant.WORK_RECORD_STATUS_REJECTED;
+                };
+            }
+
+            // Cập nhật WorkRecord
+            existingRecord.setProject(project);
+            existingRecord.setTask(task);
+            existingRecord.setStartTime(newStart);
+            existingRecord.setEndTime(newEnd);
+            existingRecord.setBreakWork(breakWork);
+            existingRecord.setWorkMinutes(workMinutes);
+            existingRecord.setStatus(status);
+            existingRecord.setRemarks(txtRemark.getText().trim());
+
+            // Gọi controller update
+            WorkRecord success = recordController.updateRecord(existingRecord);
+
+            if (success != null) {
+                // Update Break Minutes trong Attendance
+                updateAttendanceBreakTime(existingRecord.getAttendance().getId());
+
+                // Load lại bảng
+                loadWorkRecordTable(existingRecord.getAttendance().getId());
+
+                // Clear form và reset buttons
+                clearRecordForm();
+                btnUpdateRecord.setEnabled(false);
+                btnAddRecord.setEnabled(true);
+                btnDelete.setEnabled(false);
+
+                JOptionPane.showMessageDialog(this, "勤怠記録を正常に更新しました！");
+            } else {
+                JOptionPane.showMessageDialog(this, "勤怠記録の更新に失敗しました！");
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "エラー: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnUpdateRecordActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        // Xoá WorkRecord xoá mềm (soft delete)
+        try {
+            int selectedRow = tblRecord.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "削除する勤怠記録を選択してください！");
+                return;
+            }
+            // Lấy ID từ bảng
+            int recordId = (int) tblRecord.getValueAt(selectedRow, 0);
+            List<WorkRecord> records = recordController.findById(recordId);
+            if (records == null || records.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "選択された勤怠記録が見つかりません！");
+                return;
+            }
+            WorkRecord existingRecord = records.get(0);
+            // Kiểm tra attendance tồn tại
+            if (existingRecord.getAttendance() == null) {
+                JOptionPane.showMessageDialog(this, "この勤怠記録に関連する出勤データが見つかりません！");
+                return;
+            }
+            // Kiểm tra nếu đã check-out thì chỉ Manager/Admin được xoá
+            if (existingRecord.getAttendance().getCheckOutTime() != null && !isManager(loggedInUser)) {
+                JOptionPane.showMessageDialog(this, "チェックアウト済みのため、勤怠記録を削除できません！");
+                return;
+            }
+            // Xác nhận xoá
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "本当にこの勤怠記録を削除しますか？",
+                    "確認",
+                    JOptionPane.YES_NO_OPTION);
+            if (confirm != JOptionPane.YES_OPTION) {
+                return;
+            }
+            // Gọi controller xoá mềm
+            boolean deleted = recordController.deleteRecord(recordId);
+            if (deleted) {
+                // Update Break Minutes trong Attendance
+                updateAttendanceBreakTime(existingRecord.getAttendance().getId());
+                // Load lại bảng
+                loadWorkRecordTable(existingRecord.getAttendance().getId());
+                // Clear form và reset buttons
+                clearRecordForm();
+                btnUpdateRecord.setEnabled(false);
+                btnAddRecord.setEnabled(true);
+                btnDelete.setEnabled(false);
+                JOptionPane.showMessageDialog(this, "勤怠記録を正常に削除しました！");
+            } else {
+                JOptionPane.showMessageDialog(this, "勤怠記録の削除に失敗しました！");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "エラー: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
 
 

@@ -25,6 +25,4 @@ public interface IAttendanceDAO {
     List<Attendance> findByUsernameAndMonth(String username, int month, int year);
     List<Attendance> findByDepartmentAndMonth(String departmentName, int month, int year);
 
-
-
 }

@@ -49,7 +49,7 @@ public class WorkRecord {
     private String remarks;
     private Integer status;
 
-    private LocalDateTime deletedAt;
+    private boolean deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     public String getWorkTimeFormatted() {

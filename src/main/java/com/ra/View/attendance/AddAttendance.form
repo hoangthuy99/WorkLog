@@ -177,10 +177,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="rbHoliday" min="-2" max="-2" attributes="0"/>
-                          <Component id="csDate" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="csDate" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
@@ -419,60 +416,60 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="9" rowCount="4">
-                <Column editable="true" title="No" type="java.lang.Integer"/>
-                <Column editable="true" title="&#x30d7;&#x30ed;&#x30b8;&#x30a7;&#x30af;&#x30c8;&#x540d;" type="java.lang.Object"/>
-                <Column editable="true" title="&#x30bf;&#x30b9;&#x30af;&#x540d;" type="java.lang.Object"/>
-                <Column editable="true" title="&#x958b;&#x59cb;" type="java.lang.String"/>
-                <Column editable="true" title="&#x7d42;&#x4e86;" type="java.lang.String"/>
-                <Column editable="true" title="&#x52e4;&#x52d9;&#x6642;&#x9593;" type="java.lang.String"/>
-                <Column editable="true" title="&#x4f11;&#x61a9;&#x6642;&#x9593;" type="java.lang.String"/>
+                <Column editable="false" title="No" type="java.lang.Integer"/>
+                <Column editable="false" title="&#x30d7;&#x30ed;&#x30b8;&#x30a7;&#x30af;&#x30c8;&#x540d;" type="java.lang.Object"/>
+                <Column editable="false" title="&#x30bf;&#x30b9;&#x30af;&#x540d;" type="java.lang.Object"/>
+                <Column editable="false" title="&#x958b;&#x59cb;" type="java.lang.String"/>
+                <Column editable="false" title="&#x7d42;&#x4e86;" type="java.lang.String"/>
+                <Column editable="false" title="&#x52e4;&#x52d9;&#x6642;&#x9593;" type="java.lang.String"/>
+                <Column editable="false" title="&#x4f11;&#x61a9;&#x6642;&#x9593;" type="java.lang.String"/>
                 <Column editable="true" title="Status" type="java.lang.String"/>
-                <Column editable="true" title="Remark" type="java.lang.String"/>
+                <Column editable="false" title="Remark" type="java.lang.String"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="2">
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
@@ -505,6 +502,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="&#x7de8;&#x96c6;"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUpdateRecordActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnDelete">
       <Properties>
@@ -513,6 +513,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="&#x524a;&#x9664;"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator1">
     </Component>

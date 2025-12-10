@@ -45,7 +45,7 @@ public class Attendance {
     private boolean isHoliday;
     private int status; // đã xác nhận - từ chối - chờ duyệt
 
-    private LocalDateTime deletedAt;
+    private boolean deletedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     // WorkRecord (1) - (n) WorkRecord
