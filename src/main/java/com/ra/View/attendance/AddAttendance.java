@@ -603,7 +603,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
         cbTask.addActionListener(this::cbTaskActionPerformed);
 
-        jLabel1.setText("述べる");
+        jLabel1.setText("ノート");
 
         tblRecord.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
