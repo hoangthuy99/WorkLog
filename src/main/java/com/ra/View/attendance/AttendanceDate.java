@@ -393,8 +393,9 @@ public class AttendanceDate extends javax.swing.JPanel {
 
             if (updatedAttendance != null) {
                 // 6. Cập nhật lại bảng theo status vừa chọn
-                int userId = updatedAttendance.getUser().getId();
-                refreshAttendanceTableByStatus(userId, dbStatus);
+                // 6. Chỉ cập nhật lại dòng đang chọn, không refresh toàn bảng
+                int statusColumnIndex = 9; // cột "状態" = cột thứ 9
+                model.setValueAt(getStatusJapanese(dbStatus), selectedRow, statusColumnIndex);
 
                 JOptionPane.showMessageDialog(this, "ステータスが更新されました。");
             } else {
