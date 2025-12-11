@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
     private Users loggedInUser;
     private Constant constant = new Constant();
+    private Users attendanceUser;
     private AttendanceController attendanceController;
     private RecordController recordController;
     private TaskController taskController;
@@ -44,15 +46,24 @@ public class AddAttendance extends javax.swing.JPanel {
     private List<WorkRecord> currentRecords;
     private boolean isLoadingRecord = false; // Thêm biến flag
     private LocalDate currentSelectedDate = null; // Thêm biến lưu ngày đang xem
-
-
-    public AddAttendance(Users user, List<Attendance> a, boolean viewMode) {
+    private Users displayUser;     // User của attendance (dùng để hiển thị)
+    public AddAttendance(Users user,  List<Attendance> a,Users displayUser, boolean viewMode) {
         initComponents();
         this.loggedInUser = user;
         this.a = a;
         this.viewMode = viewMode;
+        this.displayUser = displayUser;
+        // Xác định attendanceUser
         if (a != null && !a.isEmpty()) {
             this.currentAttendance = a.get(0);
+            // Nếu attendance có thông tin user, thì dùng user đó
+            if (this.currentAttendance.getUser() != null) {
+                this.attendanceUser = this.currentAttendance.getUser();
+            } else {
+                this.attendanceUser = this.displayUser; // Fallback: dùng displayUser
+            }
+        } else {
+            this.attendanceUser = this.displayUser; // Nếu không có attendance, dùng displayUser
         }
 
         loadUserInfo();
@@ -78,11 +89,17 @@ public class AddAttendance extends javax.swing.JPanel {
         }
 
 
-
         // Thiết lập chế độ xem/chỉnh sửa
         if (viewMode) {
             setupViewMode();
         }
+    }
+
+    private void loadUserInfo() {
+        Users u = attendanceUser != null ? attendanceUser : displayUser;
+
+        if (u == null) return;
+        txtEmployeeName.setText(u.getFullName());
     }
 
     private void tblRecordMouseClicked(java.awt.event.MouseEvent evt) {
@@ -162,10 +179,7 @@ public class AddAttendance extends javax.swing.JPanel {
             // Disable status combo nếu không phải Manager/Admin
             cbStatus.setEnabled(isManager(loggedInUser));
 
-            // KHÔNG SET LẠI NGÀY - CHỈ HIỂN THỊ THÔNG TIN RECORD
-            // if (record.getAttendance() != null && record.getAttendance().getWorkDate() != null) {
-            //     csDate.setDate(java.sql.Date.valueOf(record.getAttendance().getWorkDate()));
-            // }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -223,10 +237,9 @@ public class AddAttendance extends javax.swing.JPanel {
         }
     }
 
-    public AddAttendance(Users user, List<Attendance> a) {
-        this(user, a, false); // Gọi constructor mới với viewMode = false
+    public AddAttendance(Users user, List<Attendance> a, boolean viewMode) {
+        this(user, a, user, false);
     }
-
 
 
     private void initializeControllers() {
@@ -264,10 +277,6 @@ public class AddAttendance extends javax.swing.JPanel {
         // lblTitle.setText("勤怠詳細 - 閲覧モード");
     }
 
-
-    private List<Attendance> getCurrentAttendance(int userId, LocalDate date) {
-        return attendanceController.findByUserAndDate(userId, date);
-    }
     private void initStatusComboBox() {
         cbStatus.removeAllItems();
         cbStatus.addItem("未確認");   // Status 0
@@ -319,14 +328,6 @@ public class AddAttendance extends javax.swing.JPanel {
         centerTableColumns(tblRecord);
     }
 
-    private boolean canEditWorkRecord(WorkRecord wr) {
-        // Manager/Admin thì sửa được tất
-        if (isManager(loggedInUser)) {
-            return true;
-        }
-        // Employee chỉ được sửa record bị từ chối
-        return wr.getStatus() == Constant.WORK_RECORD_STATUS_REJECTED;
-    }
 
 
     private void centerTableColumns(JTable table) {
@@ -338,20 +339,7 @@ public class AddAttendance extends javax.swing.JPanel {
         }
     }
 
-    private void loadUserInfo() {
-        try {
-            if (loggedInUser != null) {
-                // Tên nhân viên
-                txtEmployeeName.setText(loggedInUser.getUserName());
 
-
-                txtEmployeeName.setEditable(false);   // không cho edit
-                txtEmployeeName.setFocusable(false);  // không focus được luôn (option, cho form “clean” hơn)
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     private void loadProjects() {
@@ -568,7 +556,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
         lbEmployee.setText("社員名");
 
-        txtEmployeeName.setText("ログイン社員名");
+        txtEmployeeName.setText("");
 
         lbEarlieststarttime.setText("最始");
 

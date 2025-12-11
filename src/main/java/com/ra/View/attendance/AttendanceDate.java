@@ -190,30 +190,40 @@ public class AttendanceDate extends javax.swing.JPanel {
                 return;
             }
 
-            List<Attendance> list = new ArrayList<>();
-            list.add(attendance);
+            // Lấy user của attendance
+            Users attendanceUser = attendance.getUser();
+            if (attendanceUser == null) {
+                JOptionPane.showMessageDialog(this, "ユーザー情報が見つかりません。");
+                return;
+            }
 
+            // Kiểm tra quyền chỉnh sửa
             boolean editable = false;
-
-            // trạng thái attendance
             int status = attendance.getStatus();
 
             // Manager → luôn edit được
             if (isManager(loggedInUser)) {
                 editable = true;
             }
-            // Employee → chỉ edit khi pending hoặc rejected
-            else if (status == 0 || status == 2) {
+            // Employee → chỉ edit khi pending hoặc rejected, VÀ chỉ được edit attendance của chính mình
+            else if ((status == 0 || status == 2) && attendanceUser.getId() == loggedInUser.getId()) {
                 editable = true;
             }
 
             MainDashboard mainDashboard = findParentMainDashboard(this);
 
             if (mainDashboard != null) {
+                // Tạo danh sách attendance
+                List<Attendance> attendanceList = new ArrayList<>();
+                attendanceList.add(attendance);
 
-                // truyền viewMode = !editable
-                AddAttendance addAttendancePanel =
-                        new AddAttendance(mainDashboard.currentUser, list, !editable);
+                // FIX: Gọi constructor với đúng tham số (đưa loggedInUser làm user đang đăng nhập)
+                AddAttendance addAttendancePanel = new AddAttendance(
+                        loggedInUser,      // User đang đăng nhập
+                        attendanceList,    // Danh sách attendance
+                        attendanceUser,    // User cần hiển thị (user của attendance)
+                        !editable          // viewMode: true nếu chỉ xem, false nếu được edit
+                );
 
                 mainDashboard.showPanel(addAttendancePanel);
 
@@ -223,7 +233,6 @@ public class AttendanceDate extends javax.swing.JPanel {
                                 : "閲覧モード：修正できません。",
                         "情報",
                         JOptionPane.INFORMATION_MESSAGE);
-
             }
 
         } catch (Exception e) {
