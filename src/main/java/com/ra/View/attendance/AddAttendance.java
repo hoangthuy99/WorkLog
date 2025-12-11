@@ -607,17 +607,14 @@ public class AddAttendance extends javax.swing.JPanel {
 
         tblRecord.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "ID","No", "プロジェクト名", "タスク名", "開始", "終了", "勤務時間", "休憩時間", "状態", "ノート"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class,java.lang.Integer.class,  java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false, false
@@ -631,6 +628,18 @@ public class AddAttendance extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        if (tblRecord.getColumnCount() > 0) {
+            // Ẩn cột ID (cột 0)
+            tblRecord.getColumnModel().getColumn(0).setMinWidth(0);
+            tblRecord.getColumnModel().getColumn(0).setMaxWidth(0);
+            tblRecord.getColumnModel().getColumn(0).setPreferredWidth(0);
+            tblRecord.getColumnModel().getColumn(0).setWidth(0);
+
+            // Set resizable cho các cột còn lại
+            for (int i = 1; i < tblRecord.getColumnCount(); i++) {
+                tblRecord.getColumnModel().getColumn(i).setResizable(false);
+            }
+        }
         tblRecord.setColumnSelectionAllowed(true);
         jScrollPane1.setViewportView(tblRecord);
         tblRecord.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);

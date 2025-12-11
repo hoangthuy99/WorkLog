@@ -288,7 +288,7 @@ public class AttendanceDate extends javax.swing.JPanel {
                     new java.sql.Date(selectedDate.getTime()).toLocalDate();
 
             List<Attendance> list =
-                    attendanceController.findByUserAndDate(loggedInUser.getId(), localDate);
+                    attendanceController.findByDate(localDate);
 
             if (list == null || list.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "該当するデータがありません。");
