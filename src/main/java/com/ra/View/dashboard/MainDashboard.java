@@ -65,6 +65,7 @@ public class MainDashboard extends javax.swing.JFrame {
                 pnlTaskHeader.setVisible(false);
                 pnlHolidayHeader.setVisible(false);
                 pnlAddUser.setVisible(false);
+                btnAddUser.setVisible(false);
 
                 break;
 
@@ -1058,7 +1059,7 @@ public class MainDashboard extends javax.swing.JFrame {
 
     private void btnAllUserActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnAllUserActionPerformed
         // Gọi phương thức showPanel và truyền vào JPanel
-        showPanel(new AllUser());
+        showPanel(new AllUser(currentUser));
     }//GEN-LAST:event_btnAllUserActionPerformed
 
     private void btnAddUserActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnAddUserActionPerformed
