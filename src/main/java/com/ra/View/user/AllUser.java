@@ -30,20 +30,44 @@ public class AllUser extends JPanel {
     // Biến này lưu trữ ID thật của các user đang hiển thị trên bảng
     private List<Integer> userIds;
     public UserController userController;
+    private Users loggedInUser;
+
+    private boolean isManager(Users user) {
+        if (user == null || user.getRole() == null) return false;
+        int roleId = user.getRole().getId();   // 1=EMP, 2=MANAGER, 3=ADMIN
+        return roleId == 2 || roleId == 3;
+    }
 
 
     /**
      * Creates new form AllUser1
      */
-    public AllUser() {
-        userController = new UserController(); // Khởi tạo Controller
+    public AllUser(Users user) {
+        this.loggedInUser = user;
+        userController = new UserController();
         initComponents();
-        // Áp dụng bố cục căn giữa và cân đối
         applyCenteredLayout();
-        loadUserTable(); // Tải dữ liệu lần đầu
-        // 🌟 THÊM: Thiết lập chiều rộng cột sau khi bảng được khởi tạo
+        loadUserTable();
         setColumnWidths();
+
+        // 🔹 Ẩn nút tạo user nếu là MANAGER (nhưng vẫn cho ADMIN thấy)
+        if (loggedInUser != null && loggedInUser.getRole() != null) {
+            int roleId = loggedInUser.getRole().getId();
+            if (roleId == 2) { // chỉ manager
+                btnAdduser.setVisible(false);
+                btnEdit.setVisible(false);
+                btnDelete.setVisible(false);
+            }
+            // nếu muốn ẩn luôn cho cả admin thì dùng: if (!isManager(loggedInUser)) ...
+        }
     }
+
+
+
+
+
+
+
 
     // Phương thức mới để thiết lập chiều rộng cột cố định
     private void setColumnWidths() {
@@ -472,6 +496,7 @@ public class AllUser extends JPanel {
             logger.log(java.util.logging.Level.SEVERE, "ユーザー削除エラー", e);
         }
     }
+
 
 
     private JButton btnAdduser;

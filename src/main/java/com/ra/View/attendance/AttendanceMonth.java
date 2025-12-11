@@ -766,7 +766,6 @@ public class AttendanceMonth extends javax.swing.JPanel {
     }
 
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSearchMonth;
     private javax.swing.JButton btnSearchUser;
