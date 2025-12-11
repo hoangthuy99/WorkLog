@@ -212,7 +212,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Helvetica Neue" size="13" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="&#x793e;&#x54e1;No"/>
+        <Property name="text" type="java.lang.String" value="&#x793e;&#x54e1;&#x540d;"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
