@@ -61,7 +61,6 @@ public class AttendanceDate extends javax.swing.JPanel {
         if (!isManager(loggedInUser)) {
             cbStatus.setVisible(false);
             btnStatus.setVisible(false);
-            // 👇 ẨN TÌM KIẾM THEO TÊN NHÂN VIÊN
             txtAttendanceDate.setVisible(false);
             btnSearchField.setVisible(false);
         }
@@ -199,7 +198,7 @@ public class AttendanceDate extends javax.swing.JPanel {
             int status = attendance.getStatus();
 
             // Manager → luôn edit được
-            if (isManager(loggedInUser)) {
+            if ((isManager(loggedInUser))&&(status==0||status==2)) {
                 editable = true;
             }
             // Employee → chỉ edit khi pending hoặc rejected
@@ -346,7 +345,7 @@ public class AttendanceDate extends javax.swing.JPanel {
 
     private void btnStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStatusActionPerformed
         try {
-            // 🔐 Chỉ MANAGER / ADMIN được đổi trạng thái
+            // Chỉ MANAGER / ADMIN được đổi trạng thái
             if (!isManager(loggedInUser)) {
                 JOptionPane.showMessageDialog(this,
                         "この操作を行う権限がありません。\n" +
