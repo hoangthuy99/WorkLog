@@ -176,8 +176,8 @@ public class AllTask extends JPanel {
         String taskName = tblAddtask.getValueAt(row, 1).toString();
         Optional<Tasks> t = taskController.findByName(taskName);
 
-
-        if (t == null) {
+        // Optional không bao giờ null → phải check isPresent()
+        if (t.isEmpty()) {
             JOptionPane.showMessageDialog(this, "タスクが見つかりません。");
             return;
         }
@@ -190,11 +190,6 @@ public class AllTask extends JPanel {
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
-
-            taskController.delete(t.get().getId());
-            JOptionPane.showMessageDialog(this, "タスクが削除されました。");
-            loadTable(taskController.findAll());
-
             try {
                 taskController.delete(t.get().getId());
                 loadTable(taskController.findAll());
@@ -219,9 +214,9 @@ public class AllTask extends JPanel {
                             JOptionPane.ERROR_MESSAGE);
                 }
             }
-
         }
     }
+
 
 
 

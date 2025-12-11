@@ -61,7 +61,6 @@ public class AttendanceDate extends javax.swing.JPanel {
         if (!isManager(loggedInUser)) {
             cbStatus.setVisible(false);
             btnStatus.setVisible(false);
-            // 👇 ẨN TÌM KIẾM THEO TÊN NHÂN VIÊN
             txtAttendanceDate.setVisible(false);
             btnSearchField.setVisible(false);
         }
@@ -202,7 +201,7 @@ public class AttendanceDate extends javax.swing.JPanel {
             int status = attendance.getStatus();
 
             // Manager → luôn edit được
-            if (isManager(loggedInUser)) {
+            if ((isManager(loggedInUser))&&(status==0||status==2)) {
                 editable = true;
             }
             // Employee → chỉ edit khi pending hoặc rejected, VÀ chỉ được edit attendance của chính mình
@@ -355,7 +354,7 @@ public class AttendanceDate extends javax.swing.JPanel {
 
     private void btnStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStatusActionPerformed
         try {
-            // 🔐 Chỉ MANAGER / ADMIN được đổi trạng thái
+            // Chỉ MANAGER / ADMIN được đổi trạng thái
             if (!isManager(loggedInUser)) {
                 JOptionPane.showMessageDialog(this,
                         "この操作を行う権限がありません。\n" +
@@ -402,8 +401,9 @@ public class AttendanceDate extends javax.swing.JPanel {
 
             if (updatedAttendance != null) {
                 // 6. Cập nhật lại bảng theo status vừa chọn
-                int userId = updatedAttendance.getUser().getId();
-                refreshAttendanceTableByStatus(userId, dbStatus);
+                // 6. Chỉ cập nhật lại dòng đang chọn, không refresh toàn bảng
+                int statusColumnIndex = 9; // cột "状態" = cột thứ 9
+                model.setValueAt(getStatusJapanese(dbStatus), selectedRow, statusColumnIndex);
 
                 JOptionPane.showMessageDialog(this, "ステータスが更新されました。");
             } else {

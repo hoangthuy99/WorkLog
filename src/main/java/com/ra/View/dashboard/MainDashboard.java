@@ -63,7 +63,7 @@ public class MainDashboard extends javax.swing.JFrame {
                 pnlProjectHeader.setVisible(false);
                 pnlDepartmentHeader.setVisible(false);
                 pnlTaskHeader.setVisible(false);
-                pnlHolidayHeader.setVisible(false);
+                pnlAddHoliday.setVisible(false);
                 pnlAddUser.setVisible(false);
                 btnAddUser.setVisible(false);
 
@@ -75,9 +75,8 @@ public class MainDashboard extends javax.swing.JFrame {
                 pnlProjectHeader.setVisible(false);
                 pnlMenuHeader.setVisible(false);
                 pnlTaskHeader.setVisible(false);
-                pnlHolidayHeader.setVisible(false);
                 pnlReport.setVisible(false);
-                pnlAllHoliday.setVisible(false);
+                pnlAddHoliday.setVisible(false);
                 break;
         }
     }

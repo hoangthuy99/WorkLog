@@ -198,7 +198,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
         btnSearchMonth.addActionListener(this::btnSearchMonthActionPerformed);
 
         jLabel1.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
-        jLabel1.setText("社員No");
+        jLabel1.setText("社員名");
 
         jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         jLabel2.setText("部署");
