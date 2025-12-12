@@ -376,7 +376,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
             if (mainDashboard != null) {
 
                 AddAttendance addAttendancePanel =
-                        new AddAttendance(mainDashboard.currentUser, list, !editable);
+                        new AddAttendance(mainDashboard.currentUser, list, attendance.getUser(), !editable);
                 mainDashboard.showPanel(addAttendancePanel);
 
                 JOptionPane.showMessageDialog(this,
