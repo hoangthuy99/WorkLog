@@ -92,6 +92,7 @@ public class AddAttendance extends javax.swing.JPanel {
         // Thiết lập chế độ xem/chỉnh sửa
         if (viewMode) {
             setupViewMode();
+            canEdit();
         }
     }
 
@@ -192,6 +193,17 @@ public class AddAttendance extends javax.swing.JPanel {
     private String formatTime(LocalTime time) {
         if (time == null) return "";
         return String.format("%02d:%02d", time.getHour(), time.getMinute());
+    }
+    private boolean canEdit() {
+        if (loggedInUser == null || attendanceUser == null) return false;
+
+        int roleId = loggedInUser.getRole().getId();
+
+        // ADMIN (3) hoặc MANAGER (2) luôn được sửa
+        if (roleId == 2 || roleId == 3) return true;
+
+        // EMPLOYEE (1) chỉ được sửa của chính mình
+        return loggedInUser.getId() == attendanceUser.getId();
     }
 
     private boolean isManager(Users user) {

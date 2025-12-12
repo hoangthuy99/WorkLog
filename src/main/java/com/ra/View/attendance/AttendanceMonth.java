@@ -350,8 +350,12 @@ public class AttendanceMonth extends javax.swing.JPanel {
                 return;
             }
 
-            List<Attendance> list = new ArrayList<>();
-            list.add(attendance);
+            // Lấy user của attendance
+            Users attendanceUser = attendance.getUser();
+            if (attendanceUser == null) {
+                JOptionPane.showMessageDialog(this, "ユーザー情報が見つかりません。");
+                return;
+            }
 
             // ====== QUY ĐỊNH MODE EDIT / VIEW ======
             boolean editable = false;
@@ -371,9 +375,18 @@ public class AttendanceMonth extends javax.swing.JPanel {
             MainDashboard mainDashboard = findParentMainDashboard(this);
 
             if (mainDashboard != null) {
-                // viewMode = !editable
-                AddAttendance addAttendancePanel =
-                        new AddAttendance(mainDashboard.currentUser, list, !editable);
+                // Tạo danh sách attendance
+                List<Attendance> attendanceList = new ArrayList<>();
+                attendanceList.add(attendance);
+
+                // FIX: Gọi constructor với đúng tham số (đưa loggedInUser làm user đang đăng nhập)
+                AddAttendance addAttendancePanel = new AddAttendance(
+                        loggedInUser,      // User đang đăng nhập
+                        attendanceList,    // Danh sách attendance
+                        attendanceUser,    // User cần hiển thị (user của attendance)
+                        false// viewMode: true nếu chỉ xem, false nếu được edit
+                );
+
                 mainDashboard.showPanel(addAttendancePanel);
 
                 JOptionPane.showMessageDialog(this,
@@ -382,8 +395,6 @@ public class AttendanceMonth extends javax.swing.JPanel {
                                 : "閲覧モード：修正できません。",
                         "情報",
                         JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "メイン画面が見つかりません。");
             }
 
         } catch (Exception e) {
