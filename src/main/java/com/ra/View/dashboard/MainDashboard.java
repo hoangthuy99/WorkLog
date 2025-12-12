@@ -1142,7 +1142,7 @@ public class MainDashboard extends javax.swing.JFrame {
 
         // 2. Gọi constructor có tham số và truyền đối tượng Users vào
         List<Attendance> a = attendanceController.findByUserAndDate(currentUser.getId(), LocalDate.now());
-        AddAttendance addAttendancePanel = new AddAttendance(userToPass, a);
+        AddAttendance addAttendancePanel = new AddAttendance(userToPass,a,true);
 
         // 3. Gọi phương thức showPanel (thực hiện xóa panel cũ, thêm panel mới, revalidate/repaint)
         showPanel(addAttendancePanel);

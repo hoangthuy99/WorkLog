@@ -26,7 +26,7 @@ public class Attendance {
     private int id;
 
     // 1 user - nhiều attendance
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)
     private Users user;
 

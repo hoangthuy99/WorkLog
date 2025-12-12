@@ -339,7 +339,8 @@ public class AttendanceMonth extends javax.swing.JPanel {
 
         try {
             // Lấy ID attendance từ cột 0 (đang ẩn)
-            int attendanceId = (int) tblAttendanceDate.getValueAt(row, 0);
+            Object raw = tblAttendanceDate.getValueAt(row, 0);
+            int attendanceId = Integer.parseInt(raw.toString());
 
             // Lấy attendance từ DB
             Attendance attendance = attendanceController.findById(attendanceId);
