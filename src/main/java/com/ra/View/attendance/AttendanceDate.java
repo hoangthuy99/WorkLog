@@ -45,7 +45,7 @@ public class AttendanceDate extends javax.swing.JPanel {
     private boolean isManager(Users user) {
         if (user == null || user.getRole() == null) return false;
         int roleId = user.getRole().getId();   // 1=EMP, 2=MANAGER, 3=ADMIN
-        return roleId == 2 || roleId == 3;
+        return  roleId == 3|| roleId==2;
     }
 
     public AttendanceDate(Users user) {
@@ -189,40 +189,29 @@ public class AttendanceDate extends javax.swing.JPanel {
                 return;
             }
 
-            // Lấy user của attendance
-            Users attendanceUser = attendance.getUser();
-            if (attendanceUser == null) {
-                JOptionPane.showMessageDialog(this, "ユーザー情報が見つかりません。");
-                return;
-            }
+            List<Attendance> list = new ArrayList<>();
+            list.add(attendance);
 
             // Kiểm tra quyền chỉnh sửa
             boolean editable = false;
             int status = attendance.getStatus();
 
             // Manager → luôn edit được
-            if ((isManager(loggedInUser))&&(status==0||status==2)) {
+            if (isManager(loggedInUser)) {
                 editable = true;
             }
-            // Employee → chỉ edit khi pending hoặc rejected, VÀ chỉ được edit attendance của chính mình
-            else if ((status == 0 || status == 2) && attendanceUser.getId() == loggedInUser.getId()) {
+            // Employee → chỉ edit khi pending hoặc rejected
+            else if (status == 0 || status == 2) {
                 editable = true;
             }
 
             MainDashboard mainDashboard = findParentMainDashboard(this);
 
             if (mainDashboard != null) {
-                // Tạo danh sách attendance
-                List<Attendance> attendanceList = new ArrayList<>();
-                attendanceList.add(attendance);
 
-                // FIX: Gọi constructor với đúng tham số (đưa loggedInUser làm user đang đăng nhập)
-                AddAttendance addAttendancePanel = new AddAttendance(
-                        loggedInUser,      // User đang đăng nhập
-                        attendanceList,    // Danh sách attendance
-                        attendanceUser,    // User cần hiển thị (user của attendance)
-                        !editable          // viewMode: true nếu chỉ xem, false nếu được edit
-                );
+                // truyền viewMode = !editable
+                AddAttendance addAttendancePanel =
+                        new AddAttendance(mainDashboard.currentUser, list, !editable);
 
                 mainDashboard.showPanel(addAttendancePanel);
 

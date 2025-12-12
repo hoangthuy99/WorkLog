@@ -159,13 +159,6 @@ public class AddAttendance extends javax.swing.JPanel {
                 cbTask.setSelectedItem(record.getTask().getName());
             }
 
-            // Hiển thị status (chỉ Manager/Admin mới được thay đổi)
-
-
-            // Disable status combo nếu không phải Manager/Admin
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
