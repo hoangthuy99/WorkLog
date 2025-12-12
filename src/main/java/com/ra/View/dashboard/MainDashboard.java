@@ -672,14 +672,14 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlAttendanceHeaderLayout = new javax.swing.GroupLayout(pnlAttendanceHeader);
         pnlAttendanceHeader.setLayout(pnlAttendanceHeaderLayout);
         pnlAttendanceHeaderLayout.setHorizontalGroup(
-            pnlAttendanceHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnTaskHeader1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlAttendanceHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnTaskHeader1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAttendanceHeaderLayout.setVerticalGroup(
-            pnlAttendanceHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlAttendanceHeaderLayout.createSequentialGroup()
-                .addComponent(btnTaskHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36))
+                pnlAttendanceHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlAttendanceHeaderLayout.createSequentialGroup()
+                                .addComponent(btnTaskHeader1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(36, 36, 36))
         );
 
         pnlSidebar.add(pnlAttendanceHeader);
@@ -708,12 +708,12 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlAddAttendanceLayout = new javax.swing.GroupLayout(pnlAddAttendance);
         pnlAddAttendance.setLayout(pnlAddAttendanceLayout);
         pnlAddAttendanceLayout.setHorizontalGroup(
-            pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAddAttendance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnAddAttendance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAddAttendanceLayout.setVerticalGroup(
-            pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAddAttendance, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                pnlAddAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnAddAttendance, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlAttendancemenu.add(pnlAddAttendance);
@@ -735,12 +735,12 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlAttendanceMonthLayout = new javax.swing.GroupLayout(pnlAttendanceMonth);
         pnlAttendanceMonth.setLayout(pnlAttendanceMonthLayout);
         pnlAttendanceMonthLayout.setHorizontalGroup(
-            pnlAttendanceMonthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnViewAttendanceMonth, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlAttendanceMonthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnViewAttendanceMonth, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAttendanceMonthLayout.setVerticalGroup(
-            pnlAttendanceMonthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnViewAttendanceMonth, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                pnlAttendanceMonthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnViewAttendanceMonth, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlAttendancemenu.add(pnlAttendanceMonth);
@@ -762,12 +762,12 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlAttendanceDayLayout = new javax.swing.GroupLayout(pnlAttendanceDay);
         pnlAttendanceDay.setLayout(pnlAttendanceDayLayout);
         pnlAttendanceDayLayout.setHorizontalGroup(
-            pnlAttendanceDayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnViewAttendanceDay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlAttendanceDayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnViewAttendanceDay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAttendanceDayLayout.setVerticalGroup(
-            pnlAttendanceDayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnViewAttendanceDay, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                pnlAttendanceDayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnViewAttendanceDay, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlAttendancemenu.add(pnlAttendanceDay);
@@ -792,12 +792,12 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlReportLayout = new javax.swing.GroupLayout(pnlReport);
         pnlReport.setLayout(pnlReportLayout);
         pnlReportLayout.setHorizontalGroup(
-            pnlReportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlReportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlReportLayout.setVerticalGroup(
-            pnlReportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnReport, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                pnlReportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnReport, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlSidebar.add(pnlReport);
@@ -825,14 +825,14 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlHolidayHeaderLayout = new javax.swing.GroupLayout(pnlHolidayHeader);
         pnlHolidayHeader.setLayout(pnlHolidayHeaderLayout);
         pnlHolidayHeaderLayout.setHorizontalGroup(
-            pnlHolidayHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnHolidayHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlHolidayHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnHolidayHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlHolidayHeaderLayout.setVerticalGroup(
-            pnlHolidayHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlHolidayHeaderLayout.createSequentialGroup()
-                .addComponent(btnHolidayHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36))
+                pnlHolidayHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlHolidayHeaderLayout.createSequentialGroup()
+                                .addComponent(btnHolidayHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(36, 36, 36))
         );
 
         pnlSidebar.add(pnlHolidayHeader);
@@ -858,12 +858,12 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlAddHolidayLayout = new javax.swing.GroupLayout(pnlAddHoliday);
         pnlAddHoliday.setLayout(pnlAddHolidayLayout);
         pnlAddHolidayLayout.setHorizontalGroup(
-            pnlAddHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAddMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlAddHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnAddMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAddHolidayLayout.setVerticalGroup(
-            pnlAddHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAddMenu1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                pnlAddHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnAddMenu1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlHolidaymenu.add(pnlAddHoliday);
@@ -885,12 +885,12 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlAllHolidayLayout = new javax.swing.GroupLayout(pnlAllHoliday);
         pnlAllHoliday.setLayout(pnlAllHolidayLayout);
         pnlAllHolidayLayout.setHorizontalGroup(
-            pnlAllHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAllMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlAllHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnAllMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAllHolidayLayout.setVerticalGroup(
-            pnlAllHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAllMenu1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                pnlAllHolidayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnAllMenu1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlHolidaymenu.add(pnlAllHoliday);
@@ -920,14 +920,14 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlMenuHeaderLayout = new javax.swing.GroupLayout(pnlMenuHeader);
         pnlMenuHeader.setLayout(pnlMenuHeaderLayout);
         pnlMenuHeaderLayout.setHorizontalGroup(
-            pnlMenuHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnMenuHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlMenuHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnMenuHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlMenuHeaderLayout.setVerticalGroup(
-            pnlMenuHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlMenuHeaderLayout.createSequentialGroup()
-                .addComponent(btnMenuHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36))
+                pnlMenuHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlMenuHeaderLayout.createSequentialGroup()
+                                .addComponent(btnMenuHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(36, 36, 36))
         );
 
         pnlSidebar.add(pnlMenuHeader);
@@ -953,12 +953,12 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlAddMenuLayout = new javax.swing.GroupLayout(pnlAddMenu);
         pnlAddMenu.setLayout(pnlAddMenuLayout);
         pnlAddMenuLayout.setHorizontalGroup(
-            pnlAddMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAddMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlAddMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnAddMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAddMenuLayout.setVerticalGroup(
-            pnlAddMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAddMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                pnlAddMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnAddMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlMenumenu.add(pnlAddMenu);
@@ -980,12 +980,12 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlAllMenuLayout = new javax.swing.GroupLayout(pnlAllMenu);
         pnlAllMenu.setLayout(pnlAllMenuLayout);
         pnlAllMenuLayout.setHorizontalGroup(
-            pnlAllMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAllMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlAllMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnAllMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlAllMenuLayout.setVerticalGroup(
-            pnlAllMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAllMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                pnlAllMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnAllMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlMenumenu.add(pnlAllMenu);
@@ -1009,12 +1009,12 @@ public class MainDashboard extends javax.swing.JFrame {
         javax.swing.GroupLayout pnlLogoutLayout = new javax.swing.GroupLayout(pnlLogout);
         pnlLogout.setLayout(pnlLogoutLayout);
         pnlLogoutLayout.setHorizontalGroup(
-            pnlLogoutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                pnlLogoutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlLogoutLayout.setVerticalGroup(
-            pnlLogoutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                pnlLogoutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pnlSidebar.add(pnlLogout);
@@ -1142,7 +1142,8 @@ public class MainDashboard extends javax.swing.JFrame {
 
         // 2. Gọi constructor có tham số và truyền đối tượng Users vào
         List<Attendance> a = attendanceController.findByUserAndDate(currentUser.getId(), LocalDate.now());
-        AddAttendance addAttendancePanel = new AddAttendance(userToPass,a,true);
+
+        AddAttendance addAttendancePanel = new AddAttendance(userToPass, a, true);
 
         // 3. Gọi phương thức showPanel (thực hiện xóa panel cũ, thêm panel mới, revalidate/repaint)
         showPanel(addAttendancePanel);

@@ -201,7 +201,7 @@ public class AttendanceDate extends javax.swing.JPanel {
             int status = attendance.getStatus();
 
             // Manager → luôn edit được
-            if ((isManager(loggedInUser))&&(status==0||status==2)) {
+            if (isManager(loggedInUser)) {
                 editable = true;
             }
             // Employee → chỉ edit khi pending hoặc rejected, VÀ chỉ được edit attendance của chính mình
