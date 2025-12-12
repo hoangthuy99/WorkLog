@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
     private Users loggedInUser;
     private Constant constant = new Constant();
+    private Users attendanceUser;
     private AttendanceController attendanceController;
     private RecordController recordController;
     private TaskController taskController;
@@ -44,15 +46,24 @@ public class AddAttendance extends javax.swing.JPanel {
     private List<WorkRecord> currentRecords;
     private boolean isLoadingRecord = false; // Thêm biến flag
     private LocalDate currentSelectedDate = null; // Thêm biến lưu ngày đang xem
-
-
-    public AddAttendance(Users user, List<Attendance> a, boolean viewMode) {
+    private Users displayUser;     // User của attendance (dùng để hiển thị)
+    public AddAttendance(Users user,  List<Attendance> a,Users displayUser, boolean viewMode) {
         initComponents();
         this.loggedInUser = user;
         this.a = a;
         this.viewMode = viewMode;
+        this.displayUser = displayUser;
+        // Xác định attendanceUser
         if (a != null && !a.isEmpty()) {
             this.currentAttendance = a.get(0);
+            // Nếu attendance có thông tin user, thì dùng user đó
+            if (this.currentAttendance.getUser() != null) {
+                this.attendanceUser = this.currentAttendance.getUser();
+            } else {
+                this.attendanceUser = this.displayUser; // Fallback: dùng displayUser
+            }
+        } else {
+            this.attendanceUser = this.displayUser; // Nếu không có attendance, dùng displayUser
         }
 
         loadUserInfo();
@@ -77,11 +88,17 @@ public class AddAttendance extends javax.swing.JPanel {
         }
 
 
-
         // Thiết lập chế độ xem/chỉnh sửa
         if (viewMode) {
             setupViewMode();
         }
+    }
+
+    private void loadUserInfo() {
+        Users u = attendanceUser != null ? attendanceUser : displayUser;
+
+        if (u == null) return;
+        txtEmployeeName.setText(u.getFullName());
     }
 
     private void tblRecordMouseClicked(java.awt.event.MouseEvent evt) {
@@ -144,13 +161,10 @@ public class AddAttendance extends javax.swing.JPanel {
 
             // Hiển thị status (chỉ Manager/Admin mới được thay đổi)
 
+
             // Disable status combo nếu không phải Manager/Admin
 
 
-            // KHÔNG SET LẠI NGÀY - CHỈ HIỂN THỊ THÔNG TIN RECORD
-            // if (record.getAttendance() != null && record.getAttendance().getWorkDate() != null) {
-            //     csDate.setDate(java.sql.Date.valueOf(record.getAttendance().getWorkDate()));
-            // }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -175,6 +189,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
     private void loadAttendanceData(Attendance att) {
         if (att == null) return;
+
         try {
             //  Ngày làm việc
             if (att.getWorkDate() != null) {
@@ -207,10 +222,9 @@ public class AddAttendance extends javax.swing.JPanel {
         }
     }
 
-    public AddAttendance(Users user, List<Attendance> a) {
-        this(user, a, false); // Gọi constructor mới với viewMode = false
+    public AddAttendance(Users user, List<Attendance> a, boolean viewMode) {
+        this(user, a, user, false);
     }
-
 
 
     private void initializeControllers() {
@@ -221,7 +235,9 @@ public class AddAttendance extends javax.swing.JPanel {
         this.holidayController = new HolidayController(new HolidayDAO());
     }
     private void setupByRole() {
+        // Employee (không phải Manager/Admin) thì không cho đổi Status
         if (!isManager(loggedInUser)) {
+             // 未確認 (PENDING)
         }
     }
 
@@ -235,13 +251,12 @@ public class AddAttendance extends javax.swing.JPanel {
         fmCheckIn.setEnabled(false);
         fmCheckOut.setEnabled(false);
         txtBreak.setEnabled(false);
+
+        // Button thêm/sửa ẩn đi
         btnAddAttend.setVisible(false);
         btnAddRecord.setVisible(false);
 
-
     }
-
-
     private List<Attendance> getCurrentAttendance(int userId, LocalDate date) {
         return attendanceController.findByUserAndDate(userId, date);
     }
@@ -282,7 +297,6 @@ public class AddAttendance extends javax.swing.JPanel {
 
 
 
-
     private void centerTableColumns(JTable table) {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -292,20 +306,8 @@ public class AddAttendance extends javax.swing.JPanel {
         }
     }
 
-    private void loadUserInfo() {
-        try {
-            if (loggedInUser != null) {
-                // Tên nhân viên
-                txtEmployeeName.setText(loggedInUser.getUserName());
 
 
-                txtEmployeeName.setEditable(false);   // không cho edit
-                txtEmployeeName.setFocusable(false);  // không focus được luôn (option, cho form “clean” hơn)
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     private void loadProjects() {
@@ -387,19 +389,34 @@ public class AddAttendance extends javax.swing.JPanel {
         String[] s = startStr.split(":");
         String[] e = endStr.split(":");
 
-        int startH = Integer.parseInt(s[0]);
-        int startM = Integer.parseInt(s[1]);
+        int startH = Integer.parseInt(s[0].trim());
+        int startM = Integer.parseInt(s[1].trim());
 
-        int endH = Integer.parseInt(e[0]);
-        int endM = Integer.parseInt(e[1]);
+        int endH = Integer.parseInt(e[0].trim());
+        int endM = Integer.parseInt(e[1].trim());
 
-        // 🔹 Làm tròn phút xuống bội số 10
+        // Làm tròn phút xuống bội số 10
         startM = roundToNearest10(startM);
-        endM = roundToNearest10(endM);
+        endM   = roundToNearest10(endM);
 
-        // Chuyển thành phút theo dạng “tổng phút từ 00:00”
+        // Nếu làm tròn ra 60 phút → +1 giờ, phút = 0
+        if (startM == 60) {
+            startM = 0;
+            startH += 1;
+        }
+        if (endM == 60) {
+            endM = 0;
+            endH += 1;
+        }
+
+        // Chuyển thành phút
         int startTotal = startH * 60 + startM;
-        int endTotal = endH * 60 + endM;
+        int endTotal   = endH * 60 + endM;
+
+        // ⚠ Nếu end < start → hiểu là qua ngày → +24h
+        if (endTotal < startTotal) {
+            endTotal += 24 * 60;
+        }
 
         return endTotal - startTotal;
     }
@@ -468,9 +485,9 @@ public class AddAttendance extends javax.swing.JPanel {
         txtEmployeeName = new javax.swing.JTextField();
         lbEarlieststarttime = new javax.swing.JLabel();
         fmEnd = fmEnd = new javax.swing.JFormattedTextField(
-            new javax.swing.text.DateFormatter(
-                new java.text.SimpleDateFormat("HH:mm")
-            )
+                new javax.swing.text.DateFormatter(
+                        new java.text.SimpleDateFormat("HH:mm")
+                )
         );
         ;
         lbLatestendtime = new javax.swing.JLabel();
@@ -482,9 +499,9 @@ public class AddAttendance extends javax.swing.JPanel {
         btnAddAttend = new javax.swing.JButton();
         lbStarttime = new javax.swing.JLabel();
         fmStart = fmStart = new javax.swing.JFormattedTextField(
-            new javax.swing.text.DateFormatter(
-                new java.text.SimpleDateFormat("HH:mm")
-            )
+                new javax.swing.text.DateFormatter(
+                        new java.text.SimpleDateFormat("HH:mm")
+                )
         );
         ;
         lbEndtime = new javax.swing.JLabel();
@@ -521,7 +538,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
         lbEmployee.setText("社員名");
 
-        txtEmployeeName.setText("ログイン社員名");
+        txtEmployeeName.setText("");
 
         lbEarlieststarttime.setText("最始");
 
@@ -842,14 +859,11 @@ public class AddAttendance extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Làm tròn phút xuống bội số 10 (0,10,20,30,40,50)
-    // Làm tròn phút tới bội số 10 (có thể trả về 60)
     private int roundToNearest10(int minute) {
         if (minute < 0 || minute > 59) {
             throw new IllegalArgumentException("分は 0〜59 の範囲で入力してください");
         }
-
-        int rounded = Math.round(minute / 10f) * 10; // 0,10,...,50,60
-        return rounded;
+        return Math.round(minute / 10f) * 10;
     }
 
 
@@ -959,6 +973,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
             attendance.setTotalMinutes((int) totalMinutes);
 
+            // Tính overtime (giả sử làm việc tiêu chuẩn 8 tiếng = 480 phút)
             int standardWorkMinutes = 8 * 60; // 480 phút
             int overtime = (int) totalMinutes - standardWorkMinutes;
             attendance.setOvertimeMinutes(Math.max(overtime, 0));
@@ -1056,6 +1071,7 @@ public class AddAttendance extends javax.swing.JPanel {
             LocalDateTime checkOutDT = null;
             if (!checkOutStr.isEmpty()) {
                 try {
+                    // Validate định dạng check-out
                     String[] parts = checkOutStr.split(":");
                     if (parts.length < 2) {
                         JOptionPane.showMessageDialog(this,
@@ -1102,6 +1118,8 @@ public class AddAttendance extends javax.swing.JPanel {
                     }
 
                     checkOut = LocalTime.of(hour, minute);
+                    checkOutDT = LocalDateTime.of(workDate, checkOut).plusDays(extraDay);
+
                     checkOutDT = LocalDateTime.of(workDate, checkOut).plusDays(extraDay);
 
                     System.out.println("DEBUG: Check-out parsed - Input: " + checkOutStr +
@@ -1247,8 +1265,6 @@ public class AddAttendance extends javax.swing.JPanel {
     }//GEN-LAST:event_cbTaskActionPerformed
 
     private void btnAddRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRecordActionPerformed
-        // TODO add your handling code here:
-
         try {
             // 1. Lấy ngày
             if (csDate.getDate() == null) {
@@ -1283,7 +1299,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 return;
             }
 
-            // 3. Lấy giờ bắt đầu + kết thúc (có hỗ trợ > 24h nếu bạn cho phép)
+            // 3. Lấy giờ bắt đầu + kết thúc (CHO PHÉP 0〜30h)
             String startStr = fmStart.getText().trim();
             String endStr   = fmEnd.getText().trim();
 
@@ -1292,22 +1308,31 @@ public class AddAttendance extends javax.swing.JPanel {
                 return;
             }
 
-            // ✅ Parse sang LocalTime (đã làm tròn 10 phút nếu parseFlexibleTime có xử lý)
-            LocalTime newStart = parseFlexibleTime(startStr);
-            LocalTime newEnd   = parseFlexibleTime(endStr);
-
-            if (newStart == null || newEnd == null) {
+            // Parse sang LocalTime (cho phép 0〜30h, làm tròn phút)
+            LocalTime newStart;
+            LocalTime newEnd;
+            try {
+                newStart = parseFlexibleTime(startStr);
+                newEnd   = parseFlexibleTime(endStr);
+            } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "時間の形式が無効です。");
                 return;
             }
 
-            int newStartMin = newStart.getHour() * 60 + newStart.getMinute();
-            int newEndMin   = newEnd.getHour() * 60 + newEnd.getMinute();
+            // ⚡ Tính tổng phút theo 0〜30h (cho phép qua 24h)
+            long totalMinutes;
+            try {
+                totalMinutes = calculateMinutesAllowOver24(startStr, endStr);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "時間の形式が無効です。");
+                return;
+            }
 
-            if (newEndMin <= newStartMin) {
+            if (totalMinutes <= 0) {
                 JOptionPane.showMessageDialog(this, "終了時間は開始時間より後でなければなりません！");
                 return;
             }
+
             // 🔹 BẮT BUỘC CHECK-IN TRƯỚC KHI THÊM WORKRECORD
             if (attendance.getCheckInTime() == null) {
                 JOptionPane.showMessageDialog(this,
@@ -1315,17 +1340,19 @@ public class AddAttendance extends javax.swing.JPanel {
                 return;
             }
 
-// 🔹 NẾU ĐÃ CHECK-OUT THÌ NHÂN VIÊN KHÔNG ĐƯỢC THÊM RECORD NỮA
-//    --> Manager/Admin vẫn có thể thêm/sửa
+            // 🔹 NẾU ĐÃ CHECK-OUT THÌ NHÂN VIÊN KHÔNG ĐƯỢC THÊM RECORD NỮA
             if (attendance.getCheckOutTime() != null && !isManager(loggedInUser)) {
                 JOptionPane.showMessageDialog(this,
                         "チェックアウト済みのため、勤怠記録を追加できません！");
                 return;
             }
 
-
-            // 🔹 3b. CHECK TRÙNG GIỜ VỚI CÁC WORKRECORD ĐÃ CÓ
+            // 🔹 3b. CHECK TRÙNG GIỜ VỚI CÁC WORKRECORD ĐÃ CÓ (dùng LocalTime đã parse)
             if (existingRecords != null) {
+
+                int newStartMin = newStart.getHour() * 60 + newStart.getMinute();
+                int newEndMin   = newEnd.getHour() * 60 + newEnd.getMinute();
+
                 for (WorkRecord wr : existingRecords) {
                     LocalTime eStart = wr.getStartTime();
                     LocalTime eEnd   = wr.getEndTime();
@@ -1342,20 +1369,6 @@ public class AddAttendance extends javax.swing.JPanel {
                         return;
                     }
                 }
-            }
-
-            // ⚡ Tính thời gian làm việc theo phút (cho phép 25:30 - 08:10 nếu bạn giữ logic cũ)
-            long totalMinutes = calculateMinutesAllowOver24(startStr, endStr);
-
-            if (totalMinutes <= 0) {
-                JOptionPane.showMessageDialog(this, "終了時間は開始時間より後でなければなりません！");
-                return;
-            }
-
-            // nếu CheckOut rồi thì không thể ghi thêm workrecord
-            if (attendance.getCheckOutTime() != null) {
-                JOptionPane.showMessageDialog(this, "チェックアウト済みのため、勤怠記録を追加できません！");
-                return;
             }
 
             // 4. Lấy project + task
@@ -1379,15 +1392,12 @@ public class AddAttendance extends javax.swing.JPanel {
                 return;
             }
 
-
-
-
             // 7. Tạo WorkRecord
             WorkRecord record = new WorkRecord();
             record.setAttendance(attendance);
             record.setProject(project);
             record.setTask(task);
-            record.setStartTime(newStart);   // dùng LocalTime đã làm tròn
+            record.setStartTime(newStart);   // LocalTime (0〜23, đã làm tròn)
             record.setEndTime(newEnd);
             record.setBreakWork(breakWork);
             record.setWorkMinutes(workMinutes);
@@ -1409,8 +1419,8 @@ public class AddAttendance extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnAddRecordActionPerformed
 
+
     private void btnUpdateRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateRecordActionPerformed
-        // TODO add your handling code here:
         try {
             int selectedRow = tblRecord.getSelectedRow();
             if (selectedRow == -1) {
@@ -1441,7 +1451,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 return;
             }
 
-            // Lấy và validate giờ bắt đầu + kết thúc
+            // Lấy và validate giờ bắt đầu + kết thúc (CHO PHÉP 0〜30h)
             String startStr = fmStart.getText().trim();
             String endStr   = fmEnd.getText().trim();
             if (startStr.isEmpty() || endStr.isEmpty()) {
@@ -1449,17 +1459,25 @@ public class AddAttendance extends javax.swing.JPanel {
                 return;
             }
 
-            // Parse sang LocalTime
-            LocalTime newStart = parseFlexibleTime(startStr);
-            LocalTime newEnd   = parseFlexibleTime(endStr);
-            if (newStart == null || newEnd == null) {
+            LocalTime newStart;
+            LocalTime newEnd;
+            try {
+                newStart = parseFlexibleTime(startStr);
+                newEnd   = parseFlexibleTime(endStr);
+            } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "時間の形式が無効です。");
                 return;
             }
 
-            int newStartMin = newStart.getHour() * 60 + newStart.getMinute();
-            int newEndMin   = newEnd.getHour() * 60 + newEnd.getMinute();
-            if (newEndMin <= newStartMin) {
+            long totalMinutes;
+            try {
+                totalMinutes = calculateMinutesAllowOver24(startStr, endStr);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "時間の形式が無効です。");
+                return;
+            }
+
+            if (totalMinutes <= 0) {
                 JOptionPane.showMessageDialog(this, "終了時間は開始時間より後でなければなりません！");
                 return;
             }
@@ -1468,6 +1486,10 @@ public class AddAttendance extends javax.swing.JPanel {
             List<WorkRecord> allRecords = recordController.findByAttendanceId(
                     existingRecord.getAttendance().getId());
             if (allRecords != null) {
+
+                int newStartMin = newStart.getHour() * 60 + newStart.getMinute();
+                int newEndMin   = newEnd.getHour() * 60 + newEnd.getMinute();
+
                 for (WorkRecord wr : allRecords) {
                     // Bỏ qua record đang sửa
                     if (wr.getId() == recordId) continue;
@@ -1477,7 +1499,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     if (eStart == null || eEnd == null) continue;
 
                     int eStartMin = eStart.getHour() * 60 + eStart.getMinute();
-                    int eEndMin = eEnd.getHour() * 60 + eEnd.getMinute();
+                    int eEndMin   = eEnd.getHour() * 60 + eEnd.getMinute();
 
                     // Kiểm tra overlap
                     if (newStartMin < eEndMin && eStartMin < newEndMin) {
@@ -1487,13 +1509,6 @@ public class AddAttendance extends javax.swing.JPanel {
                         return;
                     }
                 }
-            }
-
-            // Tính thời gian làm việc
-            long totalMinutes = calculateMinutesAllowOver24(startStr, endStr);
-            if (totalMinutes <= 0) {
-                JOptionPane.showMessageDialog(this, "終了時間は開始時間より後でなければなりません！");
-                return;
             }
 
             // Lấy project + task
@@ -1524,8 +1539,6 @@ public class AddAttendance extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "休憩時間は総勤務時間を超えることはできません！");
                 return;
             }
-
-
 
             // Cập nhật WorkRecord
             existingRecord.setProject(project);
@@ -1562,6 +1575,7 @@ public class AddAttendance extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "エラー: " + ex.getMessage());
         }
     }//GEN-LAST:event_btnUpdateRecordActionPerformed
+
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
