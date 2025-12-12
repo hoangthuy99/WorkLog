@@ -352,25 +352,29 @@ public class AttendanceMonth extends javax.swing.JPanel {
             List<Attendance> list = new ArrayList<>();
             list.add(attendance);
 
-            // ====== QUY ĐỊNH MODE EDIT / VIEW ======
-            boolean editable = false;
-            int status = attendance.getStatus();   // 0=pending,1=approved,2=rejected
+            boolean editable;
 
-            // Manager/Admin -> luôn được quyền chỉnh sửa
-            if (isManager(loggedInUser)) {
+// ❌ Nếu đã 確認済み → BẤT KỲ AI cũng KHÔNG ĐƯỢC SỬA
+            if (attendance.getStatus() == 1) {
+                editable = false;
+            }
+// Manager chỉ được sửa nếu status != 1
+            else if (isManager(loggedInUser)) {
                 editable = true;
             }
-            // Employee -> chỉ được sửa khi Pending hoặc Rejected
-            else if (status == 0 || status == 2) {
-                editable = true;
+// Employee chỉ được sửa nếu status = 0 hoặc 2
+            else {
+                editable = (attendance.getStatus() == 0 || attendance.getStatus() == 2);
             }
+
+
             // status == 1 (確認済み) -> employee chỉ được xem, không sửa
 
             // Tìm MainDashboard
             MainDashboard mainDashboard = findParentMainDashboard(this);
 
             if (mainDashboard != null) {
-                // viewMode = !editable
+
                 AddAttendance addAttendancePanel =
                         new AddAttendance(mainDashboard.currentUser, list, !editable);
                 mainDashboard.showPanel(addAttendancePanel);
@@ -417,7 +421,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
             default:        return "";
         }
     }
-
+   
     private String formatMinutesToHours(int minutes) {
         int hours = minutes / 60;
         int mins = minutes % 60;

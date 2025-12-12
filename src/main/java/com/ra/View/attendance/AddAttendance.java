@@ -91,7 +91,19 @@ public class AddAttendance extends javax.swing.JPanel {
         // Thiết lập chế độ xem/chỉnh sửa
         if (viewMode) {
             setupViewMode();
+            canEdit();
         }
+    }
+    private boolean canEdit() {
+        if (loggedInUser == null || attendanceUser == null) return false;
+
+        int roleId = loggedInUser.getRole().getId();
+
+        // ADMIN (3) hoặc MANAGER (2) luôn được sửa
+        if (roleId == 2 || roleId == 3) return true;
+
+        // EMPLOYEE (1) chỉ được sửa của chính mình
+        return loggedInUser.getId() == attendanceUser.getId();
     }
 
     private void loadUserInfo() {
@@ -102,6 +114,7 @@ public class AddAttendance extends javax.swing.JPanel {
     }
 
     private void tblRecordMouseClicked(java.awt.event.MouseEvent evt) {
+        if (viewMode) return;
         if (evt.getClickCount() == 1) { // Single click
             int selectedRow = tblRecord.getSelectedRow();
             if (selectedRow >= 0) {
@@ -177,7 +190,7 @@ public class AddAttendance extends javax.swing.JPanel {
 
         int roleId = user.getRole().getId();
         // 1 = EMPLOYEE, 2 = MANAGER, 3 = ADMIN
-        return roleId == 3;
+        return roleId == 3|| roleId==2;
     }
 
     private void loadAttendanceData(Attendance att) {
@@ -235,21 +248,26 @@ public class AddAttendance extends javax.swing.JPanel {
     }
 
     private void setupViewMode() {
-        // Disable toàn bộ input
+        // 🔒 Khóa toàn bộ ô nhập
         cbProject.setEnabled(false);
         cbTask.setEnabled(false);
         txtRemark.setEnabled(false);
         csDate.setEnabled(false);
         fmStart.setEnabled(false);
+        fmEnd.setEnabled(false);
         fmCheckIn.setEnabled(false);
         fmCheckOut.setEnabled(false);
         txtBreak.setEnabled(false);
+        rbHoliday.setEnabled(false);
 
-        // Button thêm/sửa ẩn đi
+        // 🔒 Khóa bảng & nút thao tác
+        tblRecord.setEnabled(false);
         btnAddAttend.setVisible(false);
         btnAddRecord.setVisible(false);
-
+        btnUpdateRecord.setVisible(false);
+        btnDelete.setVisible(false);
     }
+
     private List<Attendance> getCurrentAttendance(int userId, LocalDate date) {
         return attendanceController.findByUserAndDate(userId, date);
     }
