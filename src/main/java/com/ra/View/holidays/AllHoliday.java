@@ -99,8 +99,6 @@ public class AllHoliday extends JPanel {
 
         jCalendar.repaint();
     }
-
-    // ---------- GUI Design (do NetBeans tạo) ----------
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
