@@ -221,7 +221,6 @@ public class AddAttendance extends javax.swing.JPanel {
         this.holidayController = new HolidayController(new HolidayDAO());
     }
     private void setupByRole() {
-        // Employee (không phải Manager/Admin) thì không cho đổi Status
         if (!isManager(loggedInUser)) {
         }
     }
@@ -236,13 +235,10 @@ public class AddAttendance extends javax.swing.JPanel {
         fmCheckIn.setEnabled(false);
         fmCheckOut.setEnabled(false);
         txtBreak.setEnabled(false);
-
-        // Button thêm/sửa ẩn đi
         btnAddAttend.setVisible(false);
         btnAddRecord.setVisible(false);
 
-        // Thay đổi tiêu đề nếu cần
-        // lblTitle.setText("勤怠詳細 - 閲覧モード");
+
     }
 
 
