@@ -32,6 +32,8 @@ public class AddUser extends JPanel {
     private DefaultListModel<String> taskModel = new DefaultListModel<>();
     private AllUser parentPanel;
     private JPanel contentPanel;
+    private char defaultEchoChar;
+
 
     /**
      * Creates new form AddUser1
@@ -39,7 +41,9 @@ public class AddUser extends JPanel {
     public AddUser(AllUser parentPanel) {
         initComponents();
         this.parentPanel = parentPanel;
-        txtPassWord.setEchoChar((char) 0);
+        defaultEchoChar = txtPassWord.getEchoChar(); // lưu char mặc định (•)
+        // đảm bảo đang ẩn
+        txtPassWord.setEchoChar(defaultEchoChar);
         listTask.setModel(taskModel);
         listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         listTask.addMouseListener(new MouseAdapter() {
@@ -78,7 +82,7 @@ public class AddUser extends JPanel {
         this.add(contentPanel, gbc);
     }
     private void setupContentPanelLayout(GroupLayout layout) {
-        this.removeAll();
+        //this.removeAll();
         contentPanel.add(lbDepartment);
         contentPanel.add(lbTask);
         contentPanel.add(lbRole);
@@ -93,6 +97,7 @@ public class AddUser extends JPanel {
         contentPanel.add(lbPassword);
         contentPanel.add(lbEmployeename);
         contentPanel.add(txtPassWord);
+        contentPanel.add(cbShowPassword);
         contentPanel.add(txtEmployeename);
 
         final int FIELD_WIDTH = 200;
@@ -115,6 +120,7 @@ public class AddUser extends JPanel {
                                         .addComponent(txtUsername, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, FIELD_WIDTH, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(txtMail, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, FIELD_WIDTH, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(txtPassWord, GroupLayout.PREFERRED_SIZE, FIELD_WIDTH, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(cbShowPassword, GroupLayout.PREFERRED_SIZE, FIELD_WIDTH, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(cbRole, 0, FIELD_WIDTH, Short.MAX_VALUE))
                                 .addGap(HORIZONTAL_GAP, HORIZONTAL_GAP, HORIZONTAL_GAP) // Khoảng cách giữa hai cột
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -169,8 +175,12 @@ public class AddUser extends JPanel {
                                                                 .addComponent(txtPassWord, GroupLayout.PREFERRED_SIZE, FIELD_HEIGHT, GroupLayout.PREFERRED_SIZE))
                                                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                                                 .addComponent(lbTask)
-                                                                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, SCROLL_PANE_HEIGHT, GroupLayout.PREFERRED_SIZE))
-                                                ))
+                                                                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, SCROLL_PANE_HEIGHT, GroupLayout.PREFERRED_SIZE)))
+                                                .addGap(6, 6, 6)
+                                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(cbShowPassword))
+
+                                        )
                                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                                 .addComponent(cbDepartment, GroupLayout.PREFERRED_SIZE, FIELD_HEIGHT, GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(lbDepartment)))
@@ -366,6 +376,11 @@ public class AddUser extends JPanel {
         lbEmployeename = new JLabel();
         txtPassWord = new JPasswordField();
         txtEmployeename = new JTextField();
+        cbShowPassword = new JCheckBox("パスワード表示");
+        cbShowPassword.setBackground(new java.awt.Color(255, 255, 255));
+        cbShowPassword.setFont(new java.awt.Font("Yu Mincho", 0, 12));
+        cbShowPassword.addActionListener(e -> togglePassword());
+
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -411,6 +426,13 @@ public class AddUser extends JPanel {
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(null);
     }// </editor-fold>//GEN-END:initComponents
+    private void togglePassword() {
+        if (cbShowPassword.isSelected()) {
+            txtPassWord.setEchoChar((char) 0); // hiện
+        } else {
+            txtPassWord.setEchoChar(defaultEchoChar); // ẩn lại
+        }
+    }
 
 
     private void cbRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbRoleActionPerformed
@@ -419,18 +441,18 @@ public class AddUser extends JPanel {
     private void txtMailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMailActionPerformed
     }//GEN-LAST:event_txtMailActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
+
         if (!validateForm()) {
             return;
         }
 
-        String userName = txtUsername.getText();
+        String userName = txtUsername.getText().trim();
         String password = new String(txtPassWord.getPassword());
         String roleName = cbRole.getSelectedItem().toString();
         String email = txtMail.getText();
         String fullName = txtEmployeename.getText();
         String departmentName = cbDepartment.getSelectedItem().toString();
-
 
         try {
             Users user = new Users();
@@ -439,38 +461,60 @@ public class AddUser extends JPanel {
             user.setFullName(fullName);
             user.setUserCode(Users.generateUserCode());
             user.setEmail(email);
+
             DepartmentDAO departmentDAO = new DepartmentDAO();
             Department dept = departmentDAO.findFindByName(departmentName).orElse(null);
             if (dept != null) {
                 user.setDepartment(dept);
             }
+
             AuthDAO roleDAO = new AuthDAO();
             Optional<Roles> roleOpt = roleDAO.findByName(roleName);
-            if (roleOpt.isPresent()) {
-                user.setRole(roleOpt.get());
-            } else {
+            if (roleOpt.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "ロールが存在しません！");
                 return;
             }
+            user.setRole(roleOpt.get());
 
             TaskDAO taskDAO = new TaskDAO();
             List<String> selectedTasks = listTask.getSelectedValuesList();
             List<Tasks> newTasks = new ArrayList<>();
-
             for (String name : selectedTasks) {
                 taskDAO.findByName(name).ifPresent(newTasks::add);
             }
             user.setTasks(newTasks);
+
+            // 🔒 chống double-click
+            btnSave.setEnabled(false);
+
+            // ⭐ GỌI CREATE USER (ở đây sẽ check trùng username)
             userController.createUser(user);
 
             JOptionPane.showMessageDialog(this, "ユーザーが正常に作成されました！");
-            if (parentPanel != null) {
-            }
+
+        } catch (IllegalArgumentException ex) {
+            // ⭐ username trùng → message rõ ràng
+            JOptionPane.showMessageDialog(
+                    this,
+                    ex.getMessage(),
+                    "警告",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            txtUsername.requestFocus();
+
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "エラー： " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "エラー：" + e.getMessage(),
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } finally {
+            btnSave.setEnabled(true);
         }
     }
+
 
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
     }//GEN-LAST:event_txtUsernameActionPerformed
@@ -496,5 +540,7 @@ public class AddUser extends JPanel {
     private JTextField txtMail;
     private JPasswordField txtPassWord;
     private JTextField txtUsername;
+    private JCheckBox cbShowPassword;
+
     // End of variables declaration//GEN-END:variables
 }

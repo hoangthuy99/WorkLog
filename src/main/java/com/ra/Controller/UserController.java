@@ -60,12 +60,19 @@ public class UserController {
      */
     public Users createUser(Users user) {
 
+        // ✅ chặn trùng username (đang active)
+        Optional<Users> existed = userDAO.findByUsername(user.getUserName().trim());
+        if (existed.isPresent()) {
+            throw new IllegalArgumentException("ユーザー名は既に存在します。別のユーザー名を入力してください。");
+        }
+
         // Hash password trước khi lưu
         String hashed = PasswordHash.hashPassword(user.getPassword());
         user.setPassword(hashed);
 
         return userDAO.create(user);
     }
+
 
     public Users updateUser(Users user) {
 
