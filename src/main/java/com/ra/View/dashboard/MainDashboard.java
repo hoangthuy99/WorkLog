@@ -19,6 +19,8 @@ import com.ra.View.attendance.AttendanceDate;
 import com.ra.View.attendance.AttendanceMonth;
 import com.ra.View.holidays.AddHoliday;
 import com.ra.View.holidays.AllHoliday;
+
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.ZonedDateTime; // Để lấy thời gian hiện tại
 import java.time.format.DateTimeFormatter; // Để định dạng chuỗi
@@ -27,11 +29,17 @@ import java.util.Locale; // Để định dạng theo Locale Nhật Bản
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayDeque; // quay lại màn hình truước đó
+import java.util.Deque;
+
 
 public class MainDashboard extends javax.swing.JFrame {
 
     public Users currentUser;
     private javax.swing.JPanel currentPanel;
+//13/12
+    private final Deque<JPanel> panelHistory = new ArrayDeque<>();
+
 
     AttendanceController attendanceController;
 
@@ -107,14 +115,75 @@ public class MainDashboard extends javax.swing.JFrame {
             }
         }
 
+        // ✅ lưu panel hiện tại vào history trước khi chuyển
+        if (currentPanel != null) {
+            panelHistory.push(currentPanel);
+        }
+
+        setWorkingPanel(panel);
+
+    }
+
+    private void setWorkingPanel(JPanel panel) {
         pnlWorkingArea.removeAll();
         pnlWorkingArea.setLayout(new java.awt.BorderLayout());
         pnlWorkingArea.add(panel, java.awt.BorderLayout.CENTER);
         pnlWorkingArea.revalidate();
         pnlWorkingArea.repaint();
-
         currentPanel = panel;
     }
+    public void goBack() {
+        if (panelHistory.isEmpty()) {
+            return;
+        }
+
+        // ✅ Nếu đang ở AddAttendance và còn unfinished thì giữ y hệt logic cũ
+        if (currentPanel instanceof AddAttendance) {
+            AddAttendance attPanel = (AddAttendance) currentPanel;
+            try {
+                if (attPanel.hasUnfinishedAttendance()) {
+                    int choice = JOptionPane.showConfirmDialog(
+                            this,
+                            "本日はまだ退勤していません。\n" +
+                                    "画面を切り替えてもデータ（業務記録・出勤時間）は保存されていますが、\n" +
+                                    "退勤処理を忘れないようご注意ください。\n\n" +
+                                    "このまま戻りますか？",
+                            "確認",
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    if (choice != JOptionPane.YES_OPTION) return;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        // ✅ CHỈ quay về 1 trong 3 màn Attendance
+        while (!panelHistory.isEmpty()) {
+            JPanel prev = panelHistory.pop();
+
+            if (prev instanceof AddAttendance
+                    || prev instanceof AttendanceDate
+                    || prev instanceof AttendanceMonth) {
+
+                setWorkingPanel(prev);
+                return;
+            }
+        }
+    }
+
+
+    private MainDashboard findParentMainDashboard(Component component) {
+        Container parent = component.getParent();
+        while (parent != null) {
+            if (parent instanceof MainDashboard) return (MainDashboard) parent;
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
+
+
 
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainDashboard.class.getName());
@@ -216,6 +285,12 @@ public class MainDashboard extends javax.swing.JFrame {
         lbDatetime = new javax.swing.JLabel();
         pnlWorkingArea = new javax.swing.JPanel();
         jLabel1.setText("jLabel1");
+        JButton btnBack = new JButton("戻る");
+        btnBack.addActionListener(e -> {
+            MainDashboard md = findParentMainDashboard(this);
+            if (md != null) md.goBack();
+        });
+
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ダッシュボード");

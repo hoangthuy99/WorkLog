@@ -10,6 +10,8 @@ import com.ra.DAO.Holiday.HolidayDAO;
 import com.ra.DAO.Project.ProjectDAO;
 import com.ra.DAO.Task.TaskDAO;
 import com.ra.Model.Entity.*;
+import com.ra.View.dashboard.MainDashboard;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -259,6 +261,7 @@ public class AddAttendance extends javax.swing.JPanel {
         fmCheckOut.setEnabled(false);
         txtBreak.setEnabled(false);
         rbHoliday.setEnabled(false);
+        txtEmployeeName.setEnabled(false); //fix sáng 13/12
 
         // 🔒 Khóa bảng & nút thao tác
         tblRecord.setEnabled(false);
@@ -544,6 +547,14 @@ public class AddAttendance extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
 
+        btnBack = new javax.swing.JButton();
+        btnBack.setBackground(new java.awt.Color(204, 204, 255));
+        btnBack.setText("戻る");
+        btnBack.addActionListener(this::btnBackActionPerformed);
+
+
+
+
         btnWorkinformation.setBackground(new java.awt.Color(255, 255, 204));
         btnWorkinformation.setText("勤怠情報");
 
@@ -706,7 +717,12 @@ public class AddAttendance extends javax.swing.JPanel {
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                             .addGroup(layout.createSequentialGroup()
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
-                                                .addComponent(btnAddRecord)
+                                                    // btnBack bên trái
+                                                    .addComponent(btnBack)
+
+                                                    // khoảng trống co giãn để đẩy 3 nút sang phải
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, Short.MAX_VALUE, Short.MAX_VALUE)
+                                                    .addComponent(btnAddRecord)
                                                 .addGap(38, 38, 38)
                                                 .addComponent(btnUpdateRecord)
                                                 .addGap(34, 34, 34)
@@ -789,6 +805,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     .addContainerGap()
                     .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 780, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -846,6 +863,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     .addComponent(txtRemark, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 314, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAddRecord)
                     .addComponent(btnUpdateRecord)
                     .addComponent(btnDelete))
@@ -868,6 +886,31 @@ public class AddAttendance extends javax.swing.JPanel {
                     .addContainerGap(332, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+
+    // thêm nút goback
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {
+        MainDashboard md = findParentMainDashboard(this);
+        if (md != null) {
+            md.goBack();
+        } else {
+            // fallback nếu không tìm thấy dashboard
+            JOptionPane.showMessageDialog(this, "メイン画面が見つかりません。");
+        }
+    }
+
+    private MainDashboard findParentMainDashboard(java.awt.Component component) {
+        java.awt.Container parent = component.getParent();
+        while (parent != null) {
+            if (parent instanceof MainDashboard) {
+                return (MainDashboard) parent;
+            }
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
+
 
     // Làm tròn phút xuống bội số 10 (0,10,20,30,40,50)
     private int roundToNearest10(int minute) {
@@ -1754,5 +1797,8 @@ public class AddAttendance extends javax.swing.JPanel {
     private javax.swing.JTextField txtBreak;
     private javax.swing.JTextField txtEmployeeName;
     private javax.swing.JTextField txtRemark;
+    private javax.swing.JButton btnBack;
+
+
     // End of variables declaration//GEN-END:variables
 }

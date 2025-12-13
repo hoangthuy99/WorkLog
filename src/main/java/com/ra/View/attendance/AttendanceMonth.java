@@ -42,6 +42,9 @@ public class AttendanceMonth extends javax.swing.JPanel {
     HolidayController holidayController = new HolidayController(new HolidayDAO());
     public AttendanceMonth(Users user) {
         initComponents();
+        //status
+        initStatusComboBox();
+
         this.loggedInUser = user;
         this.attendanceController = new AttendanceController();
         this.userController = new UserController();
@@ -99,8 +102,107 @@ public class AttendanceMonth extends javax.swing.JPanel {
             cbDepart.setVisible(false);
             jLabel1.setVisible(false); // 社員No
             jLabel2.setVisible(false); // 部署
+
+            cbStatus.setVisible(false);
+            btnStatus.setVisible(false);
+
         }
     }
+
+    private void btnStatusActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            if (!isManager(loggedInUser)) {
+                JOptionPane.showMessageDialog(this,
+                        "この操作を行う権限がありません。\n" +
+                                "ステータス変更はマネージャー／管理者のみ可能です。");
+                return;
+            }
+
+            String selectedStatus = cbStatus.getSelectedItem().toString();
+            int dbStatus = switch (selectedStatus) {
+                case "未確認" -> 0;
+                case "確認済み" -> 1;
+                case "拒否済み" -> 2;
+                default -> -1;
+            };
+
+            if (dbStatus == -1) {
+                JOptionPane.showMessageDialog(this, "無効な状態です。");
+                return;
+            }
+
+            int selectedRow = tblAttendanceDate.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "更新する行を選択してください。");
+                return;
+            }
+
+            Object idObj = tblAttendanceDate.getValueAt(selectedRow, 0);
+
+            // chặn dòng 合計 / 総合計
+            if (idObj == null || idObj.toString().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "合計行は更新できません。");
+                return;
+            }
+
+            int attendanceId;
+            try {
+                attendanceId = Integer.parseInt(idObj.toString());
+            } catch (NumberFormatException nfe) {
+                JOptionPane.showMessageDialog(this, "無効なIDです。");
+                return;
+            }
+
+            Attendance attendance = attendanceController.findById(attendanceId);
+            if (attendance == null) {
+                JOptionPane.showMessageDialog(this, "勤怠データが見つかりません。");
+                return;
+            }
+
+            // ✅ KHÓA: đã 確認済み thì không cho đổi
+            if (attendance.getStatus() == 1) {
+                JOptionPane.showMessageDialog(this,
+                        "確認済みのデータはステータス変更できません。",
+                        "権限",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // optional: chọn đúng status hiện tại thì khỏi update
+            if (attendance.getStatus() == dbStatus) {
+                JOptionPane.showMessageDialog(this, "ステータスは既に同じです。");
+                return;
+            }
+
+            attendance.setStatus(dbStatus);
+            Attendance updatedAttendance = attendanceController.updateStatus(attendance);
+
+            if (updatedAttendance != null) {
+                DefaultTableModel model = (DefaultTableModel) tblAttendanceDate.getModel();
+                int statusColIndex = findColumnIndexByName(tblAttendanceDate, "状態");
+                if (statusColIndex != -1) {
+                    model.setValueAt(getStatusJapanese(dbStatus), selectedRow, statusColIndex);
+                }
+
+                JOptionPane.showMessageDialog(this, "ステータスが更新されました。");
+            } else {
+                JOptionPane.showMessageDialog(this, "更新に失敗しました。");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "エラー: " + e.getMessage());
+        }
+    }
+
+    private int findColumnIndexByName(JTable table, String colName) {
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            if (colName.equals(table.getColumnName(i))) return i;
+        }
+        return -1;
+    }
+
+
 
 
     private String getStatusJapanese(int status) {
@@ -134,6 +236,14 @@ public class AttendanceMonth extends javax.swing.JPanel {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
     }
+    //theem cbbox cho status
+    private void initStatusComboBox() {
+        cbStatus.removeAllItems();
+        cbStatus.addItem("未確認");   // 0
+        cbStatus.addItem("確認済み"); // 1
+        cbStatus.addItem("拒否済み"); // 2
+    }
+
 
 
     /**
@@ -156,6 +266,13 @@ public class AttendanceMonth extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         cbYear = new com.toedter.calendar.JYearChooser();
+        //13/12 - thêm nút chuyển trạng thái
+        cbStatus = new javax.swing.JComboBox<>();
+        btnStatus = new javax.swing.JButton();
+
+        btnStatus.setText("状態変更");
+        btnStatus.addActionListener(this::btnStatusActionPerformed);
+
 
         tblAttendanceDate.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -238,6 +355,15 @@ public class AttendanceMonth extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSearchUser)
                         .addContainerGap(84, Short.MAX_VALUE))))
+                //thêm hàng cho status
+                    .addGroup(layout.createSequentialGroup()
+                            .addGap(56, 56, 56)
+                            .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(btnStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(0, 0, Short.MAX_VALUE)
+                    )
+
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -258,6 +384,13 @@ public class AttendanceMonth extends javax.swing.JPanel {
                             .addComponent(cbMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(cbYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(28, 28, 28)
+               //hàng status
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnStatus)
+                    )
+                    .addGap(28, 28, 28)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
                 .addGap(29, 29, 29)
                 .addComponent(btnView)
@@ -883,5 +1016,8 @@ public class AttendanceMonth extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblAttendanceDate;
+    private javax.swing.JComboBox<String> cbStatus;
+    private javax.swing.JButton btnStatus;
+
     // End of variables declaration//GEN-END:variables
 }

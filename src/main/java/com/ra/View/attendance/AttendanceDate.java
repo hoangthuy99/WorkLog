@@ -45,7 +45,7 @@ public class AttendanceDate extends javax.swing.JPanel {
     private boolean isManager(Users user) {
         if (user == null || user.getRole() == null) return false;
         int roleId = user.getRole().getId();   // 1=EMP, 2=MANAGER, 3=ADMIN
-        return roleId == 3;
+        return roleId == 3 || roleId==2;
     }
 
     public AttendanceDate(Users user) {
