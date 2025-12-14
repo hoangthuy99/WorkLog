@@ -12,7 +12,9 @@ import com.ra.Model.Entity.Users;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -20,41 +22,41 @@ import java.util.Optional;
  */
 public class EditUser extends JFrame {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditUser.class.getName());
+    private static final Logger logger = Logger.getLogger(EditUser.class.getName());
 
-    /**
-     * Creates new form AddUser
-     */
-    private DefaultListModel<String> taskModel = new DefaultListModel<>();
+    // ✅ object model like AddUser/AddProject
+    private DefaultListModel<Tasks> taskModel = new DefaultListModel<>();
 
     private UserController userController = new UserController();
     private Users currentUser;
     private AllUser parentPanel;
+
     public EditUser(Users users, AllUser parentPanel) {
         initComponents();
-        listTask.setModel(taskModel);
-        listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        listTask.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int index = listTask.locationToIndex(evt.getPoint());
-                if (index >= 0) {
-                    if (listTask.isSelectedIndex(index)) {
-                        listTask.removeSelectionInterval(index, index);
-                    } else {
-                        listTask.addSelectionInterval(index, index);
-                    }
-                }
-            }
-        });
-
 
         this.parentPanel = parentPanel;
         this.currentUser = users;
 
+        // ✅ giống AddUser/AddProject: chỉ set MULTIPLE, không toggle mouse
+        listTask.setModel(taskModel);
+        listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        // ✅ renderer để hiển thị name
+        listTask.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Tasks t) setText(t.getName());
+                else setText("");
+                return this;
+            }
+        });
+
         loadData();
         loadUserData();
-
-
     }
 
     public EditUser(Users users) {
@@ -65,8 +67,8 @@ public class EditUser extends JFrame {
         loadDepartments();
         loadTasks();
         loadRoles();
-
     }
+
     private void loadUserData() {
         if (currentUser == null) return;
 
@@ -75,47 +77,71 @@ public class EditUser extends JFrame {
         txtPassword.setText(currentUser.getPassword());
         txtEmployeename.setText(currentUser.getFullName());
 
+        // ✅ select Department object
         if (currentUser.getDepartment() != null) {
-            cbDepartment.setSelectedItem(currentUser.getDepartment().getName());
+            cbDepartment.setSelectedItem(currentUser.getDepartment());
         }
 
+        // ✅ select Role object
         if (currentUser.getRole() != null) {
-            cbRole.setSelectedItem(currentUser.getRole().getName());
+            cbRole.setSelectedItem(currentUser.getRole());
         }
 
+        // ✅ select Tasks by id
         List<Tasks> userTasks = currentUser.getTasks();
-        if (userTasks == null) return;
+        if (userTasks == null || userTasks.isEmpty()) return;
 
-        DefaultListModel<String> model = (DefaultListModel<String>) listTask.getModel();
+        Set<Integer> ids = userTasks.stream()
+                .map(Tasks::getId)
+                .collect(Collectors.toSet());
 
-        // Duyệt từng task của user
-        for (Tasks task : userTasks) {
-            String taskName = task.getName();
+        DefaultListModel<Tasks> model = (DefaultListModel<Tasks>) listTask.getModel();
 
-            // Tìm index trong JList
-            for (int i = 0; i < model.size(); i++) {
-                if (model.get(i).equals(taskName)) {
-                    listTask.addSelectionInterval(i, i);
-                }
-            }
+        listTask.clearSelection();
+
+        List<Integer> selectedIdx = new ArrayList<>();
+        for (int i = 0; i < model.size(); i++) {
+            Tasks t = model.get(i);
+            if (t != null && ids.contains(t.getId())) selectedIdx.add(i);
         }
-
+        listTask.setSelectedIndices(selectedIdx.stream().mapToInt(Integer::intValue).toArray());
     }
+
     private void loadDepartments() {
         try {
             DepartmentDAO departmentDAO = new DepartmentDAO();
             List<Department> departments = departmentDAO.findAll();
 
             cbDepartment.removeAllItems();
+            cbDepartment.addItem(null); // 未選択
+
             for (Department d : departments) {
-                cbDepartment.addItem(d.getName());
+                cbDepartment.addItem(d);
             }
+
+            cbDepartment.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public java.awt.Component getListCellRendererComponent(
+                        JList<?> list, Object value, int index,
+                        boolean isSelected, boolean cellHasFocus) {
+
+                    super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    if (value == null) setText("未選択");
+                    else setText(((Department) value).getName());
+                    return this;
+                }
+            });
 
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    this,
+                    "部署一覧の読み込みに失敗しました。",
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
-
 
     private void loadTasks() {
         try {
@@ -123,40 +149,59 @@ public class EditUser extends JFrame {
             List<Tasks> tasks = taskDAO.findAll();
 
             taskModel.clear();
-
             for (Tasks t : tasks) {
-                taskModel.addElement(t.getName());
+                taskModel.addElement(t);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    this,
+                    "タスク一覧の読み込みに失敗しました。",
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
-
 
     private void loadRoles() {
-        try{
+        try {
             AuthDAO authDAO = new AuthDAO();
             List<Roles> roles = authDAO.findAllRoles();
+
             cbRole.removeAllItems();
+            cbRole.addItem(null); // 未選択
+
             for (Roles r : roles) {
-                cbRole.addItem(r.getName());
+                cbRole.addItem(r);
             }
-        }catch (Exception e){
+
+            cbRole.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public java.awt.Component getListCellRendererComponent(
+                        JList<?> list, Object value, int index,
+                        boolean isSelected, boolean cellHasFocus) {
+
+                    super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    if (value == null) setText("未選択");
+                    else setText(((Roles) value).getName());
+                    return this;
+                }
+            });
+
+        } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    this,
+                    "ロール一覧の読み込みに失敗しました。",
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
 
         jFrame1 = new JFrame();
         jCheckBoxMenuItem4 = new JCheckBoxMenuItem();
@@ -174,76 +219,46 @@ public class EditUser extends JFrame {
         lbDepartment = new JLabel();
         lbTask = new JLabel();
         lbRole = new JLabel();
+
         cbRole = new JComboBox<>();
         btnSave = new JButton();
         cbDepartment = new JComboBox<>();
+
         jOptionPane1 = new JOptionPane();
         jSeparator1 = new JSeparator();
         jScrollPane1 = new JScrollPane();
         listTask = new JList<>();
 
-
-        GroupLayout jFrame1Layout = new GroupLayout(jFrame1.getContentPane());
-        jFrame1.getContentPane().setLayout(jFrame1Layout);
-        jFrame1Layout.setHorizontalGroup(
-                jFrame1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGap(0, 400, Short.MAX_VALUE)
-        );
-        jFrame1Layout.setVerticalGroup(
-                jFrame1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGap(0, 300, Short.MAX_VALUE)
-        );
-
-        jCheckBoxMenuItem4.setSelected(true);
-        jCheckBoxMenuItem4.setText("jCheckBoxMenuItem4");
-
-        jCheckBoxMenuItem5.setSelected(true);
-        jCheckBoxMenuItem5.setText("jCheckBoxMenuItem5");
-
-        jMenuItem1.setText("jMenuItem1");
-
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE); // ĐÃ SỬA: Dùng DISPOSE_ON_CLOSE
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("ユーザー更新");
         setPreferredSize(new java.awt.Dimension(600, 400));
 
         pnlAdduser.setBackground(new java.awt.Color(255, 255, 255));
         pnlAdduser.setPreferredSize(new java.awt.Dimension(600, 400));
 
-        lbMail.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbMail.setFont(new java.awt.Font("Yu Mincho", 1, 14));
         lbMail.setText("メール");
 
-        txtMail.addActionListener(this::txtMailActionPerformed);
-
-        lbUsername.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbUsername.setFont(new java.awt.Font("Yu Mincho", 1, 14));
         lbUsername.setText("ユーザー名");
 
-        txtUsername.addActionListener(this::txtUsernameActionPerformed);
-
-        lbPassword.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbPassword.setFont(new java.awt.Font("Yu Mincho", 1, 14));
         lbPassword.setText("パスワード");
 
-        txtPassword.addActionListener(this::txtPasswordActionPerformed);
-
-        lbEmployeename.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbEmployeename.setFont(new java.awt.Font("Yu Mincho", 1, 14));
         lbEmployeename.setText("社員名");
 
-        txtEmployeename.addActionListener(this::txtEmployeenameActionPerformed);
-
-        lbDepartment.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbDepartment.setFont(new java.awt.Font("Yu Mincho", 1, 14));
         lbDepartment.setText("部署");
 
-        lbTask.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbTask.setFont(new java.awt.Font("Yu Mincho", 1, 14));
         lbTask.setText("タスク");
 
-        lbRole.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        lbRole.setFont(new java.awt.Font("Yu Mincho", 1, 14));
         lbRole.setText("ロール");
 
-        cbRole.setModel(new DefaultComboBoxModel<>(new String[] { "Employee", "Manager", "Admin" }));
-        cbRole.addActionListener(this::cbRoleActionPerformed);
-
-
         btnSave.setBackground(new java.awt.Color(189, 231, 189));
-        btnSave.setFont(new java.awt.Font("Yu Mincho", 1, 14)); // NOI18N
+        btnSave.setFont(new java.awt.Font("Yu Mincho", 1, 14));
         btnSave.setText("保存");
         btnSave.addActionListener(this::btnSaveActionPerformed);
 
@@ -283,11 +298,7 @@ public class EditUser extends JFrame {
                                                         .addGroup(pnlAdduserLayout.createSequentialGroup()
                                                                 .addComponent(lbTask)
                                                                 .addGap(18, 18, 18)
-                                                                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(18, 18, 18)
-                                                                .addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(123, 123, 123)
-                                                                .addComponent(jOptionPane1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE))
                                                         .addGroup(pnlAdduserLayout.createSequentialGroup()
                                                                 .addGroup(pnlAdduserLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                                         .addComponent(lbEmployeename)
@@ -297,8 +308,7 @@ public class EditUser extends JFrame {
                                                                         .addComponent(txtEmployeename, GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
                                                                         .addComponent(cbDepartment, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                                         .addGroup(pnlAdduserLayout.createSequentialGroup()
-                                                .addGap(188, 188, 188)
-                                                .addGap(36, 36, 36)
+                                                .addGap(224, 224, 224)
                                                 .addComponent(btnSave)))
                                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -329,19 +339,10 @@ public class EditUser extends JFrame {
                                                         .addComponent(txtPassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                         .addComponent(lbPassword)
                                                         .addComponent(lbTask))
-                                                .addGroup(pnlAdduserLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                        .addGroup(pnlAdduserLayout.createSequentialGroup()
-                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                                                                .addGroup(pnlAdduserLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                        .addComponent(jOptionPane1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                                        .addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, 10, GroupLayout.PREFERRED_SIZE))
-                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                                        .addGroup(pnlAdduserLayout.createSequentialGroup()
-                                                                .addGap(30, 30, 30)
-                                                                .addGroup(pnlAdduserLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                                        .addComponent(cbRole, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                                        .addComponent(lbRole))
-                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                                .addGap(30, 30, 30)
+                                                .addGroup(pnlAdduserLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(cbRole, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(lbRole)))
                                         .addGroup(pnlAdduserLayout.createSequentialGroup()
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
@@ -355,148 +356,82 @@ public class EditUser extends JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(pnlAdduser, GroupLayout.PREFERRED_SIZE, 599, GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 1, Short.MAX_VALUE))
+                        .addComponent(pnlAdduser, GroupLayout.PREFERRED_SIZE, 599, GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(pnlAdduser, GroupLayout.PREFERRED_SIZE, 401, GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(pnlAdduser, GroupLayout.PREFERRED_SIZE, 401, GroupLayout.PREFERRED_SIZE)
         );
 
-        getAccessibleContext().setAccessibleDescription("Add User");
-
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
+        // 🔒 chống double-click
+        btnSave.setEnabled(false);
 
-
-    private void txtMailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMailActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtMailActionPerformed
-
-    private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtUsernameActionPerformed
-
-    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPasswordActionPerformed
-
-    private void txtEmployeenameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmployeenameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEmployeenameActionPerformed
-
-    private void cbRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbRoleActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbRoleActionPerformed
-
-
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
         try {
             if (currentUser == null) {
-                JOptionPane.showMessageDialog(this, "ユーザーが存在しません！");
+                JOptionPane.showMessageDialog(this, "ユーザーが存在しません。", "エラー", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Lấy dữ liệu từ form
-            String userName = txtUsername.getText();
-            String password = txtPassword.getText();
-            String roleName = cbRole.getSelectedItem().toString();
-            String email = txtMail.getText();
-            String fullName = txtEmployeename.getText();
-            String departmentName = cbDepartment.getSelectedItem().toString();
+            String userName = txtUsername.getText().trim();
+            String password = txtPassword.getText().trim();
+            String email = txtMail.getText().trim();
+            String fullName = txtEmployeename.getText().trim();
 
+            Department dept = (Department) cbDepartment.getSelectedItem();
+            Roles role = (Roles) cbRole.getSelectedItem();
 
             currentUser.setUserName(userName);
             currentUser.setPassword(password);
             currentUser.setEmail(email);
             currentUser.setFullName(fullName);
 
-            // Department
-            DepartmentDAO departmentDAO = new DepartmentDAO();
-            Department dept = departmentDAO.findFindByName(departmentName).orElse(null);
-            if (dept != null) {
-                currentUser.setDepartment(dept);
-            }
+            if (dept != null) currentUser.setDepartment(dept);
 
-            // Role
-            AuthDAO roleDAO = new AuthDAO();
-            Optional<Roles> roleOpt = roleDAO.findByName(roleName);
-            if (roleOpt.isPresent()) {
-                currentUser.setRole(roleOpt.get());
-            } else {
-                JOptionPane.showMessageDialog(this, "ロールが存在しません！");
+            if (role == null) {
+                JOptionPane.showMessageDialog(this, "ロールを選択してください。", "警告", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            currentUser.setRole(role);
 
-            // Tasks
-            TaskDAO taskDAO = new TaskDAO();
-            // Lấy danh sách task đã chọn từ JList
-            List<String> selectedTasks = listTask.getSelectedValuesList();
-
-            // Luôn tạo list mới (tránh bị ghi đè vào list cũ đang dùng của Hibernate)
-            List<Tasks> newTasks = new ArrayList<>();
-
-            for (String name : selectedTasks) {
-                taskDAO.findByName(name).ifPresent(newTasks::add);
-            }
-
-            // Gán danh sách task mới cho user
+            // ✅ chọn nhiều tasks bằng Ctrl/Shift
+            List<Tasks> newTasks = new ArrayList<>(listTask.getSelectedValuesList());
             currentUser.setTasks(newTasks);
 
-            // Gọi Controller để update
             userController.updateUser(currentUser);
 
-            JOptionPane.showMessageDialog(this, "ユーザーが正常に更新されました！");
+            JOptionPane.showMessageDialog(this, "ユーザーが正常に更新されました！", "成功", JOptionPane.INFORMATION_MESSAGE);
 
-            // GỌI PHƯƠNG THỨC REFRESH BẢNG TRONG ALLUSER
             if (parentPanel != null) {
                 parentPanel.loadUserTable();
             }
 
-            this.dispose(); // đóng form sau khi lưu
+            this.dispose();
+
+        } catch (IllegalArgumentException ex) {
+            // nghiệp vụ -> tiếng Nhật rõ ràng
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "警告", JOptionPane.WARNING_MESSAGE);
+
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "エラー： " + e.getMessage());
+            JOptionPane.showMessageDialog(
+                    this,
+                    "システムエラーが発生しました。\n管理者に連絡してください。",
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } finally {
+            btnSave.setEnabled(true);
         }
     }
-//GEN-LAST:event_btnSaveActionPerformed
 
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        // 🌟 CHỈ KHỞI TẠO, KHÔNG GỌI setVisible(true) 🌟
-        java.awt.EventQueue.invokeLater(() -> new EditUser(new Users()));
-    }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration
     private JButton btnSave;
-    private JComboBox<String> cbDepartment;
-    private JComboBox<String> cbRole;
+    private JComboBox<Department> cbDepartment;
+    private JComboBox<Roles> cbRole;
     private JCheckBoxMenuItem jCheckBoxMenuItem4;
     private JCheckBoxMenuItem jCheckBoxMenuItem5;
     private JFrame jFrame1;
@@ -511,11 +446,10 @@ public class EditUser extends JFrame {
     private JLabel lbRole;
     private JLabel lbTask;
     private JLabel lbUsername;
-    private JList<String> listTask;
+    private JList<Tasks> listTask;
     private JPanel pnlAdduser;
     private JTextField txtEmployeename;
     private JTextField txtMail;
     private JTextField txtPassword;
     private JTextField txtUsername;
-    // End of variables declaration//GEN-END:variables
 }

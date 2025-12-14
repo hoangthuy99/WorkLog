@@ -10,24 +10,50 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 public class UserDAO implements IUserDAO {
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UserDAO.class.getName());
+
+    private static final java.util.logging.Logger logger =
+            java.util.logging.Logger.getLogger(UserDAO.class.getName());
 
     @Override
     public Users create(Users user) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
+
+            // 🔹 normalize username
+            String username = user.getUserName() == null ? "" : user.getUserName().trim();
+            user.setUserName(username);
+
+            // ✅ check trùng username (chỉ user chưa bị xóa mềm)
+            Long count = session.createQuery(
+                            "SELECT COUNT(u.id) FROM Users u " +
+                                    "WHERE u.userName = :username AND u.deletedAt IS NULL",
+                            Long.class
+                    )
+                    .setParameter("username", username)
+                    .uniqueResult();
+
+            if (count != null && count > 0) {
+                throw new IllegalArgumentException(
+                        "ユーザー名「" + username + "」は既に使用されています。"
+                );
+            }
+
             session.save(user);
             transaction.commit();
-            System.out.println("User created successfully!");
+            logger.info("User created successfully!");
+            return user;
+
+        } catch (IllegalArgumentException e) {
+            if (transaction != null) transaction.rollback();
+            throw e;
+
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
-            throw e;
+            throw new RuntimeException("ユーザーの作成中にエラーが発生しました。");
         }
-        return user;
     }
 
     @Override
@@ -35,15 +61,45 @@ public class UserDAO implements IUserDAO {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
+
+            // 🔹 normalize username
+            String username = user.getUserName() == null ? "" : user.getUserName().trim();
+            user.setUserName(username);
+
+            // ✅ check trùng username (trừ chính user đang edit)
+            Long count = session.createQuery(
+                            "SELECT COUNT(u.id) FROM Users u " +
+                                    "WHERE u.userName = :username " +
+                                    "AND u.deletedAt IS NULL " +
+                                    "AND u.id <> :id",
+                            Long.class
+                    )
+                    .setParameter("username", username)
+                    .setParameter("id", user.getId())
+                    .uniqueResult();
+
+            if (count != null && count > 0) {
+                throw new IllegalArgumentException(
+                        "ユーザー名「" + username + "」は既に使用されています。"
+                );
+            }
+
             session.update(user);
             transaction.commit();
-            System.out.println("User updated successfully!");
+            logger.info("User updated successfully!");
+            return user;
+
+        } catch (IllegalArgumentException e) {
+            if (transaction != null) transaction.rollback();
+            throw e;
+
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
+            throw new RuntimeException("ユーザー更新中にエラーが発生しました。");
         }
-        return user;
     }
+
     @Override
     public long countAll(String keyword) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -61,10 +117,6 @@ public class UserDAO implements IUserDAO {
         }
     }
 
-
-
-
-
     @Override
     public boolean deleteFindById(int id) {
         Transaction transaction = null;
@@ -73,22 +125,19 @@ public class UserDAO implements IUserDAO {
 
             Users user = session.get(Users.class, id);
             if (user != null) {
-                user.setDeletedAt(LocalDateTime.now());  // 🔹 Đánh dấu xóa mềm
-                session.update(user);                    // 🔹 Cập nhật thay vì delete
+                user.setDeletedAt(LocalDateTime.now());
+                session.update(user);
                 transaction.commit();
-                System.out.println("User soft-deleted (deletedAt set)!");
                 return true;
             }
             return false;
+
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
             return false;
         }
     }
-
-
-
 
     @Override
     public List<Users> findAll(String keyword, int page, int size) {
@@ -117,24 +166,20 @@ public class UserDAO implements IUserDAO {
         }
     }
 
-
     @Override
     public List<Users> findAll() {
-        logger.info("Finding all users");
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             String hql = "SELECT DISTINCT u FROM Users u " +
                     "LEFT JOIN FETCH u.tasks " +
                     "LEFT JOIN FETCH u.department " +
                     "LEFT JOIN FETCH u.role " +
                     "WHERE u.deletedAt IS NULL";
-            return session.createQuery(hql, Users.class)
-                    .getResultList();
+            return session.createQuery(hql, Users.class).getResultList();
         } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
     }
-
 
     @Override
     public Users findById(int id) {
@@ -159,17 +204,20 @@ public class UserDAO implements IUserDAO {
     @Override
     public Optional<Users> findByUsername(String username) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
             String hql = "SELECT DISTINCT u FROM Users u " +
                     "LEFT JOIN FETCH u.role r " +
                     "LEFT JOIN FETCH r.permissions " +
                     "LEFT JOIN FETCH u.department " +
-                    "WHERE u.userName = :username AND u.deletedAt IS NULL";
+                    "WHERE u.userName = :username AND u.deletedAt IS NULL " +
+                    "ORDER BY u.id ASC";
 
-            Users user = session.createQuery(hql, Users.class)
+            List<Users> list = session.createQuery(hql, Users.class)
                     .setParameter("username", username)
-                    .uniqueResult();
+                    .setMaxResults(1)
+                    .getResultList();
 
-            return Optional.ofNullable(user);
+            return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,9 +225,9 @@ public class UserDAO implements IUserDAO {
         }
     }
 
+
     @Override
     public List<Users> findUserByDepartmentId(int departmentId) {
-        //TODO : Tìm kiếm user theo departmentId
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             String hql = "SELECT DISTINCT u FROM Users u " +
                     "LEFT JOIN FETCH u.department d " +
@@ -198,6 +246,4 @@ public class UserDAO implements IUserDAO {
             return new ArrayList<>();
         }
     }
-
-
 }

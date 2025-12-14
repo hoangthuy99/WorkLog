@@ -374,13 +374,23 @@ public class AllUser extends JPanel {
                 addUserPanel = (JPanel) constructor.newInstance(this);
             } catch (ClassNotFoundException e) {
                 // Xử lý trường hợp không tìm thấy lớp AddUser
-                JOptionPane.showMessageDialog(this, "Lớp AddUser không tìm thấy. Đảm bảo AddUser.java đã tồn tại và nằm trong package com.ra.View.user.", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
-                logger.log(java.util.logging.Level.SEVERE, "Lỗi khi khởi tạo AddUser", e);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "AddUser(AllUser) のコンストラクタが必要です。",
+                        "エラー",
+                        JOptionPane.ERROR_MESSAGE
+                );
+
                 return;
             } catch (NoSuchMethodException e) {
                 // Xử lý trường hợp không tìm thấy constructor AddUser(AllUser)
-                JOptionPane.showMessageDialog(this, "Lớp AddUser cần có constructor AddUser(AllUser parentPanel).", "Lỗi Cấu hình", JOptionPane.ERROR_MESSAGE);
-                logger.log(java.util.logging.Level.SEVERE, "Lỗi Constructor AddUser", e);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "AddUser(AllUser) のコンストラクタが必要です。",
+                        "エラー",
+                        JOptionPane.ERROR_MESSAGE
+                );
+
                 return;
             }
 
@@ -406,8 +416,13 @@ public class AllUser extends JPanel {
             dialog.setVisible(true);
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Xảy ra lỗi khi mở form AddUser: " + e.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
-            logger.log(java.util.logging.Level.SEVERE, "Lỗi khi mở AddUser Panel", e);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "AddUser 画面の表示中にエラーが発生しました。\n" + e.getMessage(),
+                    "エラー",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
         }
 
     }//GEN-LAST:event_btnAdduserActionPerformed

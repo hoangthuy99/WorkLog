@@ -60,8 +60,19 @@ public class UserController {
      */
     public Users createUser(Users user) {
 
+        if (user == null) {
+            throw new IllegalArgumentException("ユーザー情報が不正です。");
+        }
+
+        // ✅ normalize username (trim + lower) để chặn cả khác hoa/thường
+        String raw = user.getUserName();
+        String normalized = (raw == null) ? "" : raw.trim().toLowerCase();
+        user.setUserName(normalized);
+
+        System.out.println("[DEBUG] createUser called. username=" + normalized);
+
         // ✅ chặn trùng username (đang active)
-        Optional<Users> existed = userDAO.findByUsername(user.getUserName().trim());
+        Optional<Users> existed = userDAO.findByUsername(normalized);
         if (existed.isPresent()) {
             throw new IllegalArgumentException("ユーザー名は既に存在します。別のユーザー名を入力してください。");
         }
@@ -70,13 +81,30 @@ public class UserController {
         String hashed = PasswordHash.hashPassword(user.getPassword());
         user.setPassword(hashed);
 
-        return userDAO.create(user);
+        try {
+            return userDAO.create(user);
+        } catch (org.hibernate.exception.ConstraintViolationException ex) {
+            // ✅ phòng trường hợp DB vẫn báo unique (hoặc lỗi khác) => vẫn hiện tiếng Nhật
+            throw new IllegalArgumentException("ユーザー名は既に存在します。別のユーザー名を入力してください。");
+        }
     }
+
 
 
     public Users updateUser(Users user) {
 
-        // Nếu user muốn đổi password → hash lại
+        if (user == null) throw new IllegalArgumentException("ユーザー情報が不正です。");
+
+        // normalize
+        String normalized = user.getUserName() == null ? "" : user.getUserName().trim().toLowerCase();
+        user.setUserName(normalized);
+
+        // check trùng nhưng phải loại trừ chính nó
+        Optional<Users> existed = userDAO.findByUsername(normalized);
+        if (existed.isPresent() && existed.get().getId() != user.getId()) {
+            throw new IllegalArgumentException("ユーザー名は既に存在します。別のユーザー名を入力してください。");
+        }
+
         if (user.getPassword() != null && user.getPassword().length() < 60) {
             String hashed = PasswordHash.hashPassword(user.getPassword());
             user.setPassword(hashed);
@@ -84,6 +112,7 @@ public class UserController {
 
         return userDAO.update(user);
     }
+
 
     public boolean deleteUser(int id) {
         return userDAO.deleteFindById(id);
