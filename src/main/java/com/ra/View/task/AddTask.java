@@ -10,9 +10,11 @@ import com.ra.Model.Entity.Tasks;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.util.stream.Collectors;
 
 public class AddTask extends JPanel {
 
@@ -29,9 +31,13 @@ public class AddTask extends JPanel {
     // === Task đang edit (nếu != null thì là EDIT MODE)
     private Tasks editingTask = null;
 
-    // Generated UI components
-    private JComboBox<Project> cbProjectname;
-    private JComboBox<Department> cbDepartmentname;
+    // ====== UI components ======
+    // (đổi JComboBox -> JList multi-select)
+    private JList<Project> listProject;
+    private JList<Department> listDepartment;
+    private JScrollPane scrProject;
+    private JScrollPane scrDepartment;
+
     private JLabel lbProjectname;
     private JButton btnSave;
     private JTextField txtTaskname;
@@ -54,7 +60,7 @@ public class AddTask extends JPanel {
     // CONSTRUCTOR — EDIT MODE
     // ==========================================================
     public AddTask(Tasks taskToEdit) {
-        this(); // gọi lại constructor mặc định để build UI cũ
+        this(); // build UI
         this.editingTask = taskToEdit;
         loadForEdit();
     }
@@ -63,44 +69,46 @@ public class AddTask extends JPanel {
     // LOAD DATA INTO UI WHEN EDITING
     // ==========================================================
     private void loadForEdit() {
+        if (editingTask == null) return;
+
         txtTaskname.setText(editingTask.getName());
 
-        // ===== DEPARTMENT =====
-        Department selectedDept = null;
+        // ===== DEPARTMENT multi-select =====
         if (editingTask.getDepartments() != null && !editingTask.getDepartments().isEmpty()) {
-            int editDeptId = editingTask.getDepartments().get(0).getId();
+            Set<Integer> deptIds = editingTask.getDepartments().stream()
+                    .map(Department::getId)
+                    .collect(Collectors.toSet());
 
-            // tìm trong departmentList cái Department có cùng id
-            for (Department d : departmentList) {
-                if (d.getId() == editDeptId) {
-                    selectedDept = d;
-                    break;
-                }
+            DefaultListModel<Department> m = (DefaultListModel<Department>) listDepartment.getModel();
+            List<Integer> idx = new ArrayList<>();
+            for (int i = 0; i < m.size(); i++) {
+                Department d = m.get(i);
+                if (d != null && deptIds.contains(d.getId())) idx.add(i);
             }
+            listDepartment.setSelectedIndices(idx.stream().mapToInt(Integer::intValue).toArray());
         }
-        cbDepartmentname.setSelectedItem(selectedDept); // nếu không có thì sẽ là null → 未選択
 
-        // ===== PROJECT =====
-        Project selectedProj = null;
+        // ===== PROJECT multi-select =====
         if (editingTask.getProjects() != null && !editingTask.getProjects().isEmpty()) {
-            int editProjId = editingTask.getProjects().get(0).getId();
+            Set<Integer> projIds = editingTask.getProjects().stream()
+                    .map(Project::getId)
+                    .collect(Collectors.toSet());
 
-            for (Project p : projectList) {
-                if (p.getId() == editProjId) {
-                    selectedProj = p;
-                    break;
-                }
+            DefaultListModel<Project> m = (DefaultListModel<Project>) listProject.getModel();
+            List<Integer> idx = new ArrayList<>();
+            for (int i = 0; i < m.size(); i++) {
+                Project p = m.get(i);
+                if (p != null && projIds.contains(p.getId())) idx.add(i);
             }
+            listProject.setSelectedIndices(idx.stream().mapToInt(Integer::intValue).toArray());
         }
-        cbProjectname.setSelectedItem(selectedProj);
 
         btnSave.setText("更新");
     }
 
-
-
     // ==========================================================
-    // LAYOUT — GIỮ NGUYÊN 100% CODE UI CŨ CỦA BẠN
+    // LAYOUT
+    // (giữ structure y như bạn; chỉ đổi cb -> scrollpane list)
     // ==========================================================
     private void applyCenteredLayout() {
 
@@ -112,15 +120,15 @@ public class AddTask extends JPanel {
 
         this.removeAll();
 
-        contentPanel.add(cbProjectname);
+        // add components
+        contentPanel.add(scrProject);
         contentPanel.add(lbProjectname);
         contentPanel.add(btnSave);
         contentPanel.add(txtTaskname);
         contentPanel.add(lbTaskname);
         contentPanel.add(lbDepartmentname);
-        contentPanel.add(cbDepartmentname);
+        contentPanel.add(scrDepartment);
 
-        // 👉 GIỮ NGUYÊN Y CHUỖI LAYOUT NHƯ BẠN ĐÃ GỬI (KHÔNG ĐỔI MỘT DÒNG)
         contentLayout.setHorizontalGroup(
                 contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(contentLayout.createSequentialGroup()
@@ -144,10 +152,13 @@ public class AddTask extends JPanel {
                                                 .addGap(118, 118, 118)
                                                 .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                                         .addComponent(txtTaskname, GroupLayout.PREFERRED_SIZE, 284, GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(cbDepartmentname, GroupLayout.PREFERRED_SIZE, 284, GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(cbProjectname, GroupLayout.PREFERRED_SIZE, 284, GroupLayout.PREFERRED_SIZE))))
+                                                        // đổi cbDepartmentname -> scrDepartment (list)
+                                                        .addComponent(scrDepartment, GroupLayout.PREFERRED_SIZE, 284, GroupLayout.PREFERRED_SIZE)
+                                                        // đổi cbProjectname -> scrProject (list)
+                                                        .addComponent(scrProject, GroupLayout.PREFERRED_SIZE, 284, GroupLayout.PREFERRED_SIZE))))
                                 .addGap(92, 92, 92))
         );
+
         contentLayout.setVerticalGroup(
                 contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(contentLayout.createSequentialGroup()
@@ -156,12 +167,14 @@ public class AddTask extends JPanel {
                                         .addComponent(txtTaskname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(lbTaskname))
                                 .addGap(18, 18, 18)
-                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(cbDepartmentname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        // đổi cbDepartmentname -> scrDepartment
+                                        .addComponent(scrDepartment, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(lbDepartmentname))
                                 .addGap(18, 18, 18)
-                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(cbProjectname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        // đổi cbProjectname -> scrProject
+                                        .addComponent(scrProject, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(lbProjectname))
                                 .addGap(27, 27, 27)
                                 .addGroup(contentLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -179,70 +192,59 @@ public class AddTask extends JPanel {
     }
 
     // ==========================================================
-    // LOAD DATA COMBOBOX
+    // LOAD DATA LIST
     // ==========================================================
     private void loadDepartments() {
         departmentList = departmentController.findAll();
-        cbDepartmentname.removeAllItems();
-        cbDepartmentname.addItem(null);
 
-        for (Department d : departmentList) {
-            cbDepartmentname.addItem(d);
-        }
+        DefaultListModel<Department> model = new DefaultListModel<>();
+        for (Department d : departmentList) model.addElement(d);
+        listDepartment.setModel(model);
 
-        cbDepartmentname.setRenderer(new DefaultListCellRenderer() {
+        listDepartment.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(
                     JList<?> list, Object value, int index,
                     boolean isSelected, boolean cellHasFocus) {
 
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value == null) {
-                    setText("未選択");   // "chưa chọn"
+                if (value instanceof Department d) {
+                    setText(d.getName());
                 } else {
-                    setText(((Department) value).getName());
+                    setText("");
                 }
                 return this;
             }
         });
     }
-
 
     private void loadProjects() {
         projectList = projectController.findAll();
-        cbProjectname.removeAllItems();
 
-        // ✅ Cho phép "không chọn"
-        cbProjectname.addItem(null);
+        DefaultListModel<Project> model = new DefaultListModel<>();
+        for (Project p : projectList) model.addElement(p);
+        listProject.setModel(model);
 
-        for (Project p : projectList) {
-            cbProjectname.addItem(p);
-        }
-
-        // ✅ Renderer hiển thị khi null
-        cbProjectname.setRenderer(new DefaultListCellRenderer() {
+        listProject.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(
                     JList<?> list, Object value, int index,
                     boolean isSelected, boolean cellHasFocus) {
 
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value == null) {
-                    setText("未選択");
+                if (value instanceof Project p) {
+                    setText(p.getName());
                 } else {
-                    setText(((Project) value).getName());
+                    setText("");
                 }
                 return this;
             }
         });
     }
-
 
     // ==========================================================
     // BUTTON HANDLERS
     // ==========================================================
-
-
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
 
         String taskName = txtTaskname.getText().trim();
@@ -251,31 +253,22 @@ public class AddTask extends JPanel {
             return;
         }
 
-        Department selectedDept = (Department) cbDepartmentname.getSelectedItem();
-        Project selectedProj = (Project) cbProjectname.getSelectedItem();
-
-        List<Department> deps = new ArrayList<>();
-        if (selectedDept != null) {
-            deps.add(selectedDept);
-        }
-
-        List<Project> projs = new ArrayList<>();
-        if (selectedProj != null) {
-            projs.add(selectedProj);
-        }
-
+        // multi select
+        List<Department> deps = new ArrayList<>(listDepartment.getSelectedValuesList());
+        List<Project> projs = new ArrayList<>(listProject.getSelectedValuesList());
 
         try {
-
             // === EDIT MODE ===
             if (editingTask != null) {
                 editingTask.setName(taskName);
+
+                // ghi đè list để tránh cộng dồn/trùng
                 editingTask.setDepartments(deps);
                 editingTask.setProjects(projs);
+
                 taskController.update(editingTask);
                 JOptionPane.showMessageDialog(this, "タスクの更新が完了しました。");
             }
-
             // === ADD MODE ===
             else {
                 Tasks newTask = new Tasks();
@@ -283,12 +276,12 @@ public class AddTask extends JPanel {
                 newTask.setTaskCode(Tasks.generateTaskCode());
                 newTask.setDepartments(deps);
                 newTask.setProjects(projs);
+
                 taskController.create(newTask);
                 JOptionPane.showMessageDialog(this, "タスクの作成が完了しました。");
             }
 
         } catch (Exception ex) {
-
             JOptionPane.showMessageDialog(
                     this,
                     ex.getMessage(),
@@ -304,27 +297,29 @@ public class AddTask extends JPanel {
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
-        cbProjectname = new JComboBox<>();
+        // lists
+        listProject = new JList<>();
+        listDepartment = new JList<>();
+
+        listProject.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        listDepartment.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        scrProject = new JScrollPane(listProject);
+        scrDepartment = new JScrollPane(listDepartment);
+
         lbProjectname = new JLabel();
         btnSave = new JButton();
         txtTaskname = new JTextField();
         lbTaskname = new JLabel();
         lbDepartmentname = new JLabel();
-        cbDepartmentname = new JComboBox<>();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
         lbProjectname.setText("プロジェクト名");
-
-
-
-
         btnSave.setBackground(new java.awt.Color(102, 255, 102));
         btnSave.setText("保存");
 
         lbTaskname.setText("タスク名");
         lbDepartmentname.setText("部署名");
-
-
     }
 }

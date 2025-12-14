@@ -283,6 +283,7 @@ public class AllDepartment extends JPanel implements DepartmentListener {
         for (Department d : list) {
             String projectNames = (d.getProjects() == null) ? "" :
                     d.getProjects().stream()
+                            .distinct()
                             .map(Project::getName)
                             .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
 

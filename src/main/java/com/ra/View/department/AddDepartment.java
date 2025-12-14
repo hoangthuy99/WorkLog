@@ -6,22 +6,29 @@ import com.ra.Controller.TaskController;
 import com.ra.Model.Entity.Department;
 import com.ra.Model.Entity.Project;
 import com.ra.Model.Entity.Tasks;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class AddDepartment extends JPanel {
 
     public interface DepartmentListener {
         void onDepartmentOperationComplete();
     }
+
     private DepartmentListener listener;
     private Integer editingDepartmentId;
     private Department editingDepartment;
     private Window parentWindow;
-    private DepartmentController departmentController = new DepartmentController();
-    private ProjectController projectController = new ProjectController();
-    private TaskController taskController = new TaskController();
+
+    private final DepartmentController departmentController = new DepartmentController();
+    private final ProjectController projectController = new ProjectController();
+    private final TaskController taskController = new TaskController();
+
     private List<Project> projectList = new ArrayList<>();
     private List<Tasks> taskList = new ArrayList<>();
     private JPanel contentPanel;
@@ -31,8 +38,13 @@ public class AddDepartment extends JPanel {
     private JLabel lbProjectname;
     private JLabel lbTaskname;
     private JTextField txtDepartmentname;
-    private JComboBox<Project> cbbProjectname;
-    private JComboBox<Tasks> cbbTaskname;
+
+    // ====== MULTI SELECT LISTS ======
+    private JList<Project> listProject;
+    private JList<Tasks> listTask;
+    private JScrollPane scrProject;
+    private JScrollPane scrTask;
+
     private JButton btnSave;
 
     // -------------------- CONSTRUCTOR - ADD MODE --------------------
@@ -66,7 +78,6 @@ public class AddDepartment extends JPanel {
             btnSave.setText("保存");
         }
 
-
         btnSave.addActionListener(e -> saveDepartment());
     }
 
@@ -77,98 +88,84 @@ public class AddDepartment extends JPanel {
 
         txtDepartmentname.setText(editingDepartment.getName());
 
-        // ===== PROJECT =====
-        Project selectedProject = null;
+        // ===== PROJECT multi select =====
         if (editingDepartment.getProjects() != null && !editingDepartment.getProjects().isEmpty()) {
-            int editProjectId = editingDepartment.getProjects().get(0).getId();
+            Set<Integer> editProjectIds = editingDepartment.getProjects().stream()
+                    .map(Project::getId)
+                    .collect(Collectors.toSet());
 
-            if (projectList != null) {
-                for (Project p : projectList) {
-                    if (p.getId() == editProjectId) {
-                        selectedProject = p;
-                        break;
-                    }
-                }
+            DefaultListModel<Project> m = (DefaultListModel<Project>) listProject.getModel();
+            List<Integer> idx = new ArrayList<>();
+            for (int i = 0; i < m.size(); i++) {
+                Project p = m.get(i);
+                if (p != null && editProjectIds.contains(p.getId())) idx.add(i);
             }
+            listProject.setSelectedIndices(idx.stream().mapToInt(Integer::intValue).toArray());
         }
-        cbbProjectname.setSelectedItem(selectedProject);
-        // selectedProject == null  -> "未選択"
-        // selectedProject != null -> hiển thị tên project
 
-        // ===== TASK =====
-        Tasks selectedTask = null;
+        // ===== TASK multi select =====
         if (editingDepartment.getTasks() != null && !editingDepartment.getTasks().isEmpty()) {
-            int editTaskId = editingDepartment.getTasks().get(0).getId();
+            Set<Integer> editTaskIds = editingDepartment.getTasks().stream()
+                    .map(Tasks::getId)
+                    .collect(Collectors.toSet());
 
-            if (taskList != null) {
-                for (Tasks t : taskList) {
-                    if (t.getId() == editTaskId) {
-                        selectedTask = t;
-                        break;
-                    }
-                }
+            DefaultListModel<Tasks> m = (DefaultListModel<Tasks>) listTask.getModel();
+            List<Integer> idx = new ArrayList<>();
+            for (int i = 0; i < m.size(); i++) {
+                Tasks t = m.get(i);
+                if (t != null && editTaskIds.contains(t.getId())) idx.add(i);
             }
+            listTask.setSelectedIndices(idx.stream().mapToInt(Integer::intValue).toArray());
         }
-        cbbTaskname.setSelectedItem(selectedTask);
     }
 
-
-    // -------------------- LOAD PROJECT COMBO --------------------
+    // -------------------- LOAD PROJECT LIST --------------------
     private void loadProjects() {
         projectList = projectController.findAll();
-        cbbProjectname.removeAllItems();
 
-        cbbProjectname.addItem(null);
+        DefaultListModel<Project> model = new DefaultListModel<>();
+        for (Project p : projectList) model.addElement(p);
+        listProject.setModel(model);
 
-        for (Project p : projectList) {
-            cbbProjectname.addItem(p);
-        }
-
-        cbbProjectname.setRenderer(new DefaultListCellRenderer() {
+        listProject.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value,
                                                           int index, boolean isSelected,
                                                           boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value == null) {
-                    setText("未選択"); // hoặc "プロジェクト未選択"
+                if (value instanceof Project p) {
+                    setText(p.getName());
                 } else {
-                    setText(((Project) value).getName());
+                    setText("");
                 }
                 return this;
             }
         });
     }
 
-
-    // -------------------- LOAD TASK COMBO --------------------
+    // -------------------- LOAD TASK LIST --------------------
     private void loadTasks() {
         taskList = taskController.findAll();
-        cbbTaskname.removeAllItems();
 
+        DefaultListModel<Tasks> model = new DefaultListModel<>();
+        for (Tasks t : taskList) model.addElement(t);
+        listTask.setModel(model);
 
-        cbbTaskname.addItem(null);
-
-        for (Tasks t : taskList) {
-            cbbTaskname.addItem(t);
-        }
-
-        cbbTaskname.setRenderer(new DefaultListCellRenderer() {
+        listTask.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value,
                                                           int index, boolean isSelected,
                                                           boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value == null) {
-                    setText("未選択"); // hoặc "タスク未選択"
+                if (value instanceof Tasks t) {
+                    setText(t.getName());
                 } else {
-                    setText(((Tasks) value).getName());
+                    setText("");
                 }
                 return this;
             }
         });
     }
-
 
     // -------------------- SAVE ACTION --------------------
     private void saveDepartment() {
@@ -179,14 +176,11 @@ public class AddDepartment extends JPanel {
             return;
         }
 
-        Project selectedProject = (Project) cbbProjectname.getSelectedItem();
-        Tasks selectedTask = (Tasks) cbbTaskname.getSelectedItem();
-
-        List<Project> projects = selectedProject != null ? List.of(selectedProject) : new ArrayList<>();
-        List<Tasks> tasks = selectedTask != null ? List.of(selectedTask) : new ArrayList<>();
+        // multi select values
+        List<Project> projects = new ArrayList<>(listProject.getSelectedValuesList());
+        List<Tasks> tasks = new ArrayList<>(listTask.getSelectedValuesList());
 
         try {
-
             if (editingDepartmentId == null) {
                 // CREATE
                 Department d = new Department();
@@ -197,10 +191,11 @@ public class AddDepartment extends JPanel {
 
                 departmentController.create(d);
                 JOptionPane.showMessageDialog(this, "部署が作成されました！");
-
             } else {
                 // UPDATE
                 editingDepartment.setName(depName);
+
+                // tránh cộng dồn/trùng: ghi đè danh sách lựa chọn
                 editingDepartment.setProjects(projects);
                 editingDepartment.setTasks(tasks);
 
@@ -211,11 +206,9 @@ public class AddDepartment extends JPanel {
             closeAndNotify();
 
         } catch (Exception ex) {
-
             String msg = ex.getMessage();
 
-            if (msg.contains("既に存在")) {
-                // Duplicate name/code
+            if (msg != null && msg.contains("既に存在")) {
                 JOptionPane.showMessageDialog(this,
                         msg,
                         "重複エラー",
@@ -228,7 +221,6 @@ public class AddDepartment extends JPanel {
             }
         }
     }
-
 
     private void closeAndNotify() {
         if (listener != null) {
@@ -249,9 +241,9 @@ public class AddDepartment extends JPanel {
         contentPanel.add(lbDepartmentname);
         contentPanel.add(txtDepartmentname);
         contentPanel.add(lbProjectname);
-        contentPanel.add(cbbProjectname);
+        contentPanel.add(scrProject);
         contentPanel.add(lbTaskname);
-        contentPanel.add(cbbTaskname);
+        contentPanel.add(scrTask);
         contentPanel.add(btnSave);
 
         layout.setHorizontalGroup(
@@ -265,8 +257,8 @@ public class AddDepartment extends JPanel {
                                 .addGap(30)
                                 .addGroup(layout.createParallelGroup()
                                         .addComponent(txtDepartmentname, 200, 200, 200)
-                                        .addComponent(cbbProjectname, 200, 200, 200)
-                                        .addComponent(cbbTaskname, 200, 200, 200)))
+                                        .addComponent(scrProject, 200, 200, 200)
+                                        .addComponent(scrTask, 200, 200, 200)))
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(150)
                                 .addGap(40)
@@ -282,11 +274,11 @@ public class AddDepartment extends JPanel {
                         .addGap(25)
                         .addGroup(layout.createParallelGroup()
                                 .addComponent(lbProjectname)
-                                .addComponent(cbbProjectname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addComponent(scrProject, 90, 90, 140))
                         .addGap(25)
                         .addGroup(layout.createParallelGroup()
                                 .addComponent(lbTaskname)
-                                .addComponent(cbbTaskname, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addComponent(scrTask, 90, 90, 140))
                         .addGap(40)
                         .addGroup(layout.createParallelGroup()
                                 .addComponent(btnSave))
@@ -306,8 +298,14 @@ public class AddDepartment extends JPanel {
 
         txtDepartmentname = new JTextField();
 
-        cbbProjectname = new JComboBox<>();
-        cbbTaskname = new JComboBox<>();
+        // multi select lists
+        listProject = new JList<>();
+        listTask = new JList<>();
+        listProject.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        scrProject = new JScrollPane(listProject);
+        scrTask = new JScrollPane(listTask);
 
         btnSave = new JButton("保存");
 
