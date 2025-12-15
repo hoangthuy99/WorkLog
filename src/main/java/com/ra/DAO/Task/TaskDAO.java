@@ -18,7 +18,6 @@ public class TaskDAO implements ITaskDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            //  CHECK duplicate task name
             Long countName = session.createQuery(
                             "SELECT COUNT(t) FROM Tasks t WHERE t.name = :name AND t.deletedAt IS NULL",
                             Long.class
@@ -30,7 +29,6 @@ public class TaskDAO implements ITaskDAO {
                 throw new RuntimeException("タスク名が既に存在しています。");
             }
 
-            //  CHECK duplicate taskCode
             Long countCode = session.createQuery(
                             "SELECT COUNT(t) FROM Tasks t WHERE t.taskCode = :code",
                             Long.class
@@ -42,7 +40,6 @@ public class TaskDAO implements ITaskDAO {
                 throw new RuntimeException("タスクコードが既に存在しています。");
             }
 
-            //  Thực hiện INSERT
             tx = session.beginTransaction();
             session.save(task);
             tx.commit();
@@ -60,7 +57,6 @@ public class TaskDAO implements ITaskDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // CHECK duplicate name (trừ chính nó)
             Long countName = session.createQuery(
                             "SELECT COUNT(t) FROM Tasks t WHERE t.name = :name AND t.id <> :id AND t.deletedAt IS NULL",
                             Long.class
@@ -73,7 +69,6 @@ public class TaskDAO implements ITaskDAO {
                 throw new RuntimeException("タスク名は既に使用されています。");
             }
 
-            // CHECK duplicate taskCode
             Long countCode = session.createQuery(
                             "SELECT COUNT(t) FROM Tasks t WHERE t.taskCode = :code AND t.id <> :id AND t.deletedAt IS NULL",
                             Long.class
@@ -86,7 +81,6 @@ public class TaskDAO implements ITaskDAO {
                 throw new RuntimeException("タスクコードは既に使用されています。");
             }
 
-            // ========== TIẾP TỤC PHẦN UPDATE CŨ ==========
             tx = session.beginTransaction();
 
             Tasks original = session.get(Tasks.class, task.getId());
@@ -96,7 +90,7 @@ public class TaskDAO implements ITaskDAO {
             session.flush();
 
             original.setName(task.getName());
-            original.setTaskCode(task.getTaskCode()); // ❗ bạn nên update cả taskCode
+            original.setTaskCode(task.getTaskCode());
             original.setDepartments(task.getDepartments());
             original.setProjects(task.getProjects());
 
@@ -116,7 +110,6 @@ public class TaskDAO implements ITaskDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            //  Check xem Task có đang được sử dụng trong WorkRecord không
             Long count = session.createQuery(
                     "SELECT COUNT(w) FROM WorkRecord w WHERE w.task.id = :tid",
                     Long.class
@@ -126,13 +119,11 @@ public class TaskDAO implements ITaskDAO {
                 throw new RuntimeException("タスクは勤務記録に使用されているため、削除できません。");
             }
 
-            //  Lấy Task từ DB
             Tasks task = session.get(Tasks.class, id);
             if (task == null) return false;
 
             tx = session.beginTransaction();
 
-            // Soft Delete (KHÔNG XÓA KHỎI DB)
             task.setDeletedAt(java.time.LocalDateTime.now());
             session.update(task);
 
@@ -141,7 +132,7 @@ public class TaskDAO implements ITaskDAO {
 
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            throw e; // QUAN TRỌNG: ném lỗi lên UI
+            throw e;
         }
     }
 
@@ -175,7 +166,6 @@ public class TaskDAO implements ITaskDAO {
                     .setParameter("kw", "%" + keyword + "%")
                     .list();
 
-            // load thủ công tránh MultipleBagFetchException
             for (Tasks t : tasks) {
                 Hibernate.initialize(t.getDepartments());
                 Hibernate.initialize(t.getProjects());
@@ -197,7 +187,7 @@ public class TaskDAO implements ITaskDAO {
             ).list();
 
 
-            // Tránh LazyInitializationException
+
             for(Tasks t : tasks) {
                 Hibernate.initialize(t.getProjects());
                 Hibernate.initialize(t.getDepartments());

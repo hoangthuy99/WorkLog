@@ -106,7 +106,7 @@ public class AttendanceDAO implements IAttendanceDAO {
             transaction = session.beginTransaction();
             Attendance attendance = session.get(Attendance.class, id);
             if (attendance != null) {
-                attendance.setDeletedAt(true);  // Đánh dấu xóa mềm
+                attendance.setDeletedAt(true);
                 session.update(attendance);                // Cập nhật thay vì delete
                 transaction.commit();
                 System.out.println("Attendance deleted successfully!");

@@ -152,7 +152,7 @@ public class AllTask extends JPanel {
         JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog(parent, "タスク編集", true);
 
-        // 👉 PHẢI TRUYỀN task VÀO CONSTRUCTOR EDIT
+        //  PHẢI TRUYỀN task VÀO CONSTRUCTOR EDIT
         dialog.setContentPane(new AddTask(task));
 
         dialog.pack();

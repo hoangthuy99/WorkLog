@@ -28,11 +28,10 @@ public class AddTask extends JPanel {
 
     private JPanel contentPanel;
 
-    // === Task đang edit (nếu != null thì là EDIT MODE)
+
     private Tasks editingTask = null;
 
-    // ====== UI components ======
-    // (đổi JComboBox -> JList multi-select)
+
     private JList<Project> listProject;
     private JList<Department> listDepartment;
     private JScrollPane scrProject;
@@ -44,9 +43,7 @@ public class AddTask extends JPanel {
     private JLabel lbTaskname;
     private JLabel lbDepartmentname;
 
-    // ==========================================================
-    // CONSTRUCTOR — ADD MODE
-    // ==========================================================
+
     public AddTask() {
         initComponents();
         applyCenteredLayout();
@@ -56,24 +53,19 @@ public class AddTask extends JPanel {
         btnSave.addActionListener(this::btnSaveActionPerformed);
     }
 
-    // ==========================================================
-    // CONSTRUCTOR — EDIT MODE
-    // ==========================================================
+
     public AddTask(Tasks taskToEdit) {
         this(); // build UI
         this.editingTask = taskToEdit;
         loadForEdit();
     }
 
-    // ==========================================================
-    // LOAD DATA INTO UI WHEN EDITING
-    // ==========================================================
+
     private void loadForEdit() {
         if (editingTask == null) return;
 
         txtTaskname.setText(editingTask.getName());
 
-        // ===== DEPARTMENT multi-select =====
         if (editingTask.getDepartments() != null && !editingTask.getDepartments().isEmpty()) {
             Set<Integer> deptIds = editingTask.getDepartments().stream()
                     .map(Department::getId)
@@ -88,7 +80,6 @@ public class AddTask extends JPanel {
             listDepartment.setSelectedIndices(idx.stream().mapToInt(Integer::intValue).toArray());
         }
 
-        // ===== PROJECT multi-select =====
         if (editingTask.getProjects() != null && !editingTask.getProjects().isEmpty()) {
             Set<Integer> projIds = editingTask.getProjects().stream()
                     .map(Project::getId)
@@ -106,10 +97,7 @@ public class AddTask extends JPanel {
         btnSave.setText("更新");
     }
 
-    // ==========================================================
-    // LAYOUT
-    // (giữ structure y như bạn; chỉ đổi cb -> scrollpane list)
-    // ==========================================================
+
     private void applyCenteredLayout() {
 
         contentPanel = new JPanel();
@@ -191,9 +179,7 @@ public class AddTask extends JPanel {
         this.repaint();
     }
 
-    // ==========================================================
-    // LOAD DATA LIST
-    // ==========================================================
+
     private void loadDepartments() {
         departmentList = departmentController.findAll();
 
@@ -242,9 +228,7 @@ public class AddTask extends JPanel {
         });
     }
 
-    // ==========================================================
-    // BUTTON HANDLERS
-    // ==========================================================
+
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {
 
         String taskName = txtTaskname.getText().trim();
@@ -291,9 +275,7 @@ public class AddTask extends JPanel {
         }
     }
 
-    // ==========================================================
-    // AUTO GENERATED UI
-    // ==========================================================
+
     @SuppressWarnings("unchecked")
     private void initComponents() {
 

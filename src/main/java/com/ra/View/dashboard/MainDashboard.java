@@ -11,8 +11,6 @@ import com.ra.View.project.AddProject;
 import com.ra.View.project.AllProject;
 import com.ra.View.task.AddTask;
 import com.ra.View.task.AllTask;
-import com.ra.View.menu.AddMenu;
-import com.ra.View.menu.AllMenu;
 import com.ra.View.report.ReportSummaryPanel;
 import com.ra.View.attendance.AddAttendance;
 import com.ra.View.attendance.AttendanceDate;
@@ -61,13 +59,11 @@ public class MainDashboard extends javax.swing.JFrame {
         switch (roleId) {
             case 3: // ADMIN
                 // Admin xem tất cả
-                pnlMenuHeader.setVisible(false);
 
                 break;
 
             case 2: // MANAGER
 
-                pnlMenuHeader.setVisible(false);
                 pnlProjectHeader.setVisible(false);
                 pnlDepartmentHeader.setVisible(false);
                 pnlTaskHeader.setVisible(false);
@@ -81,7 +77,6 @@ public class MainDashboard extends javax.swing.JFrame {
                 pnlUserHeader.setVisible(false);
                 pnlDepartmentHeader.setVisible(false);
                 pnlProjectHeader.setVisible(false);
-                pnlMenuHeader.setVisible(false);
                 pnlTaskHeader.setVisible(false);
                 pnlReport.setVisible(false);
                 pnlAddHoliday.setVisible(false);
@@ -115,7 +110,6 @@ public class MainDashboard extends javax.swing.JFrame {
             }
         }
 
-        // lưu panel hiện tại vào history trước khi chuyển
         if (currentPanel != null) {
             panelHistory.push(currentPanel);
         }
@@ -137,7 +131,6 @@ public class MainDashboard extends javax.swing.JFrame {
             return;
         }
 
-        //  Nếu đang ở AddAttendance và còn unfinished thì giữ y hệt logic cũ
         if (currentPanel instanceof AddAttendance) {
             AddAttendance attPanel = (AddAttendance) currentPanel;
             try {
@@ -158,7 +151,6 @@ public class MainDashboard extends javax.swing.JFrame {
             }
         }
 
-        //  CHỈ quay về 1 trong 3 màn Attendance
         while (!panelHistory.isEmpty()) {
             JPanel prev = panelHistory.pop();
 
@@ -271,9 +263,7 @@ public class MainDashboard extends javax.swing.JFrame {
         btnAddMenu1 = new javax.swing.JButton();
         pnlAllHoliday = new javax.swing.JPanel();
         btnAllMenu1 = new javax.swing.JButton();
-        pnlMenuHeader = new javax.swing.JPanel();
         btnMenuHeader = new javax.swing.JButton();
-        pnlMenumenu = new javax.swing.JPanel();
         pnlAddMenu = new javax.swing.JPanel();
         btnAddMenu = new javax.swing.JButton();
         pnlAllMenu = new javax.swing.JPanel();
@@ -972,100 +962,8 @@ public class MainDashboard extends javax.swing.JFrame {
 
         pnlSidebar.add(pnlHolidaymenu);
 
-        pnlMenuHeader.setBackground(new java.awt.Color(0, 0, 0));
-        pnlMenuHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlMenuHeader.setForeground(new java.awt.Color(255, 255, 255));
-        pnlMenuHeader.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlMenuHeader.setPreferredSize(new java.awt.Dimension(254, 30));
-        pnlMenuHeader.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                pnlMenuHeaderMouseClicked(evt);
-            }
-        });
 
-        btnMenuHeader.setBackground(new java.awt.Color(0, 0, 102));
-        btnMenuHeader.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        btnMenuHeader.setForeground(new java.awt.Color(255, 255, 255));
-        btnMenuHeader.setText("メニュー");
-        btnMenuHeader.setMaximumSize(new java.awt.Dimension(250, 30));
-        btnMenuHeader.setMinimumSize(new java.awt.Dimension(250, 30));
-        btnMenuHeader.setPreferredSize(new java.awt.Dimension(250, 30));
-        btnMenuHeader.addActionListener(this::btnMenuHeaderActionPerformed);
 
-        javax.swing.GroupLayout pnlMenuHeaderLayout = new javax.swing.GroupLayout(pnlMenuHeader);
-        pnlMenuHeader.setLayout(pnlMenuHeaderLayout);
-        pnlMenuHeaderLayout.setHorizontalGroup(
-                pnlMenuHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(btnMenuHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        pnlMenuHeaderLayout.setVerticalGroup(
-                pnlMenuHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlMenuHeaderLayout.createSequentialGroup()
-                                .addComponent(btnMenuHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(36, 36, 36))
-        );
-
-        pnlSidebar.add(pnlMenuHeader);
-
-        pnlMenumenu.setBackground(new java.awt.Color(0, 0, 0));
-        pnlMenumenu.setVisible(false);
-        pnlMenumenu.setLayout(new javax.swing.BoxLayout(pnlMenumenu, javax.swing.BoxLayout.Y_AXIS));
-
-        pnlAddMenu.setBackground(new java.awt.Color(0, 51, 153));
-        pnlAddMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAddMenu.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAddMenu.setPreferredSize(new java.awt.Dimension(250, 30));
-
-        btnAddMenu.setBackground(new java.awt.Color(0, 102, 102));
-        btnAddMenu.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        btnAddMenu.setForeground(new java.awt.Color(255, 255, 255));
-        btnAddMenu.setText("新メニュー作成");
-        btnAddMenu.setMaximumSize(new java.awt.Dimension(250, 30));
-        btnAddMenu.setMinimumSize(new java.awt.Dimension(250, 30));
-        btnAddMenu.setPreferredSize(new java.awt.Dimension(250, 30));
-        btnAddMenu.addActionListener(this::btnAddMenuActionPerformed);
-
-        javax.swing.GroupLayout pnlAddMenuLayout = new javax.swing.GroupLayout(pnlAddMenu);
-        pnlAddMenu.setLayout(pnlAddMenuLayout);
-        pnlAddMenuLayout.setHorizontalGroup(
-                pnlAddMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(btnAddMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        pnlAddMenuLayout.setVerticalGroup(
-                pnlAddMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(btnAddMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-
-        pnlMenumenu.add(pnlAddMenu);
-
-        pnlAllMenu.setBackground(new java.awt.Color(0, 51, 153));
-        pnlAllMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        pnlAllMenu.setMaximumSize(new java.awt.Dimension(250, 30));
-        pnlAllMenu.setPreferredSize(new java.awt.Dimension(250, 30));
-
-        btnAllMenu.setBackground(new java.awt.Color(0, 102, 102));
-        btnAllMenu.setFont(new java.awt.Font("Yu Gothic Medium", 1, 14)); // NOI18N
-        btnAllMenu.setForeground(new java.awt.Color(255, 255, 255));
-        btnAllMenu.setText("メニューリスト");
-        btnAllMenu.setMaximumSize(new java.awt.Dimension(250, 30));
-        btnAllMenu.setMinimumSize(new java.awt.Dimension(250, 30));
-        btnAllMenu.setPreferredSize(new java.awt.Dimension(250, 30));
-        btnAllMenu.addActionListener(this::btnAllMenuActionPerformed);
-
-        javax.swing.GroupLayout pnlAllMenuLayout = new javax.swing.GroupLayout(pnlAllMenu);
-        pnlAllMenu.setLayout(pnlAllMenuLayout);
-        pnlAllMenuLayout.setHorizontalGroup(
-                pnlAllMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(btnAllMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        pnlAllMenuLayout.setVerticalGroup(
-                pnlAllMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(btnAllMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-
-        pnlMenumenu.add(pnlAllMenu);
-
-        pnlSidebar.add(pnlMenumenu);
 
         // CHÈN DÒNG CODE GLUE - Gắn Panel Logout xuống cuối Sidebar
         pnlSidebar.add(javax.swing.Box.createVerticalGlue());
@@ -1238,25 +1136,11 @@ public class MainDashboard extends javax.swing.JFrame {
         showPanel(new ReportSummaryPanel());
     }//GEN-LAST:event_btnReportActionPerformed
 
-    private void btnMenuHeaderActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnMenuHeaderActionPerformed
-        pnlMenumenu.setVisible(!pnlMenumenu.isVisible());
-        pnlSidebar.revalidate();
-        pnlSidebar.repaint();
-    }//GEN-LAST:event_btnMenuHeaderActionPerformed
+
 
     private void pnlMenuHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlMenuHeaderMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_pnlMenuHeaderMouseClicked
-
-    private void btnAddMenuActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnAddMenuActionPerformed
-        // Gọi phương thức showPanel và truyền vào JPanel
-        showPanel(new AddMenu());
-    }//GEN-LAST:event_btnAddMenuActionPerformed
-
-    private void btnAllMenuActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnAllMenuActionPerformed
-        // Gọi phương thức showPanel và truyền vào JPanel
-        showPanel(new AllMenu());
-    }//GEN-LAST:event_btnAllMenuActionPerformed
 
 
     private void btnHolidayHeaderActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnHolidayHeaderActionPerformed
@@ -1376,8 +1260,6 @@ public class MainDashboard extends javax.swing.JFrame {
     private javax.swing.JPanel pnlHolidaymenu;
     private javax.swing.JPanel pnlLogout;
     private javax.swing.JPanel pnlMainContent;
-    private javax.swing.JPanel pnlMenuHeader;
-    private javax.swing.JPanel pnlMenumenu;
     private javax.swing.JPanel pnlProjectHeader;
     private javax.swing.JPanel pnlProjectmenu;
     private javax.swing.JPanel pnlReport;
