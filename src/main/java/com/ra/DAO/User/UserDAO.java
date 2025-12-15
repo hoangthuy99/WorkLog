@@ -25,7 +25,6 @@ public class UserDAO implements IUserDAO {
             String username = user.getUserName() == null ? "" : user.getUserName().trim();
             user.setUserName(username);
 
-            // ✅ check trùng username (chỉ user chưa bị xóa mềm)
             Long count = session.createQuery(
                             "SELECT COUNT(u.id) FROM Users u " +
                                     "WHERE u.userName = :username AND u.deletedAt IS NULL",
@@ -62,11 +61,9 @@ public class UserDAO implements IUserDAO {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
-            // 🔹 normalize username
             String username = user.getUserName() == null ? "" : user.getUserName().trim();
             user.setUserName(username);
 
-            // ✅ check trùng username (trừ chính user đang edit)
             Long count = session.createQuery(
                             "SELECT COUNT(u.id) FROM Users u " +
                                     "WHERE u.userName = :username " +

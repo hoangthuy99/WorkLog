@@ -24,7 +24,7 @@ public class AddUser extends JPanel {
 
     private final UserController userController = new UserController();
 
-    // ✅ đổi từ DefaultListModel<String> -> DefaultListModel<Tasks>
+    //  đổi từ DefaultListModel<String> -> DefaultListModel<Tasks>
     private DefaultListModel<Tasks> taskModel = new DefaultListModel<>();
 
     private AllUser parentPanel;
@@ -38,11 +38,11 @@ public class AddUser extends JPanel {
         defaultEchoChar = txtPassWord.getEchoChar();
         txtPassWord.setEchoChar(defaultEchoChar);
 
-        // ✅ Multi select chuẩn (Ctrl/Shift)
+        // Multi select chuẩn (Ctrl/Shift)
         listTask.setModel(taskModel);
         listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-        // ✅ hiển thị tên task thay vì object
+        // hiển thị tên task thay vì object
         listTask.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(
@@ -202,7 +202,7 @@ public class AddUser extends JPanel {
         loadRoles();
     }
 
-    // ✅ đổi cbDepartment từ String -> Department
+    // đổi cbDepartment từ String -> Department
     private void loadDepartments() {
         try {
             DepartmentDAO departmentDAO = new DepartmentDAO();
@@ -236,7 +236,7 @@ public class AddUser extends JPanel {
         }
     }
 
-    // ✅ đổi listTask từ String -> Tasks (khỏi findByName)
+    // đổi listTask từ String -> Tasks (khỏi findByName)
     private void loadTasks() {
         try {
             TaskDAO taskDAO = new TaskDAO();
@@ -255,7 +255,7 @@ public class AddUser extends JPanel {
         }
     }
 
-    // ✅ đổi cbRole từ String -> Roles
+    // đổi cbRole từ String -> Roles
     private void loadRoles() {
         try {
             AuthDAO authDAO = new AuthDAO();
@@ -325,13 +325,13 @@ public class AddUser extends JPanel {
             return false;
         }
 
-        // ✅ Department must be selected
+        // Department must be selected
         if (cbDepartment.getSelectedItem() == null) {
             JOptionPane.showMessageDialog(this, "部署を選択してください。", "警告", JOptionPane.WARNING_MESSAGE);
             return false;
         }
 
-        // ✅ Role must be selected
+        // Role must be selected
         if (cbRole.getSelectedItem() == null) {
             JOptionPane.showMessageDialog(this, "役割を選択してください。", "警告", JOptionPane.WARNING_MESSAGE);
             return false;
@@ -347,7 +347,7 @@ public class AddUser extends JPanel {
         lbTask = new JLabel();
         lbRole = new JLabel();
 
-        // ✅ generic types
+        // generic types
         cbRole = new JComboBox<>();
         lbMail = new JLabel();
         txtMail = new JTextField();
@@ -357,7 +357,7 @@ public class AddUser extends JPanel {
         txtUsername = new JTextField();
         jScrollPane1 = new JScrollPane();
 
-        // ✅ listTask now holds Tasks
+        // listTask now holds Tasks
         listTask = new JList<>();
 
         lbPassword = new JLabel();
@@ -445,7 +445,7 @@ public class AddUser extends JPanel {
             }
             user.setRole(role);
 
-            // ✅ lấy thẳng tasks object đã chọn
+            // lấy thẳng tasks object đã chọn
             List<Tasks> selectedTasks = new ArrayList<>(listTask.getSelectedValuesList());
             user.setTasks(selectedTasks);
 

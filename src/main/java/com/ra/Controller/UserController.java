@@ -64,14 +64,14 @@ public class UserController {
             throw new IllegalArgumentException("ユーザー情報が不正です。");
         }
 
-        // ✅ normalize username (trim + lower) để chặn cả khác hoa/thường
+
         String raw = user.getUserName();
         String normalized = (raw == null) ? "" : raw.trim().toLowerCase();
         user.setUserName(normalized);
 
         System.out.println("[DEBUG] createUser called. username=" + normalized);
 
-        // ✅ chặn trùng username (đang active)
+        // chặn trùng username
         Optional<Users> existed = userDAO.findByUsername(normalized);
         if (existed.isPresent()) {
             throw new IllegalArgumentException("ユーザー名は既に存在します。別のユーザー名を入力してください。");
@@ -84,7 +84,7 @@ public class UserController {
         try {
             return userDAO.create(user);
         } catch (org.hibernate.exception.ConstraintViolationException ex) {
-            // ✅ phòng trường hợp DB vẫn báo unique (hoặc lỗi khác) => vẫn hiện tiếng Nhật
+
             throw new IllegalArgumentException("ユーザー名は既に存在します。別のユーザー名を入力してください。");
         }
     }

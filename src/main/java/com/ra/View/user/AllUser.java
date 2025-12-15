@@ -75,8 +75,6 @@ public class AllUser extends JPanel {
 
         TableColumnModel columnModel = tbAllUser.getColumnModel();
 
-        // 🌟 ĐIỀU CHỈNH: Giảm tổng chiều rộng cột từ 700 xuống 690 để tránh thanh cuộn ngang
-        // Tổng: 40 + 90 + 95 + 95 + 100 + 90 + 180 = 690
 
         // Cột 0: STT
         columnModel.getColumn(0).setPreferredWidth(40);
@@ -141,9 +139,7 @@ public class AllUser extends JPanel {
                                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        // ====================================================================
-        // BỐ CỤC DỌC (VERTICAL GROUP)
-        // ====================================================================
+
         layout.setVerticalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
@@ -340,9 +336,7 @@ public class AllUser extends JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    // ========================================================
-    // EVENT HANDLERS
-    // ========================================================
+
 
     private void txtSearchActionPerformed(ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         btnSearchActionPerformed(evt);

@@ -24,7 +24,7 @@ public class EditUser extends JFrame {
 
     private static final Logger logger = Logger.getLogger(EditUser.class.getName());
 
-    // ✅ object model like AddUser/AddProject
+    // object model like AddUser/AddProject
     private DefaultListModel<Tasks> taskModel = new DefaultListModel<>();
 
     private UserController userController = new UserController();
@@ -37,11 +37,11 @@ public class EditUser extends JFrame {
         this.parentPanel = parentPanel;
         this.currentUser = users;
 
-        // ✅ giống AddUser/AddProject: chỉ set MULTIPLE, không toggle mouse
+        // giống AddUser/AddProject: chỉ set MULTIPLE, không toggle mouse
         listTask.setModel(taskModel);
         listTask.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-        // ✅ renderer để hiển thị name
+        // renderer để hiển thị name
         listTask.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(
@@ -77,17 +77,17 @@ public class EditUser extends JFrame {
         txtPassword.setText(currentUser.getPassword());
         txtEmployeename.setText(currentUser.getFullName());
 
-        // ✅ select Department object
+        // select Department object
         if (currentUser.getDepartment() != null) {
             cbDepartment.setSelectedItem(currentUser.getDepartment());
         }
 
-        // ✅ select Role object
+        // select Role object
         if (currentUser.getRole() != null) {
             cbRole.setSelectedItem(currentUser.getRole());
         }
 
-        // ✅ select Tasks by id
+        // select Tasks by id
         List<Tasks> userTasks = currentUser.getTasks();
         if (userTasks == null || userTasks.isEmpty()) return;
 
