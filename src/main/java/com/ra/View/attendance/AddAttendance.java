@@ -250,7 +250,7 @@ public class AddAttendance extends javax.swing.JPanel {
     }
 
     private void setupViewMode() {
-        // 🔒 Khóa toàn bộ ô nhập
+        //  Khóa toàn bộ ô nhập
         cbProject.setEnabled(false);
         cbTask.setEnabled(false);
         txtRemark.setEnabled(false);
@@ -263,7 +263,7 @@ public class AddAttendance extends javax.swing.JPanel {
         rbHoliday.setEnabled(false);
         txtEmployeeName.setEnabled(false); //fix sáng 13/12
 
-        // 🔒 Khóa bảng & nút thao tác
+        //  Khóa bảng & nút thao tác
         tblRecord.setEnabled(false);
         btnAddAttend.setVisible(false);
         btnAddRecord.setVisible(false);
@@ -294,7 +294,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     wr.getEndTime(),                // 5: 終了
                     wr.getWorkTimeFormatted(),      // 6: 勤務時間
                     wr.getBreakWork(),              // 7: 休憩時間
-                    wr.getRemarks()                 // 8: ノート  ✅ đúng chỗ
+                    wr.getRemarks()                 // 8: ノート   đúng chỗ
             };
 
             model.addRow(row);
@@ -1008,7 +1008,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this,
                         "通常勤務の日は、少なくとも1件の業務記録（WorkRecord）が必要です。\n" +
                                 "先に業務内容を登録してください。");
-                return false;   // ❌ KHÔNG HỢP LỆ
+                return false;   //  KHÔNG HỢP LỆ
             }
         }
 
@@ -1032,13 +1032,13 @@ public class AddAttendance extends javax.swing.JPanel {
             int overtime = (int) totalMinutes - standardWorkMinutes;
             attendance.setOvertimeMinutes(Math.max(overtime, 0));
 
-            return true;  // ✅ OK
+            return true;  //  OK
 
         } catch (Exception e) {
             System.err.println("出勤時間計算エラー： " + e.getMessage());
             attendance.setTotalMinutes(0);
             attendance.setOvertimeMinutes(0);
-            return false; // ❌ lỗi
+            return false; //  lỗi
         }
     }
 
@@ -1092,7 +1092,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     return;
                 }
 
-                // 🔹 Làm tròn phút tới bội số 10 (0..60)
+                //  Làm tròn phút tới bội số 10 (0..60)
                 minute = roundToNearest10(minute);
 
                 // Nếu phút = 60 → +1 giờ, phút = 0
@@ -1121,7 +1121,7 @@ public class AddAttendance extends javax.swing.JPanel {
             LocalTime checkOut = null;
             int extraDay = 0;
 
-// Xử lý check-out (cho phép 0-30h, làm tròn phút 10)
+            // Xử lý check-out (cho phép 0-30h, làm tròn phút 10)
             LocalDateTime checkOutDT = null;
             if (!checkOutStr.isEmpty()) {
                 try {
@@ -1227,7 +1227,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 attendance.setHoliday(rbHoliday.isSelected());
                 attendance.setStatus(Constant.ATTENDANCE_STATUS_PENDING);
 
-                // 👉 Validate / tính toán trước khi set checkOut vào entity
+                //  Validate / tính toán trước khi set checkOut vào entity
                 boolean ok = calculateAttendanceTimes(attendance, checkInDT, checkOutDT);
                 if (!ok) {
                     // Ví dụ: cố checkout nhưng chưa có WorkRecord
@@ -1278,7 +1278,7 @@ public class AddAttendance extends javax.swing.JPanel {
                 }
                 attendance.setBreakMinutes(totalBreak);
 
-                // 👉 Validate / tính toán trước khi set checkOut vào entity
+                //  Validate / tính toán trước khi set checkOut vào entity
                 boolean ok = calculateAttendanceTimes(attendance, checkInDT, newCheckOutDT);
                 if (!ok) {
                     // Ví dụ: chưa có WorkRecord mà muốn checkout
@@ -1286,7 +1286,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     return;
                 }
 
-                // ✅ OK -> mới set và lưu DB
+                //  OK -> mới set và lưu DB
                 attendance.setCheckInTime(checkIn);
                 attendance.setCheckOutTime(newCheckOut);
                 attendance.setExtraDay(newExtraDay);
@@ -1344,10 +1344,10 @@ public class AddAttendance extends javax.swing.JPanel {
                 attendanceController.create(attendance);
             }
 
-            // 🔹 2c. Lấy tất cả WorkRecord hiện có của attendance này
+            //  2c. Lấy tất cả WorkRecord hiện có của attendance này
             List<WorkRecord> existingRecords = recordController.findByAttendanceId(attendance.getId());
 
-            // 🔹 GIỚI HẠN TỐI ĐA 20 RECORD / 1 NGÀY
+            //  GIỚI HẠN TỐI ĐA 20 RECORD / 1 NGÀY
             if (existingRecords != null && existingRecords.size() >= 20) {
                 JOptionPane.showMessageDialog(this, "1日あたりの勤怠記録は最大20件までです。");
                 return;
@@ -1387,21 +1387,21 @@ public class AddAttendance extends javax.swing.JPanel {
                 return;
             }
 
-            // 🔹 BẮT BUỘC CHECK-IN TRƯỚC KHI THÊM WORKRECORD
+            //  BẮT BUỘC CHECK-IN TRƯỚC KHI THÊM WORKRECORD
             if (attendance.getCheckInTime() == null) {
                 JOptionPane.showMessageDialog(this,
                         "先に出勤時間（チェックイン）を登録してください。");
                 return;
             }
 
-            // 🔹 NẾU ĐÃ CHECK-OUT THÌ NHÂN VIÊN KHÔNG ĐƯỢC THÊM RECORD NỮA
+            //  NẾU ĐÃ CHECK-OUT THÌ NHÂN VIÊN KHÔNG ĐƯỢC THÊM RECORD NỮA
             if (attendance.getCheckOutTime() != null && !isManager(loggedInUser)) {
                 JOptionPane.showMessageDialog(this,
                         "チェックアウト済みのため、勤怠記録を追加できません！");
                 return;
             }
 
-            // 🔹 3b. CHECK TRÙNG GIỜ VỚI CÁC WORKRECORD ĐÃ CÓ (dùng LocalTime đã parse)
+            // 3b. CHECK TRÙNG GIỜ VỚI CÁC WORKRECORD ĐÃ CÓ (dùng LocalTime đã parse)
             if (existingRecords != null) {
 
                 int newStartMin = newStart.getHour() * 60 + newStart.getMinute();
@@ -1739,7 +1739,7 @@ public class AddAttendance extends javax.swing.JPanel {
         // Giữ nguyên Project và Task để tiện nhập tiếp
     }
 
-    // 🔹 Được MainDashboard gọi để biết còn ngày nào đang dở không
+    //  Được MainDashboard gọi để biết còn ngày nào đang dở không
     public boolean hasUnfinishedAttendance() {
         try {
             // Giả sử bạn có biến currentAttendance lưu attendance đang xem

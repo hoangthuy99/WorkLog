@@ -159,7 +159,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
                 return;
             }
 
-            // ✅ KHÓA: đã 確認済み thì không cho đổi
+            //  KHÓA: đã 確認済み thì không cho đổi
             if (attendance.getStatus() == 1) {
                 JOptionPane.showMessageDialog(this,
                         "確認済みのデータはステータス変更できません。",
@@ -487,7 +487,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
 
             boolean editable;
 
-// ❌ Nếu đã 確認済み → BẤT KỲ AI cũng KHÔNG ĐƯỢC SỬA
+//  Nếu đã 確認済み → BẤT KỲ AI cũng KHÔNG ĐƯỢC SỬA
             if (attendance.getStatus() == 1) {
                 editable = false;
             }
@@ -761,7 +761,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
             List<Attendance> searchResults = new ArrayList<>();
             String searchCriteria = "";
 
-            // 🔹 Tìm kiếm theo user name
+            //  Tìm kiếm theo user name
             if (!"未選択".equals(selectedUserName)) {
                 Optional<Users> userOpt = userController.findByUsername(selectedUserName);
                 if (userOpt.isEmpty()) {
@@ -775,7 +775,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
                 Users targetUser = userOpt.get();
 
                 if (isManager(loggedInUser)) {
-                    // ✅ Manager / Admin: xem được bất kỳ nhân viên nào
+                    //  Manager / Admin: xem được bất kỳ nhân viên nào
                     Object result = attendanceController.findByUsernameAndMonth(
                             targetUser.getUserName(), month, year);
                     if (result instanceof List) {
@@ -806,10 +806,10 @@ public class AttendanceMonth extends javax.swing.JPanel {
                     searchCriteria = "社員: " + loggedInUser.getUserName();
                 }
             }
-            // 🔹 Tìm kiếm theo department
+            //  Tìm kiếm theo department
             else if (!"未選択".equals(selectedDeptName)) {
                 if (isManager(loggedInUser)) {
-                    // ✅ Manager / Admin: xem được tất cả nhân viên trong department
+                    //  Manager / Admin: xem được tất cả nhân viên trong department
                     Object result = attendanceController.findByDepartmentAndMonth(
                             selectedDeptName, month, year);
                     if (result instanceof List) {
@@ -820,7 +820,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
                     }
                     searchCriteria = "部署: " + selectedDeptName;
                 } else {
-                    // 🔐 Employee: chỉ xem bản thân, dù chọn department nào
+                    //  Employee: chỉ xem bản thân, dù chọn department nào
                     Object result = attendanceController.findByUsernameAndMonth(
                             loggedInUser.getUserName(), month, year);
                     if (result instanceof List) {
@@ -906,7 +906,7 @@ public class AttendanceMonth extends javax.swing.JPanel {
                 String startTime = safeFormatTime(att.getCheckInTime());
                 String endTime = safeFormatTime(att.getCheckOutTime());
 
-                // ⚠️ QUAN TRỌNG: Sử dụng phương thức helper thay vì gọi trực tiếp
+                //  QUAN TRỌNG: Sử dụng phương thức helper thay vì gọi trực tiếp
                 int totalMinutes = safeGetTotalMinutes(att);    // DÙNG HELPER
                 int breakMinutes = safeGetBreakMinutes(att);    // DÙNG HELPER
                 int overtimeMinutes = safeGetOvertimeMinutes(att); // DÙNG HELPER
