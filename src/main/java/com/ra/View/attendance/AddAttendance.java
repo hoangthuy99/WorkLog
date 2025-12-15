@@ -1129,7 +1129,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     String[] parts = checkOutStr.split(":");
                     if (parts.length < 2) {
                         JOptionPane.showMessageDialog(this,
-                                "チェックアウト時間が無効です！00:00〜30:59 の形式で入力してください。");
+                                "チェックアウト時間が無効です！00:00〜29:59 の形式で入力してください。");
                         return;
                     }
 
@@ -1139,7 +1139,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     // Giới hạn input gốc: 0〜30h
                     if (hour < 0 || hour > 30) {
                         JOptionPane.showMessageDialog(this,
-                                "チェックアウト時間は 00:00〜30:59 の範囲で入力してください！");
+                                "チェックアウト時間は 00:00〜29:59 の範囲で入力してください！");
                         return;
                     }
                     if (minute < 0 || minute > 59) {
@@ -1161,7 +1161,7 @@ public class AddAttendance extends javax.swing.JPanel {
                     // vẫn không được vượt quá 30h (theo rule của check-out)
                     if (hour < 0 || hour > 30) {
                         JOptionPane.showMessageDialog(this,
-                                "チェックアウト時間は 00:00〜30:59 の範囲で入力してください！");
+                                "チェックアウト時間は 00:00〜29:59 の範囲で入力してください！");
                         return;
                     }
 
