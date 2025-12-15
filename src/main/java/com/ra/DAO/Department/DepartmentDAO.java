@@ -19,7 +19,7 @@ public class DepartmentDAO implements IDepartmentDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // 1️⃣ CHECK duplicate name
+            // CHECK duplicate name
             Long countName = session.createQuery(
                             "SELECT COUNT(d) FROM Department d WHERE d.name = :name AND d.deletedAt IS NULL",
                             Long.class
@@ -30,7 +30,7 @@ public class DepartmentDAO implements IDepartmentDAO {
                 throw new RuntimeException("部署名が既に存在しています。");
             }
 
-            // 2️⃣ CHECK duplicate code
+            //  CHECK duplicate code
             Long countCode = session.createQuery(
                     "SELECT COUNT(d) FROM Department d WHERE d.departmentCode = :code AND d.deletedAt IS NULL",
                     Long.class
@@ -41,7 +41,7 @@ public class DepartmentDAO implements IDepartmentDAO {
                 throw new RuntimeException("部署コードが既に存在しています。");
             }
 
-            // 3️⃣ SAVE
+            //  SAVE
             tx = session.beginTransaction();
             session.save(department);
             tx.commit();
@@ -95,7 +95,7 @@ public class DepartmentDAO implements IDepartmentDAO {
             dbDep.setName(d.getName());
 
             // ============================================
-            // 🔥 UPDATE TASK (Department là owner → OK)
+            //  UPDATE TASK (Department là owner → OK)
             // ============================================
             dbDep.getTasks().clear();
             session.flush(); // tránh duplicate row
@@ -108,7 +108,7 @@ public class DepartmentDAO implements IDepartmentDAO {
             }
 
             // ============================================
-            // 🔥 UPDATE PROJECT (Project là owner → phải update bên Project)
+            //  UPDATE PROJECT (Project là owner → phải update bên Project)
             // ============================================
 
             // 2.1 XÓA RELATION cũ
@@ -152,7 +152,7 @@ public class DepartmentDAO implements IDepartmentDAO {
             Department dep = session.get(Department.class, id);
             if (dep == null) return false;
 
-            // 1️⃣ CHECK — Department có User?
+            //  CHECK — Department có User?
             Long userCount = session.createQuery(
                     "SELECT COUNT(u) FROM Users u WHERE u.department.id = :id",
                     Long.class
@@ -162,7 +162,7 @@ public class DepartmentDAO implements IDepartmentDAO {
                 throw new RuntimeException("部署はユーザーに使用されているため、削除できません。");
             }
 
-            // 2️⃣ CHECK — Department có trong WorkRecord (qua Task)?
+            // CHECK — Department có trong WorkRecord (qua Task)?
             Long workRecordCount = session.createQuery(
                     "SELECT COUNT(w) FROM WorkRecord w " +
                             "JOIN w.task t " +
@@ -175,7 +175,7 @@ public class DepartmentDAO implements IDepartmentDAO {
                 throw new RuntimeException("部署は勤務記録で使用されているため、削除できません。");
             }
 
-            // 3️⃣ SOFT DELETE
+            // SOFT DELETE
             tx = session.beginTransaction();
             dep.setDeletedAt(java.time.LocalDateTime.now());
             session.update(dep);

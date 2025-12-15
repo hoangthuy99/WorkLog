@@ -19,7 +19,7 @@ public class ProjectDAO implements IProjectDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // 1️⃣ CHECK duplicate project name
+            // CHECK duplicate project name
             Long countName = session.createQuery(
                             "SELECT COUNT(p) FROM Project p WHERE p.name = :name AND p.deletedAt IS NULL",
                             Long.class
@@ -31,7 +31,7 @@ public class ProjectDAO implements IProjectDAO {
                 throw new RuntimeException("プロジェクト名が既に存在しています。");
             }
 
-            // 2️⃣ CHECK duplicate projectCode
+            // CHECK duplicate projectCode
             Long countCode = session.createQuery(
                             "SELECT COUNT(p) FROM Project p WHERE p.projectCode = :code",
                             Long.class
@@ -43,7 +43,7 @@ public class ProjectDAO implements IProjectDAO {
                 throw new RuntimeException("プロジェクトコードが既に存在しています。");
             }
 
-            // 3️⃣ INSERT nếu hợp lệ
+            // INSERT nếu hợp lệ
             tx = session.beginTransaction();
             session.persist(project);
             tx.commit();
@@ -88,7 +88,7 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     /**
-     * ❗❗ FIND BY ID — KHÔNG FETCH BAG
+     * FIND BY ID — KHÔNG FETCH BAG
      */
     @Override
     public Project findFindById(int id) {
@@ -172,7 +172,7 @@ public class ProjectDAO implements IProjectDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // 1️⃣ Check xem Project có đang được sử dụng trong WorkRecord không
+            // Check xem Project có đang được sử dụng trong WorkRecord không
             Long count = session.createQuery(
                     "SELECT COUNT(w) FROM WorkRecord w WHERE w.project.id = :pid",
                     Long.class
@@ -182,13 +182,13 @@ public class ProjectDAO implements IProjectDAO {
                 throw new RuntimeException("プロジェクトは勤務記録に使用されているため、削除できません。");
             }
 
-            // 2️⃣ Lấy Project từ DB
+            // Lấy Project từ DB
             Project p = session.get(Project.class, id);
             if (p == null) return false;
 
             tx = session.beginTransaction();
 
-            // 3️⃣ Soft delete → đánh dấu deletedAt thay vì xóa thật
+            // Soft delete → đánh dấu deletedAt thay vì xóa thật
             p.setDeletedAt(LocalDateTime.now());
             session.update(p);
 

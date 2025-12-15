@@ -18,7 +18,7 @@ public class TaskDAO implements ITaskDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // 1️⃣ CHECK duplicate task name
+            //  CHECK duplicate task name
             Long countName = session.createQuery(
                             "SELECT COUNT(t) FROM Tasks t WHERE t.name = :name AND t.deletedAt IS NULL",
                             Long.class
@@ -30,7 +30,7 @@ public class TaskDAO implements ITaskDAO {
                 throw new RuntimeException("タスク名が既に存在しています。");
             }
 
-            // 2️⃣ CHECK duplicate taskCode
+            //  CHECK duplicate taskCode
             Long countCode = session.createQuery(
                             "SELECT COUNT(t) FROM Tasks t WHERE t.taskCode = :code",
                             Long.class
@@ -42,7 +42,7 @@ public class TaskDAO implements ITaskDAO {
                 throw new RuntimeException("タスクコードが既に存在しています。");
             }
 
-            // 3️⃣ Thực hiện INSERT
+            //  Thực hiện INSERT
             tx = session.beginTransaction();
             session.save(task);
             tx.commit();
@@ -60,7 +60,7 @@ public class TaskDAO implements ITaskDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // 0️⃣ CHECK duplicate name (trừ chính nó)
+            // CHECK duplicate name (trừ chính nó)
             Long countName = session.createQuery(
                             "SELECT COUNT(t) FROM Tasks t WHERE t.name = :name AND t.id <> :id AND t.deletedAt IS NULL",
                             Long.class
@@ -73,7 +73,7 @@ public class TaskDAO implements ITaskDAO {
                 throw new RuntimeException("タスク名は既に使用されています。");
             }
 
-            // 1️⃣ CHECK duplicate taskCode
+            // CHECK duplicate taskCode
             Long countCode = session.createQuery(
                             "SELECT COUNT(t) FROM Tasks t WHERE t.taskCode = :code AND t.id <> :id AND t.deletedAt IS NULL",
                             Long.class
@@ -116,7 +116,7 @@ public class TaskDAO implements ITaskDAO {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // 1️⃣ Check xem Task có đang được sử dụng trong WorkRecord không
+            //  Check xem Task có đang được sử dụng trong WorkRecord không
             Long count = session.createQuery(
                     "SELECT COUNT(w) FROM WorkRecord w WHERE w.task.id = :tid",
                     Long.class
@@ -126,13 +126,13 @@ public class TaskDAO implements ITaskDAO {
                 throw new RuntimeException("タスクは勤務記録に使用されているため、削除できません。");
             }
 
-            // 2️⃣ Lấy Task từ DB
+            //  Lấy Task từ DB
             Tasks task = session.get(Tasks.class, id);
             if (task == null) return false;
 
             tx = session.beginTransaction();
 
-            // 3️⃣ Soft Delete (KHÔNG XÓA KHỎI DB)
+            // Soft Delete (KHÔNG XÓA KHỎI DB)
             task.setDeletedAt(java.time.LocalDateTime.now());
             session.update(task);
 

@@ -115,7 +115,7 @@ public class MainDashboard extends javax.swing.JFrame {
             }
         }
 
-        // ✅ lưu panel hiện tại vào history trước khi chuyển
+        // lưu panel hiện tại vào history trước khi chuyển
         if (currentPanel != null) {
             panelHistory.push(currentPanel);
         }
@@ -137,7 +137,7 @@ public class MainDashboard extends javax.swing.JFrame {
             return;
         }
 
-        // ✅ Nếu đang ở AddAttendance và còn unfinished thì giữ y hệt logic cũ
+        //  Nếu đang ở AddAttendance và còn unfinished thì giữ y hệt logic cũ
         if (currentPanel instanceof AddAttendance) {
             AddAttendance attPanel = (AddAttendance) currentPanel;
             try {
@@ -158,7 +158,7 @@ public class MainDashboard extends javax.swing.JFrame {
             }
         }
 
-        // ✅ CHỈ quay về 1 trong 3 màn Attendance
+        //  CHỈ quay về 1 trong 3 màn Attendance
         while (!panelHistory.isEmpty()) {
             JPanel prev = panelHistory.pop();
 
